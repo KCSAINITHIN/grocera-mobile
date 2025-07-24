@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Tracking - GROCERA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    :root {
+      --primary: #6C63FF;
+      --primary-light: #A5A2FF;
+      --primary-dark: #5A52E0;
+      --secondary: #FF6584;
+      --accent: #42C6FF;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --danger: #F44336;
+      --dark: #2D3748;
+      --light: #F7FAFC;
+      --gray: #E2E8F0;
+      --gray-dark: #CBD5E0;
+      --text: #2D3748;
+      --text-light: #718096;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+      --card-radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f8f9fa;
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 80px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .topbar {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      height: 60px;
+    }
+
+    .topbar img {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+    }
+
+    .topbar h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .container {
+      padding: 16px;
+      max-width: 100%;
+    }
+
+    /* Enhanced Card Styling */
+    .card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 16px;
+    }
+
+    .order-date {
+      color: var(--text-light);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .order-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: capitalize;
+      align-self: flex-start;
+    }
+
+    .status-processing {
+      background-color: rgba(255, 198, 7, 0.15);
+      color: #B78103;
+      border: 1px solid rgba(183, 129, 3, 0.2);
+    }
+
+    .status-confirmed {
+      background-color: rgba(76, 175, 80, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+    }
+
+    .status-delivered {
+      background-color: rgba(66, 198, 255, 0.15);
+      color: #0288D1;
+      border: 1px solid rgba(2, 136, 209, 0.2);
+    }
+
+    .status-pending {
+      background-color: rgba(244, 67, 54, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(244, 67, 54, 0.2);
+    }
+
+    .status-cancelled {
+      background-color: rgba(244, 67, 54, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(244, 67, 54, 0.2);
+    }
+
+    .status-shipped {
+      background-color: rgba(108, 99, 255, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(108, 99, 255, 0.2);
+    }
+
+    .order-items {
+      margin-top: 12px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--gray);
+      align-items: center;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .item-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background-color: var(--gray);
+      margin-right: 16px;
+      object-fit: cover;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: var(--text-light);
+      display: flex;
+      gap: 8px;
+    }
+
+    .item-price {
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 15px;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .order-summary {
+      margin-top: 20px;
+      background: rgba(108, 99, 255, 0.03);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .total-row {
+      padding-top: 12px;
+      border-top: 1px dashed var(--gray);
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .total-amount {
+      color: var(--success);
+      font-size: 17px;
+    }
+
+    .payment-method {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .payment-method svg {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+    }
+
+    /* Tracking Progress */
+    .tracking-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(108, 99, 255, 0.1);
+    }
+
+    .tracking-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+    }
+
+    .progress-container {
+      margin: 24px 0;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--gray);
+      border-radius: 4px;
+      position: relative;
+      margin: 24px 0 36px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      width: 0;
+      transition: width 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+      box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      width: 20%;
+    }
+
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      transition: all 0.4s ease;
+      font-size: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .step.active .step-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      transform: scale(1.15);
+      box-shadow: 0 0 0 6px rgba(108, 99, 255, 0.2);
+    }
+
+    .step.completed .step-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .step-text {
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: center;
+      font-weight: 600;
+      max-width: 80px;
+    }
+
+    .step.active .step-text {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .step.completed .step-text {
+      color: var(--success);
+    }
+
+    .step-date {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Delivery Info */
+    .info-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .info-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-title svg {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 14px;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--dark);
+      min-width: 100px;
+      font-size: 14px;
+    }
+
+    .info-value {
+      color: var(--text-light);
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    /* Delivery Person */
+    .delivery-person {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .person-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .person-details {
+      flex: 1;
+    }
+
+    .person-name {
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .person-role {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .contact-btn {
+      padding: 8px 16px;
+      background: var(--primary);
+      color: white;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-btn svg {
+      margin-right: 6px;
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(108, 99, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-danger {
+      background: white;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: rgba(244, 67, 54, 0.1);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-disabled {
+      background: var(--gray);
+      color: var(--text-light);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn svg {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Order Actions */
+    .order-actions {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .action-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+
+    /* Support Section */
+    .support-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .support-options {
+      margin-top: 16px;
+    }
+
+    .support-option {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--gray);
+      transition: all 0.3s;
+    }
+
+    .support-option:last-child {
+      border-bottom: none;
+    }
+
+    .support-option:hover {
+      transform: translateX(4px);
+    }
+
+    .support-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(108, 99, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .support-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+    }
+
+    .support-text {
+      flex: 1;
+    }
+
+    .support-title {
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 15px;
+    }
+
+    .support-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .support-arrow {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-light);
+      margin-left: 8px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: white;
+      border-top: 1px solid var(--gray);
+      padding: 12px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 11px;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 8px;
+      flex: 1;
+      max-width: 70px;
+    }
+
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 4px;
+      fill: currentColor;
+      transition: all 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: rgba(108, 99, 255, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .nav-item.active svg {
+      fill: var(--primary);
+      filter: drop-shadow(0 2px 4px rgba(108, 99, 255, 0.2));
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      border-radius: var(--card-radius);
+      padding: 24px;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .modal-close:hover {
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      margin-bottom: 24px;
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--gray);
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .checkbox-input {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    /* Animation */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-2 {
+      margin-top: 8px;
+    }
+
+    .mb-3 {
+      margin-bottom: 16px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 400px) {
+      .progress-steps {
+        flex-wrap: wrap;
+      }
+      
+      .step {
+        width: 50%;
+        margin-bottom: 24px;
+      }
+      
+      .btn {
+        min-width: 100%;
+      }
+      
+      .action-buttons {
+        gap: 8px;
+      }
+      
+      .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .item-price {
+        margin-top: 8px;
+        text-align: left;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="back-btn" onclick="window.history.back()">←</button>
+    <h1>Order Tracking</h1>
+    <img src="logo.png" alt="GROCERA" width="32">
+  </div>
+
+  <div class="container">
+    <!-- Order Summary Card -->
+    <div id="orderCard" class="card fade-in">
+      <!-- Order details will be inserted here by JavaScript -->
+    </div>
+
+    <!-- Tracking Progress Card -->
+    <div class="card tracking-card fade-in">
+      <h3 class="info-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 8v4l3 3"/></svg>
+        Delivery Status
+      </h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-steps" id="progressSteps">
+          <!-- Steps will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery Information Card -->
+    <div class="info-card fade-in">
+      <div class="info-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Delivery Information
+      </div>
+      <div class="info-row">
+        <div class="info-label">Address:</div>
+        <div class="info-value" id="deliveryAddress">Loading...</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Contact:</div>
+        <div class="info-value" id="deliveryContact">Loading...</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Time:</div>
+        <div class="info-value" id="deliveryTime">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Delivery Person Card -->
+    <div id="deliveryPersonContainer" class="delivery-person hidden fade-in">
+      <div class="person-avatar" id="personAvatar">JD</div>
+      <div class="person-details">
+        <div class="person-name" id="personName">John Doe</div>
+        <div class="person-role">Your Delivery Partner</div>
+        <a href="tel:+1234567890" class="contact-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+          Contact
+        </a>
+      </div>
+    </div>
+
+    <!-- Order Actions Card -->
+    <div class="order-actions fade-in">
+      <div class="action-title">Order Actions</div>
+      <div class="action-buttons">
+        <button id="reorderBtn" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+          Reorder
+        </button>
+        <button id="cancelBtn" class="btn btn-danger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          Cancel Order
+        </button>
+      </div>
+    </div>
+
+    <!-- Support Card -->
+    <div class="support-card fade-in">
+      <div class="info-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+        Need Help With This Order?
+      </div>
+      <div class="support-options">
+        <div class="support-option" onclick="openSupport('chat')">
+          <div class="support-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+          </div>
+          <div class="support-text">
+            <div class="support-title">Chat Support</div>
+            <div class="support-desc">Instant help from our team</div>
+          </div>
+          <svg class="support-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>
+        <div class="support-option" onclick="openSupport('call')">
+          <div class="support-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+          </div>
+          <div class="support-text">
+            <div class="support-title">Call Support</div>
+            <div class="support-desc">Talk to our executive</div>
+          </div>
+          <svg class="support-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>
+        <div class="support-option" onclick="openSupport('email')">
+          <div class="support-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <div class="support-text">
+            <div class="support-title">Email Support</div>
+            <div class="support-desc">Get help within 24 hours</div>
+          </div>
+          <svg class="support-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="orders.html" class="btn btn-secondary btn-block">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+        Back to Orders
+      </a>
+    </div>
+  </div>
+
+  <!-- Cancel Order Modal -->
+  <div id="cancelModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Cancel Order</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to cancel this order? This action cannot be undone.</p>
+        <div class="form-group mt-2">
+          <label class="checkbox">
+            <input type="checkbox" id="refundCheckbox" class="checkbox-input">
+            <span>Request refund</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="cancelReason" class="form-label">Reason for cancellation:</label>
+          <select id="cancelReason" class="form-control">
+            <option value="">Select a reason</option>
+            <option>Found better price elsewhere</option>
+            <option>Ordered by mistake</option>
+            <option>Delivery time too long</option>
+            <option>Changed my mind</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Go Back</button>
+        <button class="btn btn-danger" onclick="confirmCancel()">Cancel Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reorder Modal -->
+  <div id="reorderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Reorder Items</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Your previous order items will be added to your cart. You can modify quantities before checkout.</p>
+        <div class="form-group mt-2">
+          <label class="checkbox">
+            <input type="checkbox" id="replaceCart" checked class="checkbox-input">
+            <span>Clear current cart items</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmReorder()">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="categories.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h16v2H4z"/></svg>
+      <span>Categories</span>
+    </a>
+    <a href="cart.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2H10.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03L23 6H6.21z"/></svg>
+      <span>Cart</span>
+    </a>
+    <a href="orders.html" class="nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4.586l-2-2H10.586l-2 2H4v14h16V6zM12 17l-5-5h3V9h4v3h3l-5 5z"/></svg>
+      <span>Orders</span>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get order ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      
+      if (!orderId) {
+        alert('No order ID provided');
+        window.location.href = 'orders.html';
+        return;
+      }
+      
+      // Load order details from localStorage
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const order = orders.find(o => o.orderId === orderId);
+      
+      if (!order) {
+        alert('Order not found');
+        window.location.href = 'orders.html';
+        return;
+      }
+      
+      // Display order details
+      displayOrderDetails(order);
+      
+      // Setup progress tracking based on order status
+      setupProgressTracking(order.status);
+      
+      // Setup delivery information
+      setupDeliveryInfo(order);
+      
+      // Setup event listeners
+      setupEventListeners(order);
+    });
+    
+    function displayOrderDetails(order) {
+      const orderElement = document.getElementById('orderCard');
+      const formattedDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      
+      const status = order.status || 'Processing';
+      const statusClass = getStatusClass(status);
+      
+      // Generate random product images for demo
+      const productImages = [
+        'https://via.placeholder.com/100x100/FFE5B4/000000?text=Banana',
+        'https://via.placeholder.com/100x100/F5F5F5/000000?text=Milk',
+        'https://via.placeholder.com/100x100/E6D7BD/000000?text=Bread',
+        'https://via.placeholder.com/100x100/FFCCCB/000000?text=Eggs',
+        'https://via.placeholder.com/100x100/C8E6C9/000000?text=Spinach',
+        'https://via.placeholder.com/100x100/E1BEE7/000000?text=Yogurt',
+        'https://via.placeholder.com/100x100/D7CCC8/000000?text=Granola'
+      ];
+      
+      orderElement.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="order-id">Order #${order.orderId}</div>
+            <div class="order-date">${formattedDate}</div>
+          </div>
+          <span class="order-status ${statusClass}">${status}</span>
+        </div>
+        <div class="order-items">
+          ${order.items.map((item, index) => `
+            <div class="order-item">
+              <div class="item-info">
+                <img src="${productImages[index % productImages.length]}" class="item-img" alt="${item.name}">
+                <div class="item-details">
+                  <div class="item-name">${item.name || 'Unknown Item'}</div>
+                  <div class="item-meta">Qty: ${item.quantity || 1} • ₹${(item.price || 0).toFixed(2)} each</div>
+                </div>
+              </div>
+              <div class="item-price">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="order-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹${(order.totalAmount * 0.9).toFixed(2)}</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery</span>
+            <span>₹${(order.totalAmount * 0.1).toFixed(2)}</span>
+          </div>
+          <div class="summary-row total-row">
+            <span>Total Amount</span>
+            <span class="total-amount">₹${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+          </div>
+          <div class="payment-method">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+            Paid via ${order.paymentMethod || 'Unknown Method'}
+          </div>
+        </div>
+      `;
+    }
+    
+    function setupProgressTracking(status) {
+      const steps = [
+        { id: 'ordered', label: 'Ordered', icon: '📝', active: false, completed: true },
+        { id: 'confirmed', label: 'Confirmed', icon: '✅', active: false, completed: false },
+        { id: 'processing', label: 'Processing', icon: '🔄', active: false, completed: false },
+        { id: 'shipped', label: 'Shipped', icon: '🚚', active: false, completed: false },
+        { id: 'delivered', label: 'Delivered', icon: '🏠', active: false, completed: false }
+      ];
+      
+      // Set active/completed steps based on status
+      let activeStepIndex = 0;
+      let progressPercentage = 0;
+      
+      switch(status.toLowerCase()) {
+        case 'pending':
+          activeStepIndex = 0;
+          progressPercentage = 0;
+          break;
+        case 'confirmed':
+          steps[1].completed = true;
+          activeStepIndex = 1;
+          progressPercentage = 25;
+          break;
+        case 'processing':
+          steps[1].completed = true;
+          steps[2].completed = true;
+          activeStepIndex = 2;
+          progressPercentage = 50;
+          break;
+        case 'shipped':
+          steps[1].completed = true;
+          steps[2].completed = true;
+          steps[3].completed = true;
+          activeStepIndex = 3;
+          progressPercentage = 75;
+          break;
+        case 'delivered':
+          steps.forEach(step => step.completed = true);
+          activeStepIndex = 4;
+          progressPercentage = 100;
+          break;
+        default: // processing
+          steps[1].completed = true;
+          steps[2].completed = true;
+          activeStepIndex = 2;
+          progressPercentage = 50;
+      }
+      
+      // Set active step
+      if (activeStepIndex < steps.length) {
+        steps[activeStepIndex].active = true;
+      }
+      
+      // Render steps
+      const stepsContainer = document.getElementById('progressSteps');
+      stepsContainer.innerHTML = steps.map(step => `
+        <div class="step ${step.active ? 'active' : ''} ${step.completed ? 'completed' : ''}">
+          <div class="step-icon">${step.icon}</div>
+          <div class="step-text">${step.label}</div>
+          ${step.completed ? `<div class="step-date">${getRandomTime(activeStepIndex)}</div>` : ''}
+        </div>
+      `).join('');
+      
+      // Animate progress bar
+      setTimeout(() => {
+        document.getElementById('progressFill').style.width = `${progressPercentage}%`;
+      }, 300);
+      
+      // Show delivery person if shipped
+      if (status.toLowerCase() === 'shipped' || status.toLowerCase() === 'delivered') {
+        const deliveryPerson = document.getElementById('deliveryPersonContainer');
+        deliveryPerson.classList.remove('hidden');
+        
+        // Generate random delivery person
+        const names = ['John Doe', 'Raj Patel', 'Amit Sharma', 'Priya Singh', 'David Wilson'];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const initials = randomName.split(' ').map(n => n[0]).join('');
+        
+        document.getElementById('personName').textContent = randomName;
+        document.getElementById('personAvatar').textContent = initials;
+        
+        // Add pulse animation if active delivery
+        if (status.toLowerCase() === 'shipped') {
+          deliveryPerson.classList.add('pulse');
+        }
+      }
+      
+      // Disable cancel button if order is already shipped/delivered/cancelled
+      if (['shipped', 'delivered', 'cancelled'].includes(status.toLowerCase())) {
+        document.getElementById('cancelBtn').disabled = true;
+        document.getElementById('cancelBtn').innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Order ${status.toLowerCase() === 'shipped' ? 'Shipped' : status.toLowerCase() === 'delivered' ? 'Delivered' : 'Cancelled'}
+        `;
+        document.getElementById('cancelBtn').classList.remove('btn-danger');
+        document.getElementById('cancelBtn').classList.add('btn-disabled');
+      }
+    }
+    
+    function setupDeliveryInfo(order) {
+      // Generate random delivery info for demo
+      const addresses = [
+        '123 Main St, Apartment 4B, Mumbai 400001',
+        '456 Oak Avenue, Bangalore 560001',
+        '789 Pine Road, Delhi 110001'
+      ];
+      const contacts = ['+91 9876543210', '+91 8765432109', '+91 7654321098'];
+      const times = [
+        'Within 30 minutes',
+        'Today by 7 PM',
+        'Tomorrow morning'
+      ];
+      
+      document.getElementById('deliveryAddress').textContent = 
+        order.deliveryAddress || addresses[Math.floor(Math.random() * addresses.length)];
+      document.getElementById('deliveryContact').textContent = 
+        order.deliveryContact || contacts[Math.floor(Math.random() * contacts.length)];
+      document.getElementById('deliveryTime').textContent = 
+        order.deliveryTime || times[Math.floor(Math.random() * times.length)];
+    }
+    
+    function setupEventListeners(order) {
+      // Cancel order button
+      document.getElementById('cancelBtn').addEventListener('click', function() {
+        if (order.status.toLowerCase() === 'shipped' || order.status.toLowerCase() === 'delivered') {
+          alert('This order cannot be cancelled as it has already been shipped/delivered.');
+          return;
+        }
+        openModal('cancelModal');
+      });
+      
+      // Reorder button
+      document.getElementById('reorderBtn').addEventListener('click', function() {
+        openModal('reorderModal');
+      });
+    }
+    
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('active');
+      });
+      document.body.style.overflow = '';
+    }
+    
+    function confirmCancel() {
+      const reason = document.getElementById('cancelReason').value;
+      const requestRefund = document.getElementById('refundCheckbox').checked;
+      
+      if (!reason) {
+        alert('Please select a reason for cancellation.');
+        return;
+      }
+      
+      // Update order status in localStorage
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const orderId = getOrderIdFromUrl();
+      const orderIndex = orders.findIndex(o => o.orderId === orderId);
+      
+      if (orderIndex !== -1) {
+        // Update the order status to cancelled
+        orders[orderIndex].status = 'Cancelled';
+        localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // Show success message
+        alert(`Order #${orderId} has been cancelled. ${requestRefund ? 'Your refund will be processed within 3-5 business days.' : ''}`);
+        
+        // Close modal and redirect to orders page
+        closeModal();
+        setTimeout(() => {
+          window.location.href = 'orders.html';
+        }, 500);
+      } else {
+        alert('Error: Order not found');
+        closeModal();
+      }
+    }
+    
+    function confirmReorder() {
+      const replaceCart = document.getElementById('replaceCart').checked;
+      const orderId = getOrderIdFromUrl();
+      
+      // Get the order details
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const order = orders.find(o => o.orderId === orderId);
+      
+      if (!order) {
+        alert('Error: Order not found');
+        closeModal();
+        return;
+      }
+      
+      // Get or create cart in localStorage
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      // If replaceCart is checked, clear the current cart
+      if (replaceCart) {
+        cart = [];
+      }
+      
+      // Add order items to cart
+      order.items.forEach(item => {
+        // Check if item already exists in cart
+        const existingItemIndex = cart.findIndex(cartItem => cartItem.name === item.name);
+        
+        if (existingItemIndex !== -1) {
+          // Update quantity if item exists
+          cart[existingItemIndex].quantity += item.quantity || 1;
+        } else {
+          // Add new item to cart
+          cart.push({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity || 1,
+            id: Date.now().toString() // Generate unique ID
+          });
+        }
+      });
+      
+      // Save updated cart to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Show success message
+      alert(`${order.items.length} items added to your cart!`);
+      
+      // Close modal and redirect to cart page
+      closeModal();
+      setTimeout(() => {
+        window.location.href = 'cart.html';
+      }, 500);
+    }
+    
+    function openSupport(type) {
+      const supportTypes = {
+        chat: 'Chat support initiated. Our team will connect with you shortly.',
+        call: 'Calling support... Please wait while we connect you.',
+        email: 'Email support ticket created. You will receive a response within 24 hours.'
+      };
+      alert(supportTypes[type] || 'Support option selected.');
+    }
+    
+    function getOrderIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('orderId');
+    }
+    
+    function getStatusClass(status) {
+      status = (status || '').toLowerCase();
+      if (status.includes('processing')) return 'status-processing';
+      if (status.includes('confirmed')) return 'status-confirmed';
+      if (status.includes('delivered')) return 'status-delivered';
+      if (status.includes('pending')) return 'status-pending';
+      if (status.includes('cancelled')) return 'status-cancelled';
+      if (status.includes('shipped')) return 'status-shipped';
+      return 'status-processing';
+    }
+    
+    function getRandomTime(stepIndex) {
+      const now = new Date();
+      const times = [
+        now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        new Date(now.getTime() - 15*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        new Date(now.getTime() - 30*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        new Date(now.getTime() - 45*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        new Date(now.getTime() - 60*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      ];
+      return times[stepIndex] || times[0];
+    }
+  </script>
+</body>
+</html>
