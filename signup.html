@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Sign Up - GROCERA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -24,12 +24,14 @@
         linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
         url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2053&q=80') no-repeat center center fixed;
       background-size: cover;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
       display: flex;
       justify-content: center;
       align-items: center;
       color: var(--white);
-      overflow: hidden;
+      overflow: auto;
     }
 
     .signup-box {
@@ -38,17 +40,20 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-top: 4px solid var(--pink);
-      padding: 40px 35px;
+      padding: 30px 25px;
       border-radius: 16px;
       box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.3),
         0 0 20px rgba(255, 0, 110, 0.3);
-      width: 380px;
+      width: 100%;
+      max-width: 380px;
       text-align: center;
       position: relative;
       overflow: hidden;
       z-index: 1;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin: 20px;
+      box-sizing: border-box;
     }
 
     .signup-box:hover {
@@ -77,15 +82,15 @@
     }
 
     .signup-box img {
-      width: 180px;
+      width: 150px;
       margin-bottom: 20px;
       filter: drop-shadow(0 0 10px rgba(255, 0, 110, 0.5));
     }
 
     .signup-box h2 {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-weight: 700;
-      font-size: 32px;
+      font-size: 28px;
       background: linear-gradient(90deg, var(--pink), var(--orange), var(--mango));
       -webkit-background-clip: text;
       background-clip: text;
@@ -95,14 +100,15 @@
 
     .signup-box input {
       width: 100%;
-      padding: 14px 20px;
-      margin-bottom: 18px;
+      padding: 14px 16px;
+      margin-bottom: 15px;
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 15px;
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.1);
       color: var(--white);
+      box-sizing: border-box;
     }
 
     .signup-box input:focus {
@@ -118,12 +124,12 @@
 
     .signup-box button {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       background: linear-gradient(45deg, var(--pink), var(--purple));
       color: var(--white);
       border: none;
       border-radius: 10px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -131,6 +137,7 @@
       margin-top: 10px;
       position: relative;
       overflow: hidden;
+      box-sizing: border-box;
     }
 
     .signup-box button:hover {
@@ -144,8 +151,8 @@
     }
 
     .login-link {
-      margin-top: 25px;
-      font-size: 16px;
+      margin-top: 20px;
+      font-size: 15px;
       color: rgba(255, 255, 255, 0.7);
     }
 
@@ -189,33 +196,7 @@
       z-index: 0;
       animation: float 6s ease-in-out infinite;
       filter: drop-shadow(0 0 8px rgba(255, 190, 11, 0.5));
-    }
-
-    .floating:nth-child(1) {
-      top: 10%;
-      left: 10%;
-      width: 50px;
-    }
-
-    .floating:nth-child(2) {
-      top: 70%;
-      left: 80%;
-      width: 70px;
-      animation-delay: 1s;
-    }
-
-    .floating:nth-child(3) {
-      top: 30%;
-      left: 85%;
-      width: 40px;
-      animation-delay: 2s;
-    }
-
-    .floating:nth-child(4) {
-      top: 80%;
-      left: 15%;
-      width: 60px;
-      animation-delay: 3s;
+      display: none;
     }
 
     .password-strength {
@@ -233,10 +214,101 @@
       background: linear-gradient(90deg, #ff0000, #ff9900, #33cc33);
       transition: width 0.3s ease;
     }
+
+    /* Media Queries */
+    @media (min-width: 768px) {
+      .signup-box {
+        padding: 40px 35px;
+      }
+      
+      .signup-box img {
+        width: 180px;
+        margin-bottom: 25px;
+      }
+      
+      .signup-box h2 {
+        font-size: 32px;
+        margin-bottom: 25px;
+      }
+      
+      .signup-box input {
+        padding: 14px 20px;
+        font-size: 16px;
+        margin-bottom: 18px;
+      }
+      
+      .signup-box button {
+        padding: 16px;
+        font-size: 18px;
+      }
+      
+      .login-link {
+        font-size: 16px;
+        margin-top: 25px;
+      }
+      
+      .floating {
+        display: block;
+      }
+      
+      .floating:nth-child(1) {
+        top: 10%;
+        left: 10%;
+        width: 50px;
+      }
+
+      .floating:nth-child(2) {
+        top: 70%;
+        left: 80%;
+        width: 70px;
+        animation-delay: 1s;
+      }
+
+      .floating:nth-child(3) {
+        top: 30%;
+        left: 85%;
+        width: 40px;
+        animation-delay: 2s;
+      }
+
+      .floating:nth-child(4) {
+        top: 80%;
+        left: 15%;
+        width: 60px;
+        animation-delay: 3s;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .signup-box {
+        padding: 25px 20px;
+      }
+      
+      .signup-box h2 {
+        font-size: 24px;
+      }
+      
+      .login-link {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      body {
+        align-items: flex-start;
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+      
+      .signup-box {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Decorative floating elements -->
+  <!-- Decorative floating elements (hidden on mobile) -->
   <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
   <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
   <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
