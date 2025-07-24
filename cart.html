@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #ef233c;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+  body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(-45deg, #ffe29f, #ffaec0, #b5ead7, #c9cfff);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  color: #1f1f1f;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px 0;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    .logo-title img {
+      height: 48px;
+      width: auto;
+      margin-right: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border: 2px solid white;
+    }
+
+    .main-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--primary);
+    }
+
+    .cart-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+
+    .item-price {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 15px;
+    }
+
+    .quantity-btn {
+      background: var(--light);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: all 0.2s;
+      border: 1px solid var(--light-gray);
+    }
+
+    .quantity-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      margin-left: 15px;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .remove-btn:hover {
+      background: rgba(239, 35, 60, 0.1);
+    }
+
+    .summary {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-top: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--primary);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--dark);
+    }
+
+    .checkout-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 24px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .checkout-btn:hover {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(67, 97, 238, 0.3);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--gray);
+    }
+
+    .empty-cart h3 {
+      font-size: 22px;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    .continue-shopping {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 20px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(72, 149, 239, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .continue-shopping:hover {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(72, 149, 239, 0.3);
+    }
+
+    /* Address Section Styles */
+    .address-section {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--success);
+    }
+
+    .address-section h3 {
+      color: var(--dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .address-section h3 i {
+      color: var(--success);
+    }
+
+    .address-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--light);
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .form-group input:read-only {
+      background: var(--light-gray);
+      color: var(--gray);
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .validate-btn {
+      background: linear-gradient(135deg, var(--warning), #f3722c);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 16px;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(248, 150, 30, 0.2);
+    }
+
+    .validate-btn:hover {
+      background: linear-gradient(135deg, #f3722c, var(--warning));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(248, 150, 30, 0.3);
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 14px 0;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--gray);
+      font-size: 12px;
+      transition: all 0.2s;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: rgba(67, 97, 238, 0.1);
+    }
+
+    .nav-item:hover {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .success-message {
+      color: var(--success);
+      text-align: center;
+      margin-top: 12px;
+      font-weight: 600;
+      display: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .address-form {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+      
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .item-quantity {
+        margin: 8px 0;
+      }
+      
+      .remove-btn {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-title">
+        <img src="logo.png" alt="GROCERA" />
+        <h1 class="main-title">My Cart</h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Address Section -->
+    <div class="address-section" id="addressSection">
+      <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
+      <div class="address-form">
+        <div class="form-group full-width">
+          <label for="doorNo">Door/Building No.*</label>
+          <input type="text" id="doorNo" placeholder="e.g., 12, ABC Apartments" required>
+          <div id="doorNoError" class="error-message">Please enter building number</div>
+        </div>
+        
+        <div class="form-group full-width">
+          <label for="street">Street Name*</label>
+          <input type="text" id="street" placeholder="e.g., MG Road" required>
+          <div id="streetError" class="error-message">Please enter street name</div>
+        </div>
+        
+        <div class="form-group full-width">
+          <label for="area">Area/Locality*</label>
+          <input type="text" id="area" placeholder="e.g., Shivajinagar" required>
+          <div id="areaError" class="error-message">Please enter locality</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="city">City*</label>
+          <input type="text" id="city" value="Bangalore" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="state">State*</label>
+          <input type="text" id="state" value="Karnataka" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="pincode">Pincode*</label>
+          <input type="text" id="pincode" placeholder="560001" pattern="[0-9]{6}" required>
+          <div id="pincodeError" class="error-message">Enter 6-digit Bangalore pincode</div>
+        </div>
+        
+        <div class="form-group full-width">
+          <label for="landmark">Landmark (Optional)</label>
+          <input type="text" id="landmark" placeholder="e.g., Near Metro Station">
+        </div>
+      </div>
+      <button class="validate-btn" onclick="validateAddress()">
+        <i class="fas fa-check-circle"></i> Validate Address
+      </button>
+      <div id="addressError" class="error-message" style="text-align: center;"></div>
+      <div id="addressSuccess" class="success-message"></div>
+    </div>
+
+    <div id="cartItems"></div>
+    <div id="summary" class="summary" style="display: none;"></div>
+    <button id="checkoutBtn" class="checkout-btn" style="display: none;">
+      <i class="fas fa-lock"></i> Secure Checkout
+    </button>
+    <div id="emptyCart" class="empty-cart">
+      <h3>Your Shopping Cart is Empty</h3>
+      <p>Start adding delicious items to your cart</p>
+      <button class="continue-shopping" onclick="window.location.href='dashboard.html'">
+        <i class="fas fa-arrow-left"></i> Continue Shopping
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="categories.html" class="nav-item">
+      <i class="fas fa-list"></i>
+      <span>Categories</span>
+    </a>
+    <a href="cart.html" class="nav-item active">
+      <i class="fas fa-shopping-cart"></i>
+      <span>Cart</span>
+    </a>
+    <a href="payment.html" class="nav-item">
+      <i class="fas fa-credit-card"></i>
+      <span>Payment</span>
+    </a>
+    <a href="orders.html" class="nav-item">
+      <i class="fas fa-box"></i>
+      <span>Orders</span>
+    </a>
+    <a href="about.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Account</span>
+    </a>
+  </div>
+
+  <script>
+    // Load cart items
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const container = document.getElementById("cartItems");
+      const summary = document.getElementById("summary");
+      const checkoutBtn = document.getElementById("checkoutBtn");
+      const emptyCart = document.getElementById("emptyCart");
+
+      container.innerHTML = "";
+
+      if (cart.length === 0) {
+        emptyCart.style.display = "block";
+        summary.style.display = "none";
+        checkoutBtn.style.display = "none";
+        return;
+      }
+
+      emptyCart.style.display = "none";
+      summary.style.display = "block";
+      checkoutBtn.style.display = "block";
+
+      let subtotal = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "cart-item";
+        itemDiv.innerHTML = `
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">₹${item.price.toFixed(2)} each</div>
+          </div>
+          <div class="item-quantity">
+            <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+            <span>${item.quantity}</span>
+            <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+          </div>
+          <div>₹${itemTotal.toFixed(2)}</div>
+          <button class="remove-btn" onclick="removeItem(${index})">
+            <i class="fas fa-trash-alt"></i> Remove
+          </button>
+        `;
+        container.appendChild(itemDiv);
+      });
+
+      const gst = subtotal * 0.1;
+      const discount = subtotal >= 500 ? subtotal * 0.1 : 0;
+      const delivery = subtotal >= 1000 ? 0 : 50;
+      const total = subtotal + gst - discount + delivery;
+
+      summary.innerHTML = `
+        <div class="summary-row"><span>Subtotal:</span><span>₹${subtotal.toFixed(2)}</span></div>
+        <div class="summary-row"><span>GST (10%):</span><span>₹${gst.toFixed(2)}</span></div>
+        <div class="summary-row"><span>Discount:</span><span>-₹${discount.toFixed(2)}</span></div>
+        <div class="summary-row"><span>Delivery:</span><span>${delivery === 0 ? 'FREE' : '₹' + delivery.toFixed(2)}</span></div>
+        <div class="summary-row"><span>Total:</span><span>₹${total.toFixed(2)}</span></div>
+      `;
+
+      localStorage.setItem("orderTotal", total.toFixed(2));
+      
+      // Check if address is already validated
+      if (localStorage.getItem("addressValidated") === "true") {
+        document.getElementById("addressSection").style.display = "none";
+      }
+    }
+
+    // Address Validation
+    function validateAddress() {
+      const doorNo = document.getElementById("doorNo").value.trim();
+      const street = document.getElementById("street").value.trim();
+      const area = document.getElementById("area").value.trim();
+      const pincode = document.getElementById("pincode").value.trim();
+      const errorEl = document.getElementById("addressError");
+      const successEl = document.getElementById("addressSuccess");
+      
+      // Reset messages
+      document.querySelectorAll(".error-message").forEach(el => el.style.display = "none");
+      errorEl.textContent = "";
+      successEl.style.display = "none";
+      
+      // Validate fields
+      let isValid = true;
+      
+      if (!doorNo) {
+        document.getElementById("doorNoError").style.display = "block";
+        isValid = false;
+      }
+      
+      if (!street) {
+        document.getElementById("streetError").style.display = "block";
+        isValid = false;
+      }
+      
+      if (!area) {
+        document.getElementById("areaError").style.display = "block";
+        isValid = false;
+      }
+      
+      if (!pincode.match(/^\d{6}$/) || !pincode.startsWith('56') && !pincode.startsWith('57') && !pincode.startsWith('58') && !pincode.startsWith('59') && !pincode.startsWith('60')) {
+        document.getElementById("pincodeError").style.display = "block";
+        errorEl.textContent = "We only deliver in Bangalore (Pincodes: 56xxxx-60xxxx)";
+        isValid = false;
+      }
+      
+      if (isValid) {
+        const fullAddress = `${doorNo}, ${street}, ${area}, Bangalore, Karnataka - ${pincode}`;
+        localStorage.setItem("deliveryAddress", fullAddress);
+        localStorage.setItem("addressValidated", "true");
+        
+        // Show success message
+        successEl.textContent = "✓ Address validated for Bangalore delivery!";
+        successEl.style.display = "block";
+        
+        // Hide address section after delay
+        setTimeout(() => {
+          document.getElementById("addressSection").style.display = "none";
+        }, 1500);
+        
+        return true;
+      }
+      return false;
+    }
+
+    // Cart functions
+    function changeQuantity(index, delta) {
+      let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      loadCart();
+    }
+
+    // Checkout button handler
+    document.getElementById("checkoutBtn").addEventListener("click", function() {
+      // Check if cart is empty
+      const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+      if (cart.length === 0) {
+        alert("Your cart is empty. Please add items before checkout.");
+        return;
+      }
+      
+      // Check if address is validated
+      if (localStorage.getItem("addressValidated") !== "true") {
+        // Show address section if hidden
+        document.getElementById("addressSection").style.display = "block";
+        // Scroll to address section
+        document.getElementById("addressSection").scrollIntoView({ behavior: 'smooth' });
+        alert("Please validate your delivery address first.");
+        return;
+      }
+      
+      // Proceed to payment
+      window.location.href = "payment.html";
+    });
+
+    // Load cart on page load
+    document.addEventListener("DOMContentLoaded", loadCart);
+  </script>
+</body>
+</html>

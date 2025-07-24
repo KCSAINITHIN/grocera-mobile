@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - GROCERA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      /* 2024 Trendy Color Palette */
+      --peach-fuzz: #FF9E87;       /* Pantone 2024 Color of the Year */
+      --lavender-mist: #B4A5D8;    /* Soft purple */
+      --mint-fresh: #9DE5D3;      /* Cool mint */
+      --amber-glow: #FFB347;       /* Warm golden */
+      --coral-blush: #FF7E6B;      /* Vibrant coral */
+      
+      /* Modern Neutrals */
+      --cream: #F8F5F2;            /* Warm off-white */
+      --linen: #F3ECE2;            /* Soft beige */
+      --stone: #E8E5E0;            /* Light gray-beige */
+      --slate: #3A3A3A;            /* Deep charcoal */
+      
+      /* Text Colors */
+      --ink: #2A2A2A;              /* Primary text */
+      --graphite: #5A5A5A;         /* Secondary text */
+      --paper: #FFFFFF;            /* Light text */
+      
+      /* Effects */
+      --shadow-sm: 0 2px 12px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background-color: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .overlay {
+      min-height: 100vh;
+      padding-bottom: 90px;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255,158,135,0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(180,165,216,0.03) 0%, transparent 20%);
+    }
+
+    .topbar {
+      background: var(--paper);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-img {
+      height: 36px;
+      width: 36px;
+      object-fit: contain;
+    }
+
+    .app-name {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--peach-fuzz), var(--amber-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .container {
+      padding: 24px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Card Styles */
+    .card {
+      margin-bottom: 24px;
+      background: var(--paper);
+      padding: 28px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--peach-fuzz), var(--lavender-mist));
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--stone);
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      background: linear-gradient(135deg, var(--peach-fuzz), var(--amber-glow));
+      color: var(--paper);
+      font-size: 18px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--slate);
+    }
+
+    /* User Profile Section */
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .user-info-item {
+      display: flex;
+      align-items: center;
+      padding: 14px;
+      background: var(--linen);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .user-info-item:hover {
+      background: var(--stone);
+      transform: translateX(4px);
+    }
+
+    .user-info-icon {
+      margin-right: 12px;
+      color: var(--peach-fuzz);
+      font-size: 18px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Address Card */
+    .address-card {
+      background: var(--linen);
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      margin: 20px 0;
+      border-left: 4px solid var(--peach-fuzz);
+    }
+    
+    .address-display {
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: var(--radius-sm);
+      margin-bottom: 15px;
+    }
+    
+    .edit-address-btn {
+      background: linear-gradient(135deg, var(--lavender-mist), var(--mint-fresh));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      transition: var(--transition);
+    }
+    
+    .edit-address-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .no-address {
+      color: var(--graphite);
+      font-style: italic;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .stat-card {
+      background: var(--paper);
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--stone);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--peach-fuzz), var(--lavender-mist));
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--peach-fuzz), var(--amber-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--graphite);
+    }
+
+    /* Team Section */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .team-member {
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .team-member:hover {
+      transform: translateY(-8px);
+    }
+
+    .member-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border: 3px solid var(--paper);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: var(--transition);
+    }
+
+    .team-member:hover .member-avatar {
+      border-color: var(--peach-fuzz);
+      box-shadow: 0 6px 16px rgba(255,158,135,0.3);
+    }
+
+    .member-name {
+      font-weight: 600;
+      color: var(--slate);
+      margin-bottom: 4px;
+    }
+
+    .member-role {
+      font-size: 13px;
+      color: var(--peach-fuzz);
+      font-weight: 500;
+    }
+
+    /* Social Links */
+    .social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .social-link {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--paper);
+      font-size: 18px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .social-link.instagram {
+      background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);
+    }
+
+    .social-link.facebook {
+      background: linear-gradient(45deg, #1877f2, #0d5ab9);
+    }
+
+    .social-link.twitter {
+      background: linear-gradient(45deg, #1da1f2, #0d8abc);
+    }
+
+    .social-link.youtube {
+      background: linear-gradient(45deg, #ff0000, #cc0000);
+    }
+
+    .social-link:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    /* Contact Info */
+    .contact-list {
+      margin-top: 20px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: var(--linen);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .contact-item:hover {
+      background: var(--stone);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      background: linear-gradient(135deg, var(--lavender-mist), var(--mint-fresh));
+      color: var(--paper);
+      font-size: 16px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--peach-fuzz), var(--amber-glow));
+      color: var(--paper);
+      box-shadow: 0 4px 12px rgba(255,158,135,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255,158,135,0.4);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--coral-blush), var(--peach-fuzz));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(255,255,255,0.95);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 14px 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 90;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--graphite);
+      font-size: 12px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+      transition: var(--transition);
+    }
+
+    .nav-item.active {
+      color: var(--peach-fuzz);
+      transform: translateY(-6px);
+    }
+
+    .nav-item.active .nav-icon {
+      transform: scale(1.2);
+    }
+
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--peach-fuzz);
+    }
+
+    .nav-item:hover {
+      color: var(--peach-fuzz);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px;
+      }
+      
+      .card {
+        padding: 20px 16px;
+      }
+      
+      .user-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="logo-container">
+        <img src="logo.png" alt="GROCERA" class="logo-img">
+        <span class="app-name">GROCERA</span>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- User Profile Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <h2 class="card-title">My Profile</h2>
+        </div>
+        
+        <div class="user-grid">
+          <div class="user-info-item">
+            <i class="fas fa-user user-info-icon"></i>
+            <span id="username">User Name</span>
+          </div>
+          <div class="user-info-item">
+            <i class="fas fa-envelope user-info-icon"></i>
+            <span id="useremail">user@example.com</span>
+          </div>
+          <div class="user-info-item">
+            <i class="fas fa-phone user-info-icon"></i>
+            <span id="usermobile">+1 234 567 890</span>
+          </div>
+        </div>
+        
+        <!-- Address Section -->
+        <div class="address-card">
+          <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
+          <div id="addressDisplay" class="address-display">
+            <!-- Address will be displayed here -->
+          </div>
+          <button class="edit-address-btn" onclick="editAddress()">
+            <i class="fas fa-edit"></i> Edit Address
+          </button>
+        </div>
+        
+        <button class="btn btn-primary" onclick="logout()">
+          <i class="fas fa-sign-out-alt btn-icon"></i> Logout
+        </button>
+      </div>
+
+      <!-- About Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-store"></i>
+          </div>
+          <h2 class="card-title">About GROCERA</h2>
+        </div>
+        
+        <p>GROCERA is revolutionizing grocery shopping with our farm-fresh produce, artisanal goods, and lightning-fast delivery. We're committed to sustainable sourcing and supporting local farmers.</p>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Happy Customers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Farm Partners</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">30min</div>
+            <div class="stat-label">Avg. Delivery</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Organic</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h2 class="card-title">Our Team</h2>
+        </div>
+        
+        <p>Meet the passionate team behind GROCERA who work tirelessly to bring you the freshest groceries.</p>
+        
+        <div class="team-grid">
+          <div class="team-member">
+            <img src="team1.jpg" alt="K C Sai Nithin" class="member-avatar">
+            <div class="member-name">K C Sai Nithin</div>
+            <div class="member-role">CEO & Founder</div>
+          </div>
+          <div class="team-member">
+            <img src="team2.jpeg" alt="Jay" class="member-avatar">
+            <div class="member-name">Jay</div>
+            <div class="member-role">Head Chef</div>
+          </div>
+          <div class="team-member">
+            <img src="team3.jpeg" alt="Pushpa" class="member-avatar">
+            <div class="member-name">Pushpa</div>
+            <div class="member-role">Farm Relations</div>
+          </div>
+          <div class="team-member">
+            <img src="team4.jpeg" alt="Devara" class="member-avatar">
+            <div class="member-name">Devara</div>
+            <div class="member-role">Delivery Head</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connect Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-hashtag"></i>
+          </div>
+          <h2 class="card-title">Connect With Us</h2>
+        </div>
+        
+        <p>Follow us for recipes, seasonal specials, and farm stories.</p>
+        
+        <div class="social-links">
+          <a href="#" class="social-link instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link youtube">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h2 class="card-title">Contact Us</h2>
+        </div>
+        
+        <p>We're here to help with any questions or feedback.</p>
+        
+        <div class="contact-list">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <span>+1 (800) GRO-CERA</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>hello@grocera.com</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <span>+1 (800) 476-2372</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>123 Farm Lane, Organic City</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <a href="dashboard.html" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="categories.html" class="nav-item">
+        <i class="fas fa-list"></i>
+        <span>Categories</span>
+      </a>
+      <a href="cart.html" class="nav-item">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Cart</span>
+      </a>
+      <a href="payment.html" class="nav-item">
+        <i class="fas fa-credit-card"></i>
+        <span>Payment</span>
+      </a>
+      <a href="orders.html" class="nav-item">
+        <i class="fas fa-box"></i>
+        <span>Orders</span>
+      </a>
+      <a href="about.html" class="nav-item active">
+        <i class="fas fa-user"></i>
+        <span>Account</span>
+      </a>
+    </div>
+
+    <script>
+      window.onload = () => {
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        if (isLoggedIn !== "true") {
+          alert("Please log in first.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Load user info
+        document.getElementById("username").innerText = localStorage.getItem("userName") || "Guest";
+        document.getElementById("useremail").innerText = localStorage.getItem("userEmail") || "N/A";
+        document.getElementById("usermobile").innerText = localStorage.getItem("userMobile") || "N/A";
+        
+        // Load and display address
+        updateAddressDisplay();
+      };
+      
+      function updateAddressDisplay() {
+        const addressDisplay = document.getElementById("addressDisplay");
+        const savedAddress = localStorage.getItem("deliveryAddress");
+        
+        if (savedAddress) {
+          // Format address with line breaks
+          const formattedAddress = savedAddress
+            .replace(/, /g, ",<br>")
+            .replace(/-/g, "<br>");
+          addressDisplay.innerHTML = formattedAddress;
+        } else {
+          addressDisplay.innerHTML = '<span class="no-address">No address saved yet. Please add your delivery address.</span>';
+        }
+      }
+      
+      function editAddress() {
+        // Remove validation flag so address form reappears in cart
+        localStorage.removeItem("addressValidated");
+        window.location.href = "cart.html";
+      }
+      
+      function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("userMobile");
+          localStorage.removeItem("userAddress");
+          localStorage.removeItem("isLoggedIn");
+          alert("You have been logged out.");
+          window.location.href = "index.html";
+        }
+      }
+    </script>
+  </div>
+</body>
+</html>
