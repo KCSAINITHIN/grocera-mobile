@@ -145,11 +145,23 @@
     
     /* Main payment container */
     .payment-container {
-      padding: 20px;
-      max-width: 500px;
-      margin: 0 auto;
-      animation: fadeIn 0.5s ease;
-    }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height */
+  flex-direction: column;
+  text-align: center;
+}
+
+    .empty-cart-message {
+  background-color: #f8f9fa;
+  border: 2px dashed #ccc;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
     
     /* Payment header with subtle animation */
     .payment-header {
@@ -573,13 +585,14 @@
 
   
   <div class="payment-container">
-    <!-- Empty cart message (hidden by default) -->
-    <div id="emptyCartMessage" class="empty-cart-message hidden">
-      <i class="fas fa-shopping-cart"></i>
-      <h3>Your Cart is Empty</h3>
-      <p>Please add items to your cart before proceeding to payment</p>
-      <a href="cart.html" class="btn-continue">Continue Shopping</a>
-    </div>
+  <!-- Empty cart message (hidden by default) -->
+  <div id="emptyCartMessage" class="empty-cart-message hidden">
+    <i class="fas fa-shopping-cart"></i>
+    <h3>Your Cart is Empty</h3>
+    <p>Please add items to your cart before proceeding to payment</p>
+    <a href="categories.html" class="btn-continue">Continue Shopping</a>
+  </div>
+
 
     <!-- Payment section (shown when cart has items) -->
     <div id="paymentSection">
