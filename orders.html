@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders - GROCERA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #6C63FF;  /* Vibrant purple */
+      --primary-light: #A5A2FF;
+      --secondary: #FF6584; /* Pink */
+      --accent: #42C6FF;   /* Bright blue */
+      --success: #4CAF50;  /* Green */
+      --warning: #FFC107;  /* Amber */
+      --danger: #F44336;   /* Red */
+      --dark: #2D3748;
+      --light: #F7FAFC;
+      --gray: #E2E8F0;
+      --text: #2D3748;
+      --text-light: #718096;
+    }
+
+    body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
+  background-size: 400% 400%;
+  animation: gradientBG 14s ease infinite;
+  color: #1a1a1a;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+    .topbar {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(108, 99, 255, 0.2);
+    }
+
+    .topbar img {
+      width: 36px;
+      height: 36px;
+      margin-right: 12px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .topbar h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .orders-container {
+      padding: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-size: 24px;
+      margin: 0 0 20px;
+      color: var(--dark);
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-left: 4px solid var(--primary);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .order-date {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .order-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .status-processing {
+      background-color: rgba(255, 198, 7, 0.2);
+      color: #B78103;
+    }
+
+    .status-confirmed {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
+    .status-delivered {
+      background-color: rgba(66, 198, 255, 0.2);
+      color: #0288D1;
+    }
+
+    .status-pending {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .status-cancelled {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .status-shipped {
+      background-color: rgba(108, 99, 255, 0.2);
+      color: var(--primary);
+    }
+
+    .order-details {
+      margin-top: 12px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .item-name {
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .item-price {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--gray);
+      font-weight: bold;
+    }
+
+    .total-label {
+      color: var(--dark);
+    }
+
+    .total-amount {
+      color: var(--success);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .payment-method {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .payment-method span {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .empty-orders {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .empty-orders img {
+      width: 120px;
+      opacity: 0.8;
+      margin-bottom: 16px;
+    }
+
+    .empty-orders h3 {
+      color: var(--dark);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .empty-orders p {
+      margin-bottom: 20px;
+    }
+
+    .btn-track {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 16px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(108, 99, 255, 0.3);
+    }
+
+    .btn-track:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(108, 99, 255, 0.4);
+    }
+
+    .btn-track:active {
+      transform: translateY(0);
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: white;
+      border-top: 1px solid var(--gray);
+      padding: 12px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 12px;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 4px;
+      fill: currentColor;
+      transition: all 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: rgba(108, 99, 255, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .nav-item.active svg {
+      fill: var(--primary);
+      filter: drop-shadow(0 2px 4px rgba(108, 99, 255, 0.3));
+    }
+
+    .nav-item:hover {
+      color: var(--primary);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #debugBtn {
+      margin-bottom: 20px;
+      padding: 10px 16px;
+      background: linear-gradient(to right, var(--secondary), #FF8A9D);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
+    }
+
+    #debugBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
+    }
+
+    #debugOutput {
+      margin-top: 20px;
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      border: 1px dashed var(--gray);
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .items-count {
+      background-color: var(--primary-light);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <img src="logo.png" alt="GROCERA">
+    <h1>My Orders</h1>
+  </div>
+
+  <div class="orders-container">
+    <h2 class="page-title">Order History</h2>
+    
+    <button id="debugBtn" style="margin-bottom: 20px;">
+      Debug Orders Data
+    </button>
+    
+    <div id="ordersList"></div>
+
+    <div id="emptyState" class="empty-orders hidden">
+      <img src="empty-orders.jpeg" alt="No orders">
+      <h3>No Orders Yet</h3>
+      <p>Your completed orders will appear here</p>
+      <a href="dashboard.html" class="btn-track">Start Shopping</a>
+    </div>
+
+    <div id="debugOutput"></div>
+  </div>
+
+  <!-- Bottom Navigation with SVG Icons -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="categories.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h16v2H4z"/></svg>
+      <span>Categories</span>
+    </a>
+    <a href="cart.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2H10.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03L23 6H6.21z"/></svg>
+      <span>Cart</span>
+    </a>
+    <a href="payment.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 4H3a2 2 0 0 0-2 2v1h22V6a2 2 0 0 0-2-2zm0 4H1v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Payment</span>
+    </a>
+    <a href="orders.html" class="nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4.586l-2-2H10.586l-2 2H4v14h16V6zM12 17l-5-5h3V9h4v3h3l-5 5z"/></svg>
+      <span>Orders</span>
+    </a>
+    <a href="about.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span>Account</span>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const debugBtn = document.getElementById('debugBtn');
+      const debugOutput = document.getElementById('debugOutput');
+
+      debugBtn.addEventListener('click', function() {
+        debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
+        displayDebugInfo();
+      });
+
+      loadAndDisplayOrders();
+
+      function loadAndDisplayOrders() {
+        try {
+          if (typeof localStorage === 'undefined') throw new Error('localStorage is not available');
+          const ordersJSON = localStorage.getItem('orders');
+          debugOutput.innerHTML += `<p>Raw orders data from localStorage: ${ordersJSON}</p>`;
+          if (!ordersJSON) return showEmptyState();
+
+          let orders = JSON.parse(ordersJSON);
+          if (!Array.isArray(orders)) throw new Error('Orders data is not an array');
+          
+          // If no orders in localStorage, create some sample data for demonstration
+          if (orders.length === 0) {
+            orders = generateSampleOrders();
+            localStorage.setItem('orders', JSON.stringify(orders));
+          }
+          
+          displayOrders(orders);
+        } catch (error) {
+          debugOutput.innerHTML += `<p style="color:var(--danger)">Error: ${error.message}</p>`;
+          showEmptyState();
+        }
+      }
+
+      function generateSampleOrders() {
+        const sampleOrders = [
+          {
+            orderId: 'GR' + Math.floor(Math.random() * 1000000),
+            orderDate: new Date(),
+            status: 'Delivered',
+            items: [
+              { name: 'Organic Bananas', price: 1.99, quantity: 5 },
+              { name: 'Almond Milk', price: 3.49, quantity: 2 },
+              { name: 'Whole Grain Bread', price: 2.99, quantity: 1 }
+            ],
+            totalAmount: 18.42,
+            paymentMethod: 'Credit Card'
+          },
+          {
+            orderId: 'GR' + Math.floor(Math.random() * 1000000),
+            orderDate: new Date(Date.now() - 86400000 * 2),
+            status: 'Shipped',
+            items: [
+              { name: 'Free Range Eggs', price: 4.99, quantity: 1 },
+              { name: 'Organic Spinach', price: 2.49, quantity: 3 }
+            ],
+            totalAmount: 12.46,
+            paymentMethod: 'PayPal'
+          },
+          {
+            orderId: 'GR' + Math.floor(Math.random() * 1000000),
+            orderDate: new Date(Date.now() - 86400000 * 5),
+            status: 'Processing',
+            items: [
+              { name: 'Greek Yogurt', price: 3.99, quantity: 4 },
+              { name: 'Granola', price: 5.49, quantity: 1 }
+            ],
+            totalAmount: 21.45,
+            paymentMethod: 'Credit Card'
+          }
+        ];
+        return sampleOrders;
+      }
+
+      function displayDebugInfo() {
+        debugOutput.innerHTML = `
+          <h4 style="color:var(--primary)">Debug Information</h4>
+          <p><strong>localStorage supported:</strong> ${typeof localStorage !== 'undefined' ? 'Yes' : 'No'}</p>
+          <p><strong>Total localStorage space used:</strong> ${JSON.stringify(localStorage).length} bytes</p>
+          <button onclick="localStorage.clear(); location.reload();" style="
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+          ">Clear All Data</button>
+        `;
+      }
+
+      function displayOrders(orders) {
+        const ordersList = document.getElementById('ordersList');
+        const emptyState = document.getElementById('emptyState');
+        ordersList.innerHTML = '';
+        if (orders.length === 0) return showEmptyState();
+
+        orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        orders.forEach(order => {
+          const orderElement = createOrderElement(order);
+          ordersList.appendChild(orderElement);
+        });
+
+        emptyState.classList.add('hidden');
+      }
+
+      function createOrderElement(order) {
+        const orderElement = document.createElement('div');
+        orderElement.className = 'order-card';
+
+        const formattedDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const status = order.status || 'Processing';
+        const statusClass = getStatusClass(status);
+
+        const totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+        orderElement.innerHTML = `
+          <div class="order-header">
+            <div>
+              <span class="order-id">Order #${order.orderId}</span>
+              <div class="order-date">${formattedDate}</div>
+            </div>
+            <span class="order-status ${statusClass}">${status}</span>
+          </div>
+          <div class="order-details">
+            <div style="margin-bottom: 8px; font-size: 14px;">
+              <span class="items-count">${totalItems} ${totalItems > 1 ? 'items' : 'item'}</span>
+            </div>
+            ${order.items.map(item => `
+              <div class="order-item">
+                <span class="item-name">${item.name || 'Unknown Item'} × ${item.quantity || 1}</span>
+                <span class="item-price">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+              </div>`).join('')}
+            <div class="order-total">
+              <span class="total-label">Total Amount</span>
+              <span class="total-amount">₹${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+            </div>
+            <div class="payment-method">Paid via <span>${order.paymentMethod || 'Unknown Method'}</span></div>
+            <a href="order-details.html?orderId=${order.orderId}" class="btn-track">
+              ${status === 'Delivered' ? 'View Details' : 'Track Order'}
+            </a>
+          </div>
+        `;
+        return orderElement;
+      }
+
+      function showEmptyState() {
+        document.getElementById('emptyState').classList.remove('hidden');
+        document.getElementById('ordersList').innerHTML = '';
+      }
+
+      function getStatusClass(status) {
+        status = (status || '').toLowerCase();
+        if (status.includes('processing')) return 'status-processing';
+        if (status.includes('confirmed')) return 'status-confirmed';
+        if (status.includes('delivered')) return 'status-delivered';
+        if (status.includes('pending')) return 'status-pending';
+        if (status.includes('cancelled')) return 'status-cancelled';
+        if (status.includes('shipped')) return 'status-shipped';
+        return 'status-processing';
+      }
+    });
+  </script>
+</body>
+</html>

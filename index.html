@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - GROCERA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --electric-blue: #00F5FF;
+      --neon-pink: #FF00F5;
+      --acid-green: #A5FF00;
+      --violet: #8A2BE2;
+      --sunshine: #FFDE00;
+      --white: rgba(255, 255, 255, 0.9);
+      --black: #121212;
+      --glass: rgba(20, 20, 20, 0.6);
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: 
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .login-box {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid var(--electric-blue);
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 245, 255, 0.2);
+      width: 380px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .login-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(0, 245, 255, 0.3);
+    }
+
+    .login-box::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle, rgba(0,245,255,0.1) 0%, transparent 70%),
+        radial-gradient(circle, rgba(255,0,245,0.05) 0%, transparent 70%),
+        radial-gradient(circle, rgba(165,255,0,0.05) 0%, transparent 70%);
+      z-index: -1;
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    .login-box img {
+      width: 180px;
+      margin-bottom: 25px;
+      filter: drop-shadow(0 0 10px rgba(0, 245, 255, 0.5));
+    }
+
+    .login-box h2 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 32px;
+      background: linear-gradient(90deg, var(--electric-blue), var(--neon-pink), var(--acid-green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: rgba(10, 10, 10, 0.4);
+      color: var(--white);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-box input:focus {
+      border-color: var(--electric-blue);
+      box-shadow: 
+        inset 0 0 10px rgba(0, 245, 255, 0.3),
+        0 0 15px rgba(0, 245, 255, 0.2);
+      outline: none;
+      background: rgba(20, 20, 20, 0.6);
+    }
+
+    .login-box input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(45deg, var(--electric-blue), var(--violet));
+      color: var(--black);
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 5px 15px rgba(0, 245, 255, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+      margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      transform: rotate(30deg);
+      transition: all 0.5s ease;
+    }
+
+    .login-box button:hover {
+      background: linear-gradient(45deg, var(--violet), var(--electric-blue));
+      box-shadow: 
+        0 8px 25px rgba(138, 43, 226, 0.6),
+        inset 0 0 15px rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+
+    .login-box button:hover::before {
+      left: 100%;
+    }
+
+    .login-box button:active {
+      transform: translateY(1px);
+    }
+
+    .signup-link {
+      margin-top: 25px;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .signup-link a {
+      color: var(--sunshine);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .signup-link a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--sunshine);
+      transition: width 0.3s ease;
+    }
+
+    .signup-link a:hover {
+      color: var(--acid-green);
+      text-shadow: 0 0 10px rgba(165, 255, 0, 0.5);
+    }
+
+    .signup-link a:hover::after {
+      width: 100%;
+      background: var(--acid-green);
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      margin: -10px 0 20px;
+      font-size: 14px;
+    }
+
+    .forgot-password a {
+      color: var(--neon-pink);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password a:hover {
+      text-shadow: 0 0 10px rgba(255, 0, 245, 0.5);
+    }
+
+    .social-login {
+      margin: 30px 0 20px;
+    }
+
+    .social-login p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .social-login p::before,
+    .social-login p::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .social-login p::before {
+      left: 0;
+    }
+
+    .social-login p::after {
+      right: 0;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(30, 30, 30, 0.5);
+      color: var(--white);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .social-icon:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon:hover::before {
+      transform: translateX(100%);
+    }
+
+    .social-icon.facebook:hover {
+      background: linear-gradient(45deg, #3b5998, #00F5FF);
+      box-shadow: 0 5px 20px rgba(59, 89, 152, 0.5);
+    }
+
+    .social-icon.google:hover {
+      background: linear-gradient(45deg, #DB4437, #FFDE00);
+      box-shadow: 0 5px 20px rgba(219, 68, 55, 0.5);
+    }
+
+    .social-icon.apple:hover {
+      background: linear-gradient(45deg, #000000, #8A2BE2);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Floating animation for decorative elements */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .floating {
+      position: absolute;
+      opacity: 0.6;
+      z-index: -1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      width: 40px;
+      filter: drop-shadow(0 0 10px var(--electric-blue));
+    }
+
+    .floating:nth-child(2) {
+      top: 70%;
+      left: 80%;
+      width: 60px;
+      filter: drop-shadow(0 0 10px var(--neon-pink));
+      animation-delay: 1s;
+    }
+
+    .floating:nth-child(3) {
+      top: 30%;
+      left: 85%;
+      width: 30px;
+      filter: drop-shadow(0 0 10px var(--acid-green));
+      animation-delay: 2s;
+    }
+
+    .floating:nth-child(4) {
+      top: 80%;
+      left: 15%;
+      width: 50px;
+      filter: drop-shadow(0 0 10px var(--sunshine));
+      animation-delay: 3s;
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative floating elements -->
+  <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
+
+  <div class="login-box">
+    <img src="logo.png" alt="GROCERA Logo">
+
+    <h2>Welcome Back!</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <a href="#" class="forgot-password">Forgot password?</a>
+      <button type="submit">Login</button>
+    </form>
+    
+    <div class="social-login">
+      <p>or continue with</p>
+      <div class="social-icons">
+        <div class="social-icon facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+        </div>
+        <div class="social-icon google">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972-3.332 0-6.033-2.701-6.033-6.032s2.701-6.032 6.033-6.032c1.498 0 2.866.549 3.921 1.453l2.814-2.814c-1.784-1.664-4.146-2.675-6.735-2.675-5.522 0-10 4.477-10 10s4.478 10 10 10c8.396 0 10-7.524 10-10 0-.67-.069-1.325-.173-1.971h-9.827z"/></svg>
+        </div>
+        <div class="social-icon apple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53-1.71-2.47-3-7.01-1.26-10.08 1.7-2.93 4.5-3.9 6.65-3.9 1.56 0 3.04.9 4.05.9.99 0 2.56-1.12 4.36-.96.76.03 2.87.31 4.17 2.32-.11.07-2.44 1.43-2.42 4.26.03 3.38 3.03 4.54 3.09 4.57-.03.07-.42 1.44-1.39 2.83m-2.99-14.88c.78-1.01 1.3-2.39 1.16-3.62-1.2.05-2.66.82-3.53 1.84-.77.92-1.46 2.38-1.26 3.8 1.34.1 2.71-.69 3.63-1.82z"/></svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="signup-link">
+      New to GROCERA? <a href="signup.html">Create account</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const storedEmail = localStorage.getItem("userEmail");
+      const storedPassword = localStorage.getItem("userPassword");
+
+      if (email === storedEmail && password === storedPassword) {
+        localStorage.setItem("isLoggedIn", "true");
+        
+        // Create a colorful success effect
+        const button = document.querySelector('button');
+        button.innerHTML = '✓ Welcome!';
+        button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
+        button.style.color = 'var(--black)';
+        
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      } else {
+        // Create error effect
+        const button = document.querySelector('button');
+        button.innerHTML = '✗ Try Again';
+        button.style.background = 'linear-gradient(45deg, var(--neon-pink), var(--violet))';
+        
+        setTimeout(() => {
+          button.innerHTML = 'Login';
+          button.style.background = 'linear-gradient(45deg, var(--electric-blue), var(--violet))';
+        }, 1500);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - GROCERA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mango: #FFBE0B;
+      --orange: #FB5607;
+      --pink: #FF006E;
+      --purple: #8338EC;
+      --blue: #3A86FF;
+      --white: #FFFFFF;
+      --dark: #121212;
+      --glass: rgba(255, 255, 255, 0.15);
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: 
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2053&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .signup-box {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-top: 4px solid var(--pink);
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 0, 110, 0.3);
+      width: 380px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .signup-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(255, 0, 110, 0.4);
+    }
+
+    .signup-box::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle, rgba(255,0,110,0.1) 0%, transparent 70%),
+        radial-gradient(circle, rgba(251,86,7,0.1) 0%, transparent 70%);
+      z-index: -1;
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    .signup-box img {
+      width: 180px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px rgba(255, 0, 110, 0.5));
+    }
+
+    .signup-box h2 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 32px;
+      background: linear-gradient(90deg, var(--pink), var(--orange), var(--mango));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+    }
+
+    .signup-box input {
+      width: 100%;
+      padding: 14px 20px;
+      margin-bottom: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+
+    .signup-box input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.3);
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .signup-box input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .signup-box button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(45deg, var(--pink), var(--purple));
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signup-box button:hover {
+      background: linear-gradient(45deg, var(--purple), var(--pink));
+      box-shadow: 0 8px 25px rgba(131, 56, 236, 0.6);
+      transform: translateY(-3px);
+    }
+
+    .signup-box button:active {
+      transform: translateY(1px);
+    }
+
+    .login-link {
+      margin-top: 25px;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .login-link a {
+      color: var(--mango);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .login-link a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--mango);
+      transition: width 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: var(--orange);
+      text-shadow: 0 0 10px rgba(251, 86, 7, 0.5);
+    }
+
+    .login-link a:hover::after {
+      width: 100%;
+    }
+
+    /* Floating animation for decorative elements */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .floating {
+      position: absolute;
+      opacity: 0.7;
+      z-index: 0;
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(255, 190, 11, 0.5));
+    }
+
+    .floating:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      width: 50px;
+    }
+
+    .floating:nth-child(2) {
+      top: 70%;
+      left: 80%;
+      width: 70px;
+      animation-delay: 1s;
+    }
+
+    .floating:nth-child(3) {
+      top: 30%;
+      left: 85%;
+      width: 40px;
+      animation-delay: 2s;
+    }
+
+    .floating:nth-child(4) {
+      top: 80%;
+      left: 15%;
+      width: 60px;
+      animation-delay: 3s;
+    }
+
+    .password-strength {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .strength-meter {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #ff0000, #ff9900, #33cc33);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative floating elements -->
+  <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
+  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
+
+  <div class="signup-box">
+    <img src="https://via.placeholder.com/180x60/121212/FFFFFF?text=GROCERA&font-size=30" alt="GROCERA Logo">
+    <h2>Join GROCERA</h2>
+    <form id="signupForm">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="tel" id="mobile" placeholder="Mobile Number" maxlength="10" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="password" id="password" placeholder="Create Password" required>
+      <div class="password-strength">
+        <div class="strength-meter" id="strengthMeter"></div>
+      </div>
+      <button type="submit">Create Account</button>
+    </form>
+    
+    <div class="login-link">
+      Already have an account? <a href="index.html">Login</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (name.length < 3) {
+        alert("Name must be at least 3 characters.");
+        return;
+      }
+
+      const mobileRegex = /^[6-9]\d{9}$/;
+      if (!mobileRegex.test(mobile)) {
+        alert("Enter a valid 10-digit mobile number.");
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("Enter a valid email address.");
+        return;
+      }
+
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+      }
+
+      // Save to localStorage
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userMobile", mobile);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userPassword", password);
+
+      // Create a colorful success effect
+      const button = document.querySelector('button');
+      button.innerHTML = '✓ Account Created!';
+      button.style.background = 'linear-gradient(45deg, var(--mango), var(--orange))';
+      
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1500);
+    });
+
+    // Password strength indicator
+    document.getElementById("password").addEventListener("input", function() {
+      const password = this.value;
+      const strengthMeter = document.getElementById("strengthMeter");
+      let strength = 0;
+      
+      if (password.length > 0) strength += 20;
+      if (password.length >= 6) strength += 20;
+      if (/[A-Z]/.test(password)) strength += 20;
+      if (/[0-9]/.test(password)) strength += 20;
+      if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+      
+      strengthMeter.style.width = strength + '%';
+    });
+  </script>
+</body>
+</html>

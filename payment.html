@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment - GROCERA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f3f9f8;
+      padding-bottom: 120px;
+    }
+
+    .topbar {
+      background-color: #007bff;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .topbar img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .topbar h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .payment-container {
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .payment-header {
+      text-align: center;
+      margin-bottom: 25px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .payment-header h2 {
+      margin: 0 0 5px;
+      color: #333;
+    }
+
+    .total-amount {
+      font-size: 24px;
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .payment-methods {
+      display: flex;
+      margin-bottom: 20px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .method-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border: none;
+      background: white;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .method-tab.active {
+      background: #007bff;
+      color: white;
+    }
+
+    .payment-form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .form-control:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .btn-pay {
+      width: 100%;
+      padding: 14px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-pay:hover {
+      background: #218838;
+    }
+
+    .cod-notice {
+      text-align: center;
+      color: #666;
+      margin: 20px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 10px 0;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #888;
+      font-size: 12px;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .nav-item.active {
+      color: #007bff;
+    }
+
+    .nav-item.active i {
+      filter: drop-shadow(0 0 6px #007bff);
+      color: #007bff;
+    }
+
+    .nav-item.active span {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <img src="logo.png" alt="GROCERA">
+    <h1>GROCERA</h1>
+  </div>
+
+  <div class="payment-container">
+    <div class="payment-header">
+      <h2>Complete Your Payment</h2>
+      <div class="total-amount">₹<span id="payAmount">0.00</span></div>
+    </div>
+
+    <div class="payment-methods">
+      <button id="cardTab" class="method-tab active" onclick="showPaymentForm('card')">Card</button>
+      <button id="upiTab" class="method-tab" onclick="showPaymentForm('upi')">UPI</button>
+      <button id="codTab" class="method-tab" onclick="showPaymentForm('cod')">Cash on Delivery</button>
+    </div>
+
+    <!-- Card Payment Form -->
+    <div id="cardForm" class="payment-form">
+      <div class="form-group">
+        <label for="cardName">Cardholder Name</label>
+        <input type="text" id="cardName" class="form-control" placeholder="John Doe">
+      </div>
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="16">
+      </div>
+      <div style="display: flex; gap: 15px;">
+        <div class="form-group" style="flex: 1;">
+          <label for="expiry">Expiry Date</label>
+          <input type="text" id="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="3">
+        </div>
+      </div>
+      <button class="btn-pay" onclick="processPayment('card')">Pay Now</button>
+    </div>
+
+    <!-- UPI Payment Form -->
+    <div id="upiForm" class="payment-form hidden">
+      <div class="form-group">
+        <label for="upiId">UPI ID</label>
+        <input type="text" id="upiId" class="form-control" placeholder="name@bank">
+      </div>
+      <button class="btn-pay" onclick="processPayment('upi')">Pay Now</button>
+    </div>
+
+    <!-- Cash on Delivery -->
+    <div id="codForm" class="payment-form hidden">
+      <p class="cod-notice">Pay cash when your order is delivered</p>
+      <button class="btn-pay" onclick="processPayment('cod')">Confirm Order</button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="categories.html" class="nav-item">
+      <i class="fas fa-list"></i>
+      <span>Categories</span>
+    </a>
+    <a href="cart.html" class="nav-item">
+      <i class="fas fa-shopping-cart"></i>
+      <span>Cart</span>
+    </a>
+    <a href="payment.html" class="nav-item active">
+      <i class="fas fa-credit-card"></i>
+      <span>Payment</span>
+    </a>
+    <a href="orders.html" class="nav-item">
+      <i class="fas fa-box"></i>
+      <span>Orders</span>
+    </a>
+    <a href="about.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Account</span>
+    </a>
+  </div>
+
+  <script>
+    // Initialize cart and total amount
+    let cart = [];
+    let total = 0;
+
+    // When page loads
+    window.onload = function() {
+      // Load cart from localStorage
+      loadCartData();
+      
+      // Calculate total amount
+      calculateTotal();
+      
+      // Display the amount
+      updatePaymentDisplay();
+      
+      // Set default payment method
+      showPaymentForm('card');
+    };
+
+    // Load cart data from localStorage
+    function loadCartData() {
+      // Try to load cart items
+      const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      
+      // If cart is empty, redirect to cart page
+      if (cartItems.length === 0) {
+        alert("Your cart is empty. Please add items before payment.");
+        window.location.href = "cart.html";
+        return;
+      }
+      
+      cart = cartItems;
+    }
+
+    // Calculate total amount from cart
+    function calculateTotal() {
+      total = 0;
+      
+      // Calculate from cart items
+      cart.forEach(item => {
+        total += (item.price || 0) * (item.quantity || 1);
+      });
+      
+      // Check for orderTotal in localStorage
+      const orderTotal = parseFloat(localStorage.getItem("orderTotal")) || 0;
+      if (orderTotal > 0) {
+        total = orderTotal;
+      }
+      
+      // If total is zero, redirect to cart
+      if (total <= 0) {
+        alert("Your cart total is ₹0. Please add items before payment.");
+        window.location.href = "cart.html";
+        return;
+      }
+    }
+
+    // Update payment amount display
+    function updatePaymentDisplay() {
+      document.getElementById("payAmount").textContent = total.toFixed(2);
+    }
+
+    // Show selected payment form
+    function showPaymentForm(method) {
+      // Hide all forms
+      document.getElementById("cardForm").classList.add("hidden");
+      document.getElementById("upiForm").classList.add("hidden");
+      document.getElementById("codForm").classList.add("hidden");
+      
+      // Remove active class from all tabs
+      document.getElementById("cardTab").classList.remove("active");
+      document.getElementById("upiTab").classList.remove("active");
+      document.getElementById("codTab").classList.remove("active");
+      
+      // Show selected form and activate tab
+      document.getElementById(`${method}Form`).classList.remove("hidden");
+      document.getElementById(`${method}Tab`).classList.add("active");
+    }
+
+    // Process payment
+    function processPayment(method) {
+      // Validate payment details
+      if (!validatePaymentMethod(method)) {
+        return;
+      }
+      
+      // Create order
+      const order = createOrder(method);
+      
+      // Save order to localStorage
+      saveOrder(order);
+      
+      // Clear cart
+      clearCart();
+      
+      // Show success message and redirect
+      showPaymentSuccess(method);
+    }
+
+    // Validate payment method details
+    function validatePaymentMethod(method) {
+      switch(method) {
+        case 'card':
+          const name = document.getElementById('cardName').value.trim();
+          const number = document.getElementById('cardNumber').value.trim();
+          const expiry = document.getElementById('expiry').value.trim();
+          const cvv = document.getElementById('cvv').value.trim();
+          
+          if (!name) {
+            alert("Please enter cardholder name");
+            return false;
+          }
+          if (number.length !== 16 || !/^\d+$/.test(number)) {
+            alert("Please enter a valid 16-digit card number");
+            return false;
+          }
+          if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+            alert("Please enter expiry date in MM/YY format");
+            return false;
+          }
+          if (cvv.length !== 3 || !/^\d+$/.test(cvv)) {
+            alert("Please enter a valid 3-digit CVV");
+            return false;
+          }
+          return true;
+          
+        case 'upi':
+          const upiId = document.getElementById('upiId').value.trim();
+          if (!upiId.includes("@") || upiId.length < 6) {
+            alert("Please enter a valid UPI ID (e.g. name@bank)");
+            return false;
+          }
+          return true;
+          
+        case 'cod':
+          return confirm("Are you sure you want to proceed with Cash on Delivery?");
+          
+        default:
+          return false;
+      }
+    }
+
+    // Create order object
+    function createOrder(method) {
+      const now = new Date();
+      return {
+        orderId: 'GROC' + now.getTime().toString().slice(-8),
+        items: cart.map(item => ({
+          name: item.name,
+          quantity: item.quantity || 1,
+          price: item.price || 0,
+          total: (item.quantity || 1) * (item.price || 0)
+        })),
+        totalAmount: total.toFixed(2),
+        paymentMethod: method === 'card' ? 'Credit/Debit Card' : 
+                      method === 'upi' ? 'UPI' : 'Cash on Delivery',
+        status: method === 'cod' ? 'Pending Payment' : 'Paid',
+        orderDate: now.toLocaleString(),
+        deliveryAddress: localStorage.getItem("deliveryAddress") || "Address not specified"
+      };
+    }
+
+    // Save order to localStorage
+    function saveOrder(order) {
+      let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      orders.unshift(order); // Add new order at beginning of array
+      localStorage.setItem("orders", JSON.stringify(orders));
+    }
+
+    // Clear cart data
+    function clearCart() {
+      localStorage.removeItem("cartItems");
+      localStorage.removeItem("orderTotal");
+    }
+
+    // Show payment success and redirect
+    function showPaymentSuccess(method) {
+      const paymentMethod = method === 'card' ? 'Card' : 
+                          method === 'upi' ? 'UPI' : 'Cash on Delivery';
+      const message = method === 'cod' ? 
+        'Order placed successfully! You will pay ₹' + total.toFixed(2) + ' when your order is delivered.' : 
+        'Payment of ₹' + total.toFixed(2) + ' via ' + paymentMethod + ' was successful!';
+      
+      alert(message);
+      window.location.href = "orders.html";
+    }
+  </script>
+</body>
+</html>
