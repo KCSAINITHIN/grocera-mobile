@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GROCERA - Categories</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #6C63FF;
@@ -24,6 +23,7 @@
       --snacks: #FFDAC1;
       --meat: #F8B195;
       --cleaning: #A2D7D8;
+      --babyCare: #b48ae0;
     }
 
     * {
@@ -34,59 +34,64 @@
     }
 
     body {
-      margin: 0;
-      background: linear-gradient(-45deg, #d4fc79, #96e6a1, #a1f6f9, #e0ffe6);
-      background-size: 400% 400%;
-      animation: gradientBG 12s ease infinite;
-      color: #1e1e1e;
-      overflow-x: hidden;
-      padding-bottom: 70px;
-    }
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(-45deg, #d4fc79, #96e6a1, #a1f6f9, #e0ffe6);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  color: #1e1e1e;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Top Bar - Mobile Optimized */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
     .topbar {
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
-      padding: 12px 15px;
+      padding: 15px 20px;
       display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
+    .topbar img {
+      height: 40px;
+    }
+
     .logo-container {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .topbar img {
-      height: 36px;
     }
 
     .logo-container h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 700;
-      margin-left: 8px;
+      margin-left: 10px;
     }
 
     .search-bar {
       display: flex;
       align-items: center;
       background: rgba(255,255,255,0.2);
-      border-radius: 25px;
-      padding: 6px 12px;
-      width: 100%;
+      border-radius: 30px;
+      padding: 8px 15px;
+      width: 50%;
+      max-width: 500px;
     }
 
     .search-bar input {
@@ -94,9 +99,8 @@
       border: none;
       color: white;
       width: 100%;
-      padding: 4px 8px;
+      padding: 5px 10px;
       outline: none;
-      font-size: 14px;
     }
 
     .search-bar input::placeholder {
@@ -105,108 +109,105 @@
 
     .search-bar i {
       color: white;
-      margin-right: 8px;
-      font-size: 14px;
+      margin-right: 10px;
     }
 
-    /* Main Content */
     .main-container {
-      padding: 15px;
+      padding: 20px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
     .page-title {
-      font-size: 22px;
+      font-size: 28px;
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       position: relative;
-      padding-left: 12px;
+      padding-left: 15px;
     }
 
     .page-title::before {
       content: '';
       position: absolute;
       left: 0;
-      top: 4px;
+      top: 5px;
       height: 80%;
-      width: 4px;
+      width: 5px;
       background: var(--secondary);
-      border-radius: 4px;
+      border-radius: 5px;
     }
 
-    /* Categories Grid - Mobile Optimized */
     .categories-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
     }
 
     .category-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
     }
 
     .category-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
     }
 
     .category-image {
-      height: 100px;
+      height: 160px;
       width: 100%;
       object-fit: cover;
     }
 
     .category-info {
-      padding: 12px;
+      padding: 20px;
     }
 
     .category-name {
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       color: var(--dark);
     }
 
     .category-count {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--primary);
       font-weight: 500;
     }
 
     .category-badge {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 15px;
+      right: 15px;
       background: var(--secondary);
       color: white;
-      padding: 3px 8px;
-      border-radius: 15px;
-      font-size: 10px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
       font-weight: 600;
     }
 
-    /* Trending Section - Mobile Optimized */
     .trending-section {
-      margin-top: 30px;
+      margin-top: 50px;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .section-title {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 600;
       color: var(--dark);
     }
@@ -217,12 +218,10 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      font-size: 13px;
     }
 
     .view-all i {
-      margin-left: 4px;
-      font-size: 12px;
+      margin-left: 5px;
       transition: transform 0.3s;
     }
 
@@ -233,57 +232,56 @@
     .trending-products {
       display: flex;
       overflow-x: auto;
-      gap: 12px;
-      padding: 8px 0 15px;
+      gap: 20px;
+      padding: 10px 0 20px;
       scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
     }
 
     .trending-products::-webkit-scrollbar {
-      height: 3px;
+      height: 5px;
     }
 
     .trending-products::-webkit-scrollbar-thumb {
       background: var(--primary);
-      border-radius: 3px;
+      border-radius: 5px;
     }
 
     .product-card {
-      min-width: 150px;
+      min-width: 200px;
       background: white;
-      border-radius: 10px;
-      padding: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
     }
 
     .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
     .product-image {
       width: 100%;
-      height: 90px;
+      height: 120px;
       object-fit: contain;
-      margin-bottom: 10px;
-      border-radius: 6px;
+      margin-bottom: 15px;
+      border-radius: 8px;
     }
 
     .product-name {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       color: var(--dark);
     }
 
     .product-price {
       color: var(--primary);
       font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 10px;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
 
     .quantity-controls {
@@ -297,14 +295,14 @@
       background: var(--primary);
       color: white;
       border: none;
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
       transition: all 0.2s;
     }
 
@@ -314,119 +312,27 @@
 
     .quantity-display {
       font-weight: 600;
-      font-size: 14px;
-      margin: 0 8px;
+      font-size: 16px;
+      margin: 0 10px;
     }
 
     .add-to-cart {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 6px 12px;
+      padding: 8px 15px;
       border-radius: 5px;
       font-weight: 500;
       width: 100%;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
-      font-size: 13px;
+      transition: all 0.3s;
+      margin-top: 10px;
     }
 
     .add-to-cart:hover {
       background: var(--accent);
     }
 
-    /* Offer Banner - Mobile Optimized */
-    .offer-banner {
-      background: linear-gradient(135deg, var(--secondary), var(--warning));
-      color: white;
-      padding: 12px 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .offer-text {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .offer-btn {
-      background: white;
-      color: var(--secondary);
-      border: none;
-      padding: 6px 15px;
-      border-radius: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 13px;
-      align-self: flex-end;
-    }
-
-    .offer-btn:hover {
-      transform: translateX(3px);
-    }
-
-    /* Category View - Mobile Optimized */
-    .category-banner {
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-      display: flex;
-      align-items: center;
-      color: var(--dark);
-    }
-
-    .banner-icon {
-      font-size: 30px;
-      margin-right: 15px;
-      flex-shrink: 0;
-    }
-
-    .banner-text {
-      flex-grow: 1;
-    }
-
-    .banner-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .banner-text p {
-      font-size: 12px;
-    }
-
-    .category-products {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .back-button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 13px;
-    }
-
-    .back-button:hover {
-      background: var(--accent);
-    }
-
-    /* Bottom Navigation - Mobile Optimized */
     .bottom-nav {
       display: flex;
       justify-content: space-around;
@@ -434,9 +340,8 @@
       position: fixed;
       bottom: 0;
       width: 100%;
-      padding: 8px 0;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-      z-index: 100;
+      padding: 10px 0;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
     }
 
     .nav-item {
@@ -445,17 +350,97 @@
       align-items: center;
       text-decoration: none;
       color: #888;
-      font-size: 10px;
-      padding: 4px 6px;
+      font-size: 12px;
     }
 
     .nav-item i {
-      font-size: 18px;
-      margin-bottom: 3px;
+      font-size: 20px;
+      margin-bottom: 5px;
     }
 
     .nav-item.active {
       color: var(--primary);
+    }
+
+    .offer-banner {
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin: 30px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .offer-text {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .offer-btn {
+      background: white;
+      color: var(--secondary);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .offer-btn:hover {
+      transform: translateX(5px);
+    }
+
+    /* Category page styles */
+    .category-banner {
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      color: var(--dark);
+    }
+
+    .banner-icon {
+      font-size: 40px;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+
+    .banner-text {
+      flex-grow: 1;
+    }
+
+    .banner-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .category-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .back-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .back-button:hover {
+      background: var(--accent);
     }
 
     /* Category-specific banner colors */
@@ -467,40 +452,25 @@
     .snacks-banner { background-color: var(--snacks); }
     .meat-banner { background-color: var(--meat); }
     .cleaning-banner { background-color: var(--cleaning); }
-
-    /* Hidden class */
-    .hidden {
-      display: none;
-    }
-
-    /* Toast notification - Mobile */
-    .toast {
-      position: fixed;
-      bottom: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--success);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      animation: fadeIn 0.3s;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    /* Responsive adjustments for larger phones */
-    @media (min-width: 400px) {
+    .babyCare-banner { background-color: var(--babyCare); }
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        padding: 15px;
+      }
+      
+      .search-bar {
+        width: 100%;
+        margin-top: 15px;
+      }
+      
       .categories-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
+      }
+      
+      .category-image {
+        height: 120px;
       }
       
       .product-card {
@@ -508,35 +478,7 @@
       }
       
       .category-products {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-      }
-    }
-
-    @media (min-width: 500px) {
-      .topbar {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-      
-      .logo-container {
-        margin-bottom: 0;
-      }
-      
-      .search-bar {
-        width: 60%;
-        margin-left: 15px;
-      }
-      
-      .offer-banner {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-      
-      .offer-text {
-        margin-bottom: 0;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       }
     }
   </style>
@@ -563,80 +505,91 @@
       <!-- Offer Banner -->
       <div class="offer-banner">
         <div class="offer-text">
-          <i class="fas fa-tag"></i> 🎉 10% OFF on ₹500+ Orders!
+          <i class="fas fa-tag"></i> 🎉 Enjoy 10% OFF on Orders Over ₹500! 🎉
         </div>
         <button class="offer-btn">Shop Now</button>
       </div>
       
       <!-- Categories Grid -->
-      <div class="categories-grid">
-        <div class="category-card" data-category="fruits">
-          <div class="category-badge">Popular</div>
-          <img src="fruits.jpeg" alt="Fruits" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Fresh Fruits</h3>
-            <p class="category-count">120+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="vegetables">
-          <img src="vegetables.jpeg" alt="Vegetables" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Vegetables</h3>
-            <p class="category-count">85+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="dairy">
-          <div class="category-badge">New</div>
-          <img src="dairy.jpeg" alt="Dairy" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Dairy & Eggs</h3>
-            <p class="category-count">65+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="bakery">
-          <img src="bakery.jpeg" alt="Bakery" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Bakery</h3>
-            <p class="category-count">45+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="beverages">
-          <img src="beverages.jpeg" alt="Beverages" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Beverages</h3>
-            <p class="category-count">110+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="snacks">
-          <div class="category-badge">Sale</div>
-          <img src="snacks.jpeg" alt="Snacks" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Snacks</h3>
-            <p class="category-count">95+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="meat">
-          <img src="meat.jpeg" alt="Meat" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Meat & Fish</h3>
-            <p class="category-count">55+ items</p>
-          </div>
-        </div>
-        
-        <div class="category-card" data-category="cleaning">
-          <img src="cleaning.jpeg" alt="Cleaning" class="category-image">
-          <div class="category-info">
-            <h3 class="category-name">Cleaning</h3>
-            <p class="category-count">75+ items</p>
-          </div>
-        </div>
-      </div>
+<div class="categories-grid">
+  
+  <div class="category-card" data-category="fruits">
+    <div class="category-badge">Popular</div>
+    <img src="fruits.jpeg" alt="Fruits" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Fresh Fruits</h3>
+      <p class="category-count">120+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="vegetables">
+    <img src="vegetables.jpeg" alt="Vegetables" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Vegetables</h3>
+      <p class="category-count">85+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="dairy">
+    <div class="category-badge">New</div>
+    <img src="dairy.jpeg" alt="Dairy" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Dairy & Eggs</h3>
+      <p class="category-count">65+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="bakery">
+    <img src="bakery.jpeg" alt="Bakery" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Bakery</h3>
+      <p class="category-count">45+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="beverages">
+    <img src="beverages.jpeg" alt="Beverages" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Beverages</h3>
+      <p class="category-count">110+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="snacks">
+    <div class="category-badge">Sale</div>
+    <img src="snacks.jpeg" alt="Snacks" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Snacks</h3>
+      <p class="category-count">95+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="meat">
+    <img src="meat.jpeg" alt="Meat" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Meat & Fish</h3>
+      <p class="category-count">55+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="cleaning">
+    <img src="cleaning.jpeg" alt="Cleaning" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Cleaning</h3>
+      <p class="category-count">75+ items</p>
+    </div>
+  </div>
+
+  <div class="category-card" data-category="babyCare">
+    <img src="babycare.jpeg" alt="Baby Care" class="category-image">
+    <div class="category-info">
+      <h3 class="category-name">Baby Care</h3>
+      <p class="category-count">50+ items</p>
+    </div>
+  </div>
+
+</div>
+
       
       <!-- Trending Products Section -->
       <div class="trending-section">
@@ -683,30 +636,30 @@
           </div>
           
           <div class="product-card">
-            <img src="maggi.jpeg" alt="Maggi" class="product-image">
-            <h3 class="product-name">Maggi Noodles</h3>
-            <p class="product-price">₹25</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
+      <img src="maggi.jpeg" alt="Maggi" class="product-image">
+      <h3 class="product-name">Maggi Noodles</h3>
+      <p class="product-price">₹25</p>
+      <div class="quantity-controls">
+        <button class="quantity-btn minus-btn">-</button>
+        <span class="quantity-display">0</span>
+        <button class="quantity-btn plus-btn">+</button>
+      </div>
+      <button class="add-to-cart">Add to Cart</button>
+    </div>
 
-          <div class="product-card">
-            <img src="chocobar.jpeg" alt="Choco Bar" class="product-image">
-            <h3 class="product-name">Choco Bar Ice Cream</h3>
-            <p class="product-price">₹25</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
+<div class="product-card">
+      <img src="chocobar.jpeg" alt="Choco Bar" class="product-image">
+      <h3 class="product-name">Choco Bar Ice Cream</h3>
+      <p class="product-price">₹25</p>
+      <div class="quantity-controls">
+        <button class="quantity-btn minus-btn">-</button>
+        <span class="quantity-display">0</span>
+        <button class="quantity-btn plus-btn">+</button>
+      </div>
+      <button class="add-to-cart">Add to Cart</button>
+    </div>
 
-          <div class="product-card">
+           <div class="product-card">
             <img src="tomato.jpeg" alt="Tomato" class="product-image">
             <h3 class="product-name">Tomato-nati</h3>
             <p class="product-price">₹20</p>
@@ -731,16 +684,40 @@
           </div>
 
           <div class="product-card">
-            <img src="garlic-bread.jpeg" alt="Garlic Bread" class="product-image">
-            <h3 class="product-name">Garlic Bread</h3>
-            <p class="product-price">₹45</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
+      <img src="garlic-bread.jpeg" alt="Garlic Bread" class="product-image">
+      <h3 class="product-name">Garlic Bread</h3>
+      <p class="product-price">₹45</p>
+      <div class="quantity-controls">
+        <button class="quantity-btn minus-btn">-</button>
+        <span class="quantity-display">0</span>
+        <button class="quantity-btn plus-btn">+</button>
+      </div>
+      <button class="add-to-cart">Add to Cart</button>
+    </div>
+
+ <div class="product-card">
+      <img src="french-fries.jpeg" alt="French Fries" class="product-image">
+      <h3 class="product-name">Frozen French Fries</h3>
+      <p class="product-price">₹99</p>
+      <div class="quantity-controls">
+        <button class="quantity-btn minus-btn">-</button>
+        <span class="quantity-display">0</span>
+        <button class="quantity-btn plus-btn">+</button>
+      </div>
+      <button class="add-to-cart">Add to Cart</button>
+</div>
+
+          <div class="product-card">
+      <img src="greek-yogurt.jpeg" alt="Greek Yogurt" class="product-image">
+      <h3 class="product-name">Greek Yogurt</h3>
+      <p class="product-price">₹60</p>
+      <div class="quantity-controls">
+        <button class="quantity-btn minus-btn">-</button>
+        <span class="quantity-display">0</span>
+        <button class="quantity-btn plus-btn">+</button>
+      </div>
+      <button class="add-to-cart">Add to Cart</button>
+    </div>
         </div>
       </div>
     </div>
@@ -758,7 +735,7 @@
         </div>
         <div class="banner-text">
           <h2 class="banner-title">Fresh Fruits</h2>
-          <p>Nature's sweetest gift! Packed with vitamins and antioxidants.</p>
+          <p>Nature's sweetest gift! Packed with vitamins, minerals and antioxidants to boost your immunity and energy levels. Eat fresh fruits daily for a healthy lifestyle.</p>
         </div>
       </div>
       
@@ -768,16 +745,86 @@
         </div>
         <div class="banner-text">
           <h2 class="banner-title">Fresh Vegetables</h2>
-          <p>Rich in fiber and essential nutrients for healthy living.</p>
+          <p>The foundation of good health! Rich in fiber, vitamins and essential nutrients. Regular consumption helps prevent diseases and maintains optimal body function.</p>
         </div>
       </div>
       
+      <div class="category-banner dairy-banner" id="dairyBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-cheese"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Dairy & Eggs</h2>
+          <p>Excellent source of calcium and protein! Essential for strong bones, teeth and muscle development. Our dairy products come from trusted local farms.</p>
+        </div>
+      </div>
+      
+      <div class="category-banner bakery-banner" id="bakeryBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-bread-slice"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Bakery Items</h2>
+          <p>Freshly baked goodness! Made with high-quality ingredients daily. Perfect for breakfast or as a snack. Enjoy the comforting aroma of freshly baked breads and pastries.</p>
+        </div>
+      </div>
+      
+      <div class="category-banner beverages-banner" id="beveragesBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-coffee"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Beverages</h2>
+          <p>Stay hydrated and refreshed! From healthy juices to energizing drinks, we have options for every taste and occasion. Remember to drink enough fluids throughout the day.</p>
+        </div>
+      </div>
+      
+      <div class="category-banner snacks-banner" id="snacksBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-cookie"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Snacks</h2>
+          <p>Perfect for your cravings! From healthy options to indulgent treats, we've got snacks for every mood. Enjoy in moderation as part of a balanced diet.</p>
+        </div>
+      </div>
+      
+      <div class="category-banner meat-banner" id="meatBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-drumstick-bite"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Meat & Fish</h2>
+          <p>High-quality protein sources! Our meats and seafood are fresh, properly handled and sourced from trusted suppliers. Essential for muscle growth and repair.</p>
+        </div>
+      </div>
+      
+      <div class="category-banner cleaning-banner" id="cleaningBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-broom"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Cleaning Supplies</h2>
+          <p>Keep your home sparkling clean! Effective and eco-friendly options available. A clean environment is essential for good health and wellbeing.</p>
+        </div>
+      </div>
+      
+<div class="category-banner babycare-banner" id="babyCareBanner" style="display:none;">
+  <div class="banner-icon">
+    <i class="fas fa-baby"></i>
+  </div>
+  <div class="banner-text">
+    <h2 class="banner-title">Baby Care</h2>
+    <p>Gentle care for your little one! Discover trusted baby products including diapers, baby lotion, shampoo, and baby food – everything your baby needs for comfort and health.</p>
+  </div>
+</div>
+
       <!-- Category Products Container -->
       <div class="category-products" id="categoryProducts"></div>
     </div>
   </div>
   
-  <!-- Bottom Navigation -->
+   <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <i class="fas fa-home"></i>
@@ -791,10 +838,17 @@
       <i class="fas fa-shopping-cart"></i>
       <span>Cart</span>
     </a>
-    <a href="payment.html" class="nav-item">
+
+     <a href="payment.html" class="nav-item">
       <i class="fas fa-credit-card"></i>
       <span>Payment</span>
     </a>
+
+    <a href="orders.html" class="nav-item">
+      <i class="fas fa-box"></i>
+      <span>Orders</span>
+    </a>
+
     <a href="about.html" class="nav-item">
       <i class="fas fa-user"></i>
       <span>Account</span>
@@ -802,6 +856,10 @@
   </div>
 
   <script>
+
+
+
+
     // Cart functionality
     let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
     
@@ -874,51 +932,107 @@
           { name: 'Apple', price: 100, image: 'apple.jpeg' },
           { name: 'Banana', price: 45, image: 'banana.jpeg' },
           { name: 'Watermelon', price: 40, image: 'watermelon.jpeg' },
-          { name: 'Orange', price: 60, image: 'orange.jpeg' }
+          { name: 'Orange', price: 60, image: 'orange.jpeg' },
+          { name: 'Grapes', price: 80, image: 'grapes.jpeg' },
+          { name: 'Mango', price: 120, image: 'mango.jpeg' },
+          { name: 'Pineapple', price: 50, image: 'pineapple.jpeg' },
+          { name: 'Pomegranate', price: 90, image: 'pomegranate.jpeg' }
         ],
         vegetables: [
           { name: 'Tomato-nati', price: 20, image: 'tomato.jpeg' },
           { name: 'Potato', price: 30, image: 'potato.jpeg' },
           { name: 'Onion', price: 25, image: 'onion.jpeg' },
-          { name: 'Carrot', price: 35, image: 'carrot.jpeg' }
+          { name: 'Carrot', price: 35, image: 'carrot.jpeg' },
+          { name: 'Cabbage', price: 40, image: 'cabbage.jpeg' },
+          { name: 'Cauliflower', price: 45, image: 'cauliflower.jpeg' },
+          { name: 'Brinjal', price: 30, image: 'brinjal.jpeg' },
+          { name: 'Cucumber', price: 25, image: 'cucumber.jpeg' }
         ],
         dairy: [
           { name: 'Milk', price: 27, image: 'milk.jpeg' },
           { name: 'Cheese', price: 60, image: 'cheese.jpeg' },
           { name: 'Amul butter', price: 110, image: 'butter.jpeg' },
-          { name: 'Yogurt', price: 40, image: 'greek-yogurt.jpeg' }
+          { name: 'Yogurt', price: 40, image: 'greek-yogurt.jpeg' },
+          { name: 'Paneer', price: 80, image: 'paneer.jpeg' },
+          { name: 'Nati-eggs (Dozen)', price: 100, image: 'eggs.jpeg' },
+          { name: 'Veeba-mayonnaise', price: 70, image: 'mayonnaise.jpeg' },
+          { name: 'Ghee', price: 320, image: 'ghee.jpeg' }
         ],
         bakery: [
           { name: 'White Bread', price: 35, image: 'bread.jpeg' },
           { name: 'Brown Bread', price: 40, image: 'brown-bread.jpeg' },
           { name: 'Croissant', price: 25, image: 'croissant.jpeg' },
+          { name: 'Donut', price: 30, image: 'donut.jpeg' },
+          { name: 'Cake Slice', price: 50, image: 'cake.jpeg' },
+          { name: 'Cookies', price: 60, image: 'cookies.jpeg' },
+          { name: 'Buns', price: 60, image: 'buns.jpeg' },
           { name: 'Garlic Bread', price: 45, image: 'garlic-bread.jpeg' }
         ],
         beverages: [
           { name: 'Mineral Water', price: 20, image: 'water.jpeg' },
           { name: 'Orange Juice', price: 60, image: 'orange-juice.jpeg' },
           { name: 'Frooti', price: 85, image: 'frooti.jpeg' },
-          { name: 'Soda', price: 40, image: 'soda.jpeg' }
+          { name: 'Soda', price: 40, image: 'soda.jpeg' },
+          { name: 'Green Tea', price: 80, image: 'green-tea.jpeg' },
+          { name: 'Nescafe Coffee', price: 45, image: 'coffee.jpeg' },
+          { name: 'Red Bull', price: 70, image: 'red-bull.jpeg' },
+          { name: 'sprite', price: 40, image: 'sprite.jpeg' },
+          { name: 'Thums Up', price: 40, image: 'thumsup.jpeg' },
+          { name: 'Bindu', price: 40, image: 'bindu.jpeg' },
+          { name: 'Coca-cola', price: 40, image: 'coca-cola.jpeg' }
         ],
         snacks: [
           { name: 'Lays pack', price: 40, image: 'chips.jpeg' },
           { name: 'Dairy milk', price: 350, image: 'choclate.jpeg' },
           { name: 'Biscuits', price: 165, image: 'orio-buiscuits.jpeg' },
-          { name: 'KurKure pack', price: 35, image: 'kurkure.jpeg' }
+         { name: 'KurKure pack', price: 35, image: 'kurkure.jpeg' },
+          { name: 'ACT Ⅱ popcorn', price: 100, image: 'popcorn.jpeg' },
+          { name: 'Nuts Mix', price: 290, image: 'mixed-nuts.jpeg' },
+          { name: 'Indian snacks', price: 35, image: 'ind-snacks.jpeg' },
+           { name: 'Maggi pack', price: 50, image: 'maggi-pack.jpeg' },
+          { name: 'Choclate pack ', price: 400, image: 'candy.jpeg' },
+          { name: 'Pringles pack', price: 20, image: 'pringles.jpeg' },
+          { name: 'Dried Fruits', price: 1810, image: 'dried-fruits.jpeg' }
         ],
         meat: [
           { name: 'Chicken Breast', price: 150, image: 'chicken.jpeg' },
           { name: 'Mutton', price: 250, image: 'mutton.jpeg' },
           { name: 'Fish Fillet', price: 180, image: 'fish.jpeg' },
-          { name: 'Prawns', price: 220, image: 'prawns.jpeg' }
+          { name: 'Prawns', price: 220, image: 'prawns.jpeg' },
+          { name: 'Eggs (Dozen)', price: 70, image: 'eggs.jpeg' },
+          { name: 'Sausages', price: 120, image: 'sausages.jpeg' },
+          { name: 'Chicken', price: 200, image: 'tandoori.jpeg' },
+          { name: 'Chicken Wings', price: 130, image: 'wings.jpeg' }
         ],
         cleaning: [
           { name: 'Dish Soap', price: 45, image: 'dish-soap.jpeg' },
           { name: 'Laundry Detergent', price: 90, image: 'detergent.jpeg' },
           { name: 'Floor Cleaner', price: 270, image: 'floor-cleaner.jpeg' },
-          { name: 'Glass Cleaner', price: 60, image: 'glass-cleaner.jpeg' }
-        ]
-      };
+          { name: 'Glass Cleaner', price: 60, image: 'glass-cleaner.jpeg' },
+          { name: 'Disinfectant', price: 80, image: 'disinfectant.jpeg' },
+          { name: 'Broom', price: 120, image: 'broom.jpeg' },
+          { name: 'Mop', price: 1990, image: 'mop.jpeg' },
+          { name: 'Bucket-mug', price: 109, image: 'bucket.jpeg' },
+          { name: 'Harpic', price: 200, image: 'harpic.jpeg' },
+          { name: 'Bathroom-brush', price: 129, image: 'bathroom-brush.jpeg' },
+          { name: 'Soap', price: 150, image: 'soap.jpeg' },
+          { name: 'Rin', price: 20, image: 'Rin.jpeg' },
+          { name: 'Colour-dye', price: 150, image: 'color-dye.jpeg' },
+          { name: 'Dish washing brush', price: 50, image: 'dish-washer.jpeg' },
+          { name: 'Trash Bags', price: 40, image: 'trash-bags.jpeg' }
+        ],
+        babyCare: [
+           { name: 'Pampers Diapers - Small Pack', price: 299, image: 'pampers-small.jpeg' },
+           { name: 'Huggies Baby Wipes (72 pcs)', price: 175, image: 'huggies-wipes.jpeg' },
+           { name: 'Johnson\'s Baby Lotion 200ml', price: 165, image: 'johnsons-lotion.jpeg' },
+           { name: 'Himalaya Baby Powder 100g', price: 80, image: 'himalaya-powder.jpeg' },
+           { name: 'Nestle Cerelac Wheat 300g', price: 210, image: 'cerelac.jpeg' },
+          { name: 'Johnson\'s Baby Soap 100g', price: 55, image: 'baby-soap.jpeg' },
+           { name: 'Mee Mee Feeding Bottle 250ml', price: 199, image: 'mee-bottle.jpeg' },
+           { name: 'Baby Oil (Johnson\'s) 100ml', price: 95, image: 'baby-oil.jpeg' },
+           { name: 'Chicco Baby Shampoo 200ml', price: 180, image: 'chicco-shampoo.jpeg' }
+]
+};
       
       if (productsData[category]) {
         productsData[category].forEach(product => {
@@ -970,7 +1084,7 @@
           const quantity = parseInt(productCard.querySelector('.quantity-display').textContent);
           
           if (quantity === 0) {
-            showToast('Please select quantity');
+            showToast('Please select quantity', 'var(--warning)');
             return;
           }
           
@@ -993,7 +1107,7 @@
           // Reset quantity
           productCard.querySelector('.quantity-display').textContent = '0';
           
-          showToast(`${productName} (${quantity}) added to cart`);
+          showToast(`${productName} (${quantity}) added to cart`, 'var(--success)');
         });
       });
     }
@@ -1001,9 +1115,17 @@
     // Toast notification
     function showToast(message, color = "var(--success)") {
       const toast = document.createElement('div');
-      toast.className = 'toast';
       toast.textContent = message;
+      toast.style.position = 'fixed';
+      toast.style.bottom = '80px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
       toast.style.backgroundColor = color;
+      toast.style.color = 'white';
+      toast.style.padding = '10px 20px';
+      toast.style.borderRadius = '5px';
+      toast.style.zIndex = '1000';
+      toast.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
       document.body.appendChild(toast);
       
       // Remove toast after 3 seconds
@@ -1012,29 +1134,31 @@
       }, 3000);
     }
 
-    // Search functionality
     const searchInput = document.querySelector('.search-bar input');
-    const searchIcon = document.querySelector('.search-bar i');
-    const categoryCards = document.querySelectorAll('.category-card');
+const searchIcon = document.querySelector('.search-bar i');
+const categoryCards = document.querySelectorAll('.category-card');
 
-    searchInput.addEventListener('input', filterCategories);
-    searchIcon.addEventListener('click', filterCategories);
+// 2. Add event listeners for both keyboard and click search
+searchInput.addEventListener('input', filterCategories);
+searchIcon.addEventListener('click', filterCategories);
 
-    function filterCategories() {
-      const searchTerm = searchInput.value.toLowerCase();
-      
-      categoryCards.forEach(card => {
-        const categoryName = card.querySelector('.category-name').textContent.toLowerCase();
-        const categoryCount = card.querySelector('.category-count').textContent.toLowerCase();
-        
-        // Check if search term matches name or count
-        if (categoryName.includes(searchTerm) || categoryCount.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+// 3. Search filtering function
+function filterCategories() {
+  const searchTerm = searchInput.value.toLowerCase();
+  
+  categoryCards.forEach(card => {
+    const categoryName = card.querySelector('.category-name').textContent.toLowerCase();
+    const categoryCount = card.querySelector('.category-count').textContent.toLowerCase();
+    
+    // Check if search term matches name or count
+    if (categoryName.includes(searchTerm) || categoryCount.includes(searchTerm)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
     }
+  });
+}
+
   </script>
 </body>
 </html>
