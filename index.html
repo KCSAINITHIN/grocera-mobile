@@ -53,6 +53,7 @@
       z-index: 1;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       margin: 20px;
+      box-sizing: border-box;
     }
 
     .login-box:hover {
@@ -109,6 +110,7 @@
       background: rgba(10, 10, 10, 0.4);
       color: var(--white);
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+      box-sizing: border-box;
     }
 
     .login-box input:focus {
@@ -139,6 +141,25 @@
         0 5px 15px rgba(0, 245, 255, 0.4),
         inset 0 0 10px rgba(255, 255, 255, 0.2);
       margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .login-box button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      transform: rotate(30deg);
+      transition: all 0.5s ease;
     }
 
     .login-box button:hover {
@@ -147,6 +168,14 @@
         0 8px 25px rgba(138, 43, 226, 0.6),
         inset 0 0 15px rgba(255, 255, 255, 0.3);
       transform: translateY(-3px);
+    }
+
+    .login-box button:hover::before {
+      left: 100%;
+    }
+
+    .login-box button:active {
+      transform: translateY(1px);
     }
 
     .signup-link {
@@ -160,11 +189,28 @@
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .signup-link a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--sunshine);
+      transition: width 0.3s ease;
     }
 
     .signup-link a:hover {
       color: var(--acid-green);
       text-shadow: 0 0 10px rgba(165, 255, 0, 0.5);
+    }
+
+    .signup-link a:hover::after {
+      width: 100%;
+      background: var(--acid-green);
     }
 
     .forgot-password {
@@ -229,71 +275,140 @@
       justify-content: center;
       background: rgba(30, 30, 30, 0.5);
       color: var(--white);
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
     }
 
     .social-icon:hover {
-      transform: translateY(-5px);
+      transform: translateY(-5px) scale(1.1);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
+    .social-icon:hover::before {
+      transform: translateX(100%);
+    }
+
     .social-icon.facebook:hover {
-      background: #3b5998;
+      background: linear-gradient(45deg, #3b5998, #00F5FF);
+      box-shadow: 0 5px 20px rgba(59, 89, 152, 0.5);
     }
 
     .social-icon.google:hover {
-      background: #DB4437;
+      background: linear-gradient(45deg, #DB4437, #FFDE00);
+      box-shadow: 0 5px 20px rgba(219, 68, 55, 0.5);
     }
 
     .social-icon.apple:hover {
-      background: #000000;
+      background: linear-gradient(45deg, #000000, #8A2BE2);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
     }
 
-    /* Floating elements - hidden on mobile */
-    .floating {
-      position: absolute;
-      opacity: 0.6;
-      z-index: -1;
-      animation: float 6s ease-in-out infinite;
-      display: none;
-    }
-
+    /* Floating animation for decorative elements */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
 
-    /* Responsive adjustments */
+    .floating {
+      position: absolute;
+      opacity: 0.6;
+      z-index: -1;
+      animation: float 6s ease-in-out infinite;
+      display: none; /* Hidden on mobile by default */
+    }
+
+    /* Media Queries */
     @media (min-width: 768px) {
       .login-box {
         padding: 40px 35px;
       }
-      .floating {
-        display: block;
+      
+      .login-box img {
+        width: 180px;
+        margin-bottom: 25px;
       }
+      
+      .login-box h2 {
+        font-size: 32px;
+        margin-bottom: 25px;
+      }
+      
+      .login-box input {
+        padding: 16px 20px;
+        font-size: 16px;
+      }
+      
+      .login-box button {
+        padding: 16px;
+        font-size: 18px;
+      }
+      
+      .signup-link {
+        font-size: 16px;
+        margin-top: 25px;
+      }
+      
+      .social-icon {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .social-icons {
+        gap: 20px;
+      }
+      
+      .floating {
+        display: block; /* Show decorative elements on larger screens */
+      }
+      
       .floating:nth-child(1) {
         top: 10%;
         left: 10%;
         width: 40px;
+        filter: drop-shadow(0 0 10px var(--electric-blue));
       }
+
       .floating:nth-child(2) {
         top: 70%;
         left: 80%;
         width: 60px;
+        filter: drop-shadow(0 0 10px var(--neon-pink));
         animation-delay: 1s;
       }
+
       .floating:nth-child(3) {
         top: 30%;
         left: 85%;
         width: 30px;
+        filter: drop-shadow(0 0 10px var(--acid-green));
         animation-delay: 2s;
       }
+
       .floating:nth-child(4) {
         top: 80%;
         left: 15%;
         width: 50px;
+        filter: drop-shadow(0 0 10px var(--sunshine));
         animation-delay: 3s;
       }
     }
@@ -302,14 +417,32 @@
       .login-box {
         padding: 25px 20px;
       }
+      
       .login-box h2 {
         font-size: 24px;
+      }
+      
+      .signup-link {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      body {
+        align-items: flex-start;
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+      
+      .login-box {
+        margin-top: 20px;
+        margin-bottom: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Decorative floating elements -->
+  <!-- Decorative floating elements (hidden on mobile) -->
   <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
   <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
   <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
@@ -346,96 +479,40 @@
     </div>
   </div>
 
-  <!-- Supabase Integration -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Initialize Supabase with your credentials
-    const supabaseUrl = 'https://vqkrcubtvblcsydpzatu.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxa3JjdWJ0dmJsY3N5ZHB6YXR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzE1MzksImV4cCI6MjA2ODI0NzUzOX0.J0CI6yWIG4hfC0Hl9j2ZxDGV11t_VQQup3NDkbSq5aU';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-    // Login form handler
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      
+
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-      const button = document.querySelector('button');
-      
-      // Original button state
-      const originalText = button.textContent;
-      const originalBg = button.style.background;
 
-      try {
-        button.textContent = "Signing in...";
-        button.disabled = true;
+      const storedEmail = localStorage.getItem("userEmail");
+      const storedPassword = localStorage.getItem("userPassword");
 
-        // Supabase sign-in
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-        if (error) throw error;
-
-        // Success
-        button.innerHTML = '✓ Welcome!';
-        button.style.background = 'linear-gradient(45deg, #A5FF00, #FFDE00)';
+      if (email === storedEmail && password === storedPassword) {
+        localStorage.setItem("isLoggedIn", "true");
         
-        // Redirect after delay
+        // Create a colorful success effect
+        const button = document.querySelector('button');
+        button.innerHTML = '✓ Welcome!';
+        button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
+        button.style.color = 'var(--black)';
+        
         setTimeout(() => {
           window.location.href = "dashboard.html";
         }, 1500);
-
-      } catch (error) {
-        console.error("Login error:", error.message);
-        button.innerHTML = '✗ Invalid Credentials';
-        button.style.background = 'linear-gradient(45deg, #FF00F5, #8A2BE2)';
+      } else {
+        // Create error effect
+        const button = document.querySelector('button');
+        button.innerHTML = '✗ Try Again';
+        button.style.background = 'linear-gradient(45deg, var(--neon-pink), var(--violet))';
         
-        // Reset button after delay
         setTimeout(() => {
-          button.innerHTML = originalText;
-          button.style.background = originalBg;
-          button.disabled = false;
-        }, 2000);
+          button.innerHTML = 'Login';
+          button.style.background = 'linear-gradient(45deg, var(--electric-blue), var(--violet))';
+        }, 1500);
       }
-    });
-
-    // Password reset handler
-    document.querySelector('.forgot-password').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = prompt('Enter your email to reset password:');
-      if (email) {
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) {
-          alert('Error: ' + error.message);
-        } else {
-          alert('Password reset link sent to your email!');
-        }
-      }
-    });
-
-    // Social logins
-    document.querySelector('.social-icon.google').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
-      if (error) console.error('Google login error:', error);
-    });
-
-    document.querySelector('.social-icon.facebook').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-      });
-      if (error) console.error('Facebook login error:', error);
-    });
-
-    document.querySelector('.social-icon.apple').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-      });
-      if (error) console.error('Apple login error:', error);
     });
   </script>
 </body>
-</html> 
+</html>
