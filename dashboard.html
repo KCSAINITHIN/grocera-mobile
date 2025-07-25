@@ -52,7 +52,6 @@
   }
 }
 
-
     .topbar {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: var(--white);
@@ -220,6 +219,19 @@
       margin: 5px 0;
     }
 
+    .product-card .original-price {
+      text-decoration: line-through;
+      color: var(--gray);
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .product-card .discount {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
     .product-card .unit {
       color: var(--gray);
       font-size: 12px;
@@ -313,6 +325,33 @@
 
     .scroll-container::-webkit-scrollbar {
       display: none;
+    }
+
+    .category-card {
+      min-width: 100px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding: 15px 10px;
+      flex-shrink: 0;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-card i {
+      font-size: 24px;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .category-card span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--dark);
     }
 
     .bottom-nav {
@@ -424,6 +463,149 @@
       background-color: #FF9800;
     }
 
+    /* Deal of the day */
+    .deal-of-day {
+      background: linear-gradient(135deg, #FF5252, #FF4081);
+      color: white;
+      padding: 15px;
+      margin: 15px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deal-content {
+      flex: 1;
+      z-index: 2;
+    }
+
+    .deal-tag {
+      background: white;
+      color: #FF5252;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .deal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .deal-desc {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .deal-price {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .deal-original-price {
+      text-decoration: line-through;
+      font-size: 14px;
+      opacity: 0.8;
+      margin-right: 8px;
+    }
+
+    .deal-discount {
+      background: white;
+      color: #FF5252;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .deal-image {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      z-index: 2;
+    }
+
+    .deal-bg {
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    /* Category grid */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 10px 15px;
+    }
+
+ .scroll-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f0fff0;
+    }
+
+    .category-card {
+      padding: 1rem;
+      background: white;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 100px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .category-card i {
+      font-size: 1.5rem;
+      color: #2ecc71;
+      margin-bottom: 0.5rem;
+    }
+
+    .grid-item {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .grid-item i {
+      font-size: 22px;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .grid-item span {
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .grid-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
     @media (max-width: 480px) {
       .product-card {
         min-width: 140px;
@@ -439,6 +621,10 @@
         font-size: 14px;
         padding: 10px 15px;
       }
+
+      .category-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>
 </head>
@@ -450,12 +636,54 @@
     <h1>GROCERA</h1>
   </div>
 
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search for groceries, fruits, vegetables...">
+  </div>
 
+  <!-- Categories -->
+  <h2 style="padding-left: 1rem;">Dashboard Categories</h2>
+  <div class="scroll-container">
+    <div class="category-card" onclick="redirectToCategory('fruits')">
+      <i class="fas fa-apple-alt"></i>
+      <span>Fruits</span>
+    </div>
+    <div class="category-card" onclick="redirectToCategory('vegetables')">
+      <i class="fas fa-carrot"></i>
+      <span>Vegetables</span>
+    </div>
+    <div class="category-card" onclick="redirectToCategory('beverages')">
+      <i class="fas fa-wine-bottle"></i>
+      <span>Beverages</span>
+    </div>
+    <div class="category-card" onclick="redirectToCategory('bakery')">
+      <i class="fas fa-bread-slice"></i>
+      <span>Bakery</span>
+    </div>
+    <div class="category-card" onclick="redirectToCategory('cleaning')">
+      <i class="fas fa-pump-soap"></i>
+      <span>Cleaning</span>
+    </div>
+    <div class="category-card" onclick="redirectToCategory('baby')">
+      <i class="fas fa-baby"></i>
+      <span>Baby Care</span>
+    </div>
+  </div>
 
-  <!-- Banner -->
-  <div class="highlight-banner">
-    <i class="fas fa-bolt"></i>
-    <span>Fast Delivery | Up to 30% Off on Fresh Items!</span>
+  <!-- Deal of the Day -->
+  <div class="deal-of-day">
+    <div class="deal-content">
+      <div class="deal-tag">DEAL OF THE DAY</div>
+      <div class="deal-title">Organic Avocados</div>
+      <div class="deal-desc">Premium quality, imported from Mexico</div>
+      <div class="deal-price">
+        <span class="deal-original-price">₹200</span>
+        ₹149 <span class="deal-discount">25% OFF</span>
+      </div>
+    </div>
+    <img src="avocado.png" class="deal-image" alt="Avocado">
+    <div class="deal-bg"></div>
   </div>
 
   <!-- Today's Deals -->
@@ -469,11 +697,12 @@
     <button class="carousel-nav left" onclick="moveCarousel(-1)"><i class="fas fa-chevron-left"></i></button>
     <div class="carousel-wrapper" id="dealsCarousel">
 
-      <div class="product-card" data-name="Watermelon" data-price="40" data-image="images/watermelon.jpg">
+      <div class="product-card" data-name="Watermelon" data-price="40" data-original-price="50" data-image="watermelon.jpeg">
         <div class="badge">20% OFF</div>
         <img src="watermelon.jpeg">
         <h4>Watermelon</h4>
-        <p class="price">₹40 <span class="unit">/kg</span></p>
+        <p class="price">₹40 <span class="original-price">₹50</span> <span class="discount">20% OFF</span></p>
+        <p class="unit">/kg</p>
         <div class="cart-buttons">
           <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
           <span>0</span>
@@ -481,11 +710,12 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Tomato" data-price="20" data-image="images/tomato.jpg">
+      <div class="product-card" data-name="Tomato" data-price="20" data-original-price="25" data-image="tomato.jpeg">
         <div class="badge">15% OFF</div>
         <img src="tomato.jpeg">
         <h4>Tomato</h4>
-        <p class="price">₹20 <span class="unit">/kg</span></p>
+        <p class="price">₹20 <span class="original-price">₹25</span> <span class="discount">15% OFF</span></p>
+        <p class="unit">/kg</p>
         <div class="cart-buttons">
           <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
           <span>0</span>
@@ -493,7 +723,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Red Apple" data-price="100" data-image="images/apple.jpg">
+      <div class="product-card" data-name="Red Apple" data-price="100" data-image="apple.jpeg">
         <div class="badge">BESTSELLER</div>
         <img src="apple.jpeg">
         <h4>Red Apple</h4>
@@ -505,7 +735,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Banana" data-price="45" data-image="images/banana.jpg">
+      <div class="product-card" data-name="Banana" data-price="45" data-image="banana.jpeg">
         <img src="banana.jpeg">
         <h4>Banana</h4>
         <p class="price">₹45 <span class="unit">/dozen</span></p>
@@ -516,7 +746,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Orange" data-price="60" data-image="images/orange.jpg">
+      <div class="product-card" data-name="Orange" data-price="60" data-image="orange.jpeg">
         <div class="badge">NEW</div>
         <img src="orange.jpeg">
         <h4>Orange</h4>
@@ -528,7 +758,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Grapes" data-price="80" data-image="images/grapes.jpg">
+      <div class="product-card" data-name="Grapes" data-price="80" data-image="grapes.jpeg">
         <img src="grapes.jpeg">
         <h4>Grapes</h4>
         <p class="price">₹80 <span class="unit">/kg</span></p>
@@ -539,11 +769,12 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Bread Loaf" data-price="30" data-image="images/bread.jpg">
+      <div class="product-card" data-name="Bread Loaf" data-price="30" data-original-price="35" data-image="bread.jpeg">
         <div class="badge">10% OFF</div>
         <img src="bread.jpeg">
         <h4>Bread Loaf</h4>
-        <p class="price">₹30 <span class="unit">/400g</span></p>
+        <p class="price">₹30 <span class="original-price">₹35</span> <span class="discount">10% OFF</span></p>
+        <p class="unit">/400g</p>
         <div class="cart-buttons">
           <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
           <span>0</span>
@@ -551,7 +782,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Milk 1L" data-price="55" data-image="images/milk.jpg">
+      <div class="product-card" data-name="Milk 1L" data-price="55" data-image="milk.jpeg">
         <img src="milk.jpeg">
         <h4>Milk (1L)</h4>
         <p class="price">₹55 <span class="unit">/pack</span></p>
@@ -562,7 +793,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Maggi 2-Min Noodles" data-price="14" data-image="images/maggi.jpg">
+      <div class="product-card" data-name="Maggi 2-Min Noodles" data-price="14" data-image="maggi.jpeg">
         <div class="badge">SAVER DEAL</div>
         <img src="maggi.jpeg">
         <h4>Maggi Noodles</h4>
@@ -574,7 +805,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Dishwash Liquid" data-price="99" data-image="images/dishwash.jpg">
+      <div class="product-card" data-name="Dishwash Liquid" data-price="99" data-image="dishwash.jpeg">
         <img src="dishwash.jpeg">
         <h4>Dishwash Liquid</h4>
         <p class="price">₹99 <span class="unit">/500ml</span></p>
@@ -585,7 +816,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Choco Bar Ice Cream" data-price="25" data-image="images/chocobar.jpg">
+      <div class="product-card" data-name="Choco Bar Ice Cream" data-price="25" data-image="chocobar.jpeg">
         <div class="badge">COOL DEAL</div>
         <img src="chocobar.jpeg">
         <h4>Choco Bar Ice Cream</h4>
@@ -597,7 +828,7 @@
         </div>
       </div>
 
-      <div class="product-card" data-name="Kitchen Tissue Roll" data-price="49" data-image="images/tissue.jpg">
+      <div class="product-card" data-name="Kitchen Tissue Roll" data-price="49" data-image="tissue.jpeg">
         <img src="tissue.jpeg">
         <h4>Kitchen Tissue Roll</h4>
         <p class="price">₹49 <span class="unit">/roll</span></p>
@@ -612,10 +843,11 @@
     <button class="carousel-nav right" onclick="moveCarousel(1)"><i class="fas fa-chevron-right"></i></button>
   </div>
 
+  
   <!-- Featured Products -->
   <h2 class="section-title">Featured Products</h2>
   <div class="scroll-container">
-    <div class="product-card" data-name="Basmati Rice" data-price="65" data-image="images/rice.jpg">
+    <div class="product-card" data-name="Basmati Rice" data-price="65" data-image="rice.jpeg">
       <img src="rice.jpeg">
       <h4>Basmati Rice</h4>
       <p class="price">₹65 <span class="unit">/kg</span></p>
@@ -626,11 +858,12 @@
       </div>
     </div>
     
-    <div class="product-card" data-name="Sunflower Oil" data-price="110" data-image="images/oil.jpg">
+    <div class="product-card" data-name="Sunflower Oil" data-price="110" data-original-price="130" data-image="oil.jpeg">
       <div class="badge">SAVE ₹20</div>
       <img src="oil.jpeg">
       <h4>Sunflower Oil</h4>
-      <p class="price">₹110 <span class="unit">/1L</span></p>
+      <p class="price">₹110 <span class="original-price">₹130</span> <span class="discount">15% OFF</span></p>
+      <p class="unit">/1L</p>
       <div class="cart-buttons">
         <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
         <span>0</span>
@@ -638,7 +871,7 @@
       </div>
     </div>
 
-    <div class="product-card" data-name="Buiscuits" data-price="50" data-image="images/buiscuits.jpg">
+    <div class="product-card" data-name="Buiscuits" data-price="50" data-image="buiscuits.jpeg">
       <img src="buiscuits.jpeg">
       <h4>Buiscuits</h4>
       <p class="price">₹50 <span class="unit">/pack of 8</span></p>
@@ -649,7 +882,7 @@
       </div>
     </div>
 
-    <div class="product-card" data-name="Lays" data-price="100" data-image="images/lays.jpeg">
+    <div class="product-card" data-name="Lays" data-price="100" data-image="lays.jpeg">
       <div class="badge">COMBO</div>
       <img src="lays.jpeg">
       <h4>Lays</h4>
@@ -661,7 +894,7 @@
       </div>
     </div>
 
-    <div class="product-card" data-name="Sugar Pack" data-price="40" data-image="images/sugar.jpg">
+    <div class="product-card" data-name="Sugar Pack" data-price="40" data-image="sugar.jpeg">
       <img src="sugar.jpeg">
       <h4>Sugar Pack</h4>
       <p class="price">₹40 <span class="unit">/kg</span></p>
@@ -671,16 +904,27 @@
         <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
       </div>
     </div>
+
+    <div class="product-card" data-name="Honey" data-price="199" data-image="honey.jpeg">
+      <div class="badge">PURE</div>
+      <img src="honey.jpeg">
+      <h4>Organic Honey</h4>
+      <p class="price">₹199 <span class="unit">/500g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
   </div>
 
-  <!-- Quick Accessories -->
-  <h2 class="section-title">Home Essentials</h2>
+  <!-- Dairy & Eggs -->
+  <h2 class="section-title">Dairy & Eggs</h2>
   <div class="scroll-container">
-    <div class="product-card" data-name="Floor Mop" data-price="199" data-image="images/mop.jpg">
-      <div class="badge">BEST VALUE</div>
-      <img src="mop.jpeg">
-      <h4>Floor Mop</h4>
-      <p class="price">₹1999 <span class="unit">/piece</span></p>
+    <div class="product-card" data-name="Eggs" data-price="60" data-image="eggs.jpeg">
+      <img src="eggs.jpeg">
+      <h4>Farm Eggs</h4>
+      <p class="price">₹60 <span class="unit">/dozen</span></p>
       <div class="cart-buttons">
         <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
         <span>0</span>
@@ -688,7 +932,126 @@
       </div>
     </div>
     
-    <div class="product-card" data-name="Sponge Wipe" data-price="49" data-image="images/sponge.jpg">
+    <div class="product-card" data-name="Paneer" data-price="90" data-image="paneer.jpeg">
+      <img src="paneer.jpeg">
+      <h4>Fresh Paneer</h4>
+      <p class="price">₹90 <span class="unit">/200g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Butter" data-price="50" data-image="butter.jpeg">
+      <img src="butter.jpeg">
+      <h4>Amul Butter</h4>
+      <p class="price">₹50 <span class="unit">/100g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Cheese" data-price="120" data-image="cheese.jpeg">
+      <img src="cheese.jpeg">
+      <h4>Cheese Slice</h4>
+      <p class="price">₹120 <span class="unit">/200g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Yogurt" data-price="35" data-image="yogurt.jpeg">
+      <img src="greek-yogurt.jpeg">
+      <h4>Yogurt</h4>
+      <p class="price">₹35 <span class="unit">/400g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Beverages -->
+  <h2 class="section-title">Beverages</h2>
+  <div class="scroll-container">
+    <div class="product-card" data-name="Coca Cola" data-price="45" data-image="coke.jpeg">
+      <img src="coca-cola.jpeg">
+      <h4>Coca Cola</h4>
+      <p class="price">₹45 <span class="unit">/750ml</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+    
+    <div class="product-card" data-name="Orange Juice" data-price="80" data-image="juice.jpeg">
+      <img src="orange-juice.jpeg">
+      <h4>Orange Juice</h4>
+      <p class="price">₹80 <span class="unit">/1L</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Tea Bags" data-price="120" data-image="tea.jpeg">
+      <img src="green-tea.jpeg">
+      <h4>Tea Bags</h4>
+      <p class="price">₹120 <span class="unit">/25 bags</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Coffee Powder" data-price="180" data-image="coffee.jpeg">
+      <img src="coffee.jpeg">
+      <h4>Coffee</h4>
+      <p class="price">₹180 <span class="unit">/200g</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="product-card" data-name="Mineral Water" data-price="20" data-image="water.jpeg">
+      <img src="water.jpeg">
+      <h4>Mineral Water</h4>
+      <p class="price">₹20 <span class="unit">/1L</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Essentials -->
+  <h2 class="section-title">Home Essentials</h2>
+  <div class="scroll-container">
+    <div class="product-card" data-name="Floor Mop" data-price="199" data-image="mop.jpeg">
+      <div class="badge">BEST VALUE</div>
+      <img src="mop.jpeg">
+      <h4>Floor Mop</h4>
+      <p class="price">₹199 <span class="unit">/piece</span></p>
+      <div class="cart-buttons">
+        <button class="remove-btn" onclick="removeFromCart(this)"><i class="fas fa-minus"></i></button>
+        <span>0</span>
+        <button class="add-btn" onclick="addToCart(this)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+    
+    <div class="product-card" data-name="Sponge Wipe" data-price="49" data-image="sponge.jpeg">
       <img src="sponge.jpeg">
       <h4>Sponge Wipe</h4>
       <p class="price">₹49 <span class="unit">/pack of 2</span></p>
@@ -699,7 +1062,7 @@
       </div>
     </div>
 
-    <div class="product-card" data-name="Duster Cloth" data-price="30" data-image="images/duster.jpg">
+    <div class="product-card" data-name="Duster Cloth" data-price="30" data-image="duster.jpeg">
       <img src="duster.jpeg">
       <h4>Duster Cloth</h4>
       <p class="price">₹30 <span class="unit">/piece</span></p>
@@ -710,7 +1073,7 @@
       </div>
     </div>
     
-    <div class="product-card" data-name="Laundry Basket" data-price="249" data-image="images/basket.jpg">
+    <div class="product-card" data-name="Laundry Basket" data-price="249" data-image="basket.jpeg">
       <img src="basket.jpeg">
       <h4>Laundry Basket</h4>
       <p class="price">₹249 <span class="unit">/piece</span></p>
@@ -721,7 +1084,7 @@
       </div>
     </div>
     
-    <div class="product-card" data-name="Trash Bags" data-price="89" data-image="images/trashbag.jpg">
+    <div class="product-card" data-name="Trash Bags" data-price="89" data-image="trash-bags.jpeg">
       <div class="badge">PACK OF 10</div>
       <img src="trash-bags.jpeg">
       <h4>Trash Bags</h4>
@@ -748,7 +1111,7 @@
       <i class="fas fa-shopping-cart"></i>
       <span>Cart</span>
     </a>
-    <a href="payment.html" class="nav-item">
+    <a href="payment.html" class="nav-item ">
       <i class="fas fa-credit-card"></i>
       <span>Payment</span>
     </a>
@@ -875,6 +1238,11 @@
       });
       updateCartCount();
     }
+
+function redirectToCategory(category) {
+  window.location.href = "categories.html?category=" + category;
+}
+
 
     // Initialize on load
     window.onload = function() {
