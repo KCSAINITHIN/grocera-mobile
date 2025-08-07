@@ -788,7 +788,7 @@
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
       authDomain: "grocera-nithin.firebaseapp.com",
       projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.firebasestorage.app",
+      storageBucket: "grocera-nithin.appspot.com",
       messagingSenderId: "824896008507",
       appId: "1:824896008507:web:136d071d696f9ff190071e"
     };
@@ -804,9 +804,9 @@
       
       if (user) {
         // User is signed in
-        document.getElementById("username").innerText = user.displayName || localStorage.getItem("userName") || "Guest";
-        document.getElementById("useremail").innerText = user.email || "N/A";
-        document.getElementById("usermobile").innerText = localStorage.getItem("userMobile") || "N/A";
+        document.getElementById("username").textContent = user.displayName || localStorage.getItem("userName") || "Guest";
+        document.getElementById("useremail").textContent = user.email || "N/A";
+        document.getElementById("usermobile").textContent = localStorage.getItem("userMobile") || "N/A";
         
         updateAddressDisplay();
         
@@ -824,7 +824,7 @@
 
     function updateAddressDisplay() {
       const addressDisplay = document.getElementById("addressDisplay");
-      
+      const savedAddress = localStorage.getItem("userAddress");
       
       if (savedAddress) {
         const formattedAddress = savedAddress
@@ -870,4 +870,3 @@
   </script>
 </body>
 </html>
-
