@@ -817,14 +817,14 @@
         // No user is signed in
         loading.innerHTML = '<i class="fas fa-exclamation-circle"></i> Redirecting to login...';
         setTimeout(() => {
-          window.location.href = "login.html";
+          window.location.href = "index.html";
         }, 1500);
       }
     });
 
     function updateAddressDisplay() {
       const addressDisplay = document.getElementById("addressDisplay");
-      const savedAddress = localStorage.getItem("deliveryAddress");
+      
       
       if (savedAddress) {
         const formattedAddress = savedAddress
@@ -870,3 +870,4 @@
   </script>
 </body>
 </html>
+
