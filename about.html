@@ -67,61 +67,59 @@
       z-index: 100;
     }
 
-.background-blobs {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-}
+    .background-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.15;
-  animation: float 20s infinite ease-in-out;
-}
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+    }
 
-.blob1 {
-  width: 300px;
-  height: 300px;
-  background: var(--peach-fuzz);
-  top: 10%;
-  left: -10%;
-  animation-delay: 0s;
-}
+    .blob1 {
+      width: 300px;
+      height: 300px;
+      background: var(--peach-fuzz);
+      top: 10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
 
-.blob2 {
-  width: 400px;
-  height: 400px;
-  background: var(--lavender-mist);
-  bottom: -20%;
-  right: -15%;
-  animation-delay: 5s;
-}
+    .blob2 {
+      width: 400px;
+      height: 400px;
+      background: var(--lavender-mist);
+      bottom: -20%;
+      right: -15%;
+      animation-delay: 5s;
+    }
 
-.blob3 {
-  width: 250px;
-  height: 250px;
-  background: var(--mint-fresh);
-  top: 50%;
-  left: 50%;
-  animation-delay: 10s;
-}
+    .blob3 {
+      width: 250px;
+      height: 250px;
+      background: var(--mint-fresh);
+      top: 50%;
+      left: 50%;
+      animation-delay: 10s;
+    }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-30px) scale(1.05);
-  }
-}
-
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-30px) scale(1.05);
+      }
+    }
 
     .logo-container {
       display: flex;
@@ -500,44 +498,44 @@
 
     /* Bottom Navigation */
     .bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  background: #fff8e1;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  padding: 12px 0;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  border-top: 1px solid #ffe082;
-}
+      display: flex;
+      justify-content: space-around;
+      background: #fff8e1;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 12px 0;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      border-top: 1px solid #ffe082;
+    }
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: #f57c00;
-  font-size: 11px;
-  transition: all 0.2s;
-  padding: 4px 8px;
-  border-radius: 8px;
-}
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #f57c00;
+      font-size: 11px;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
 
-.nav-item i {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
+    .nav-item i {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
 
-.nav-item.active {
-  color: white;
-  background: #f57c00;
-}
+    .nav-item.active {
+      color: white;
+      background: #f57c00;
+    }
 
-.nav-item:hover {
-  color: #ef6c00;
-  transform: translateY(-2px);
-}
+    .nav-item:hover {
+      color: #ef6c00;
+      transform: translateY(-2px);
+    }
 
     /* Text Content */
     p {
@@ -582,12 +580,11 @@
       </div>
     </div>
 
-<div class="background-blobs">
-  <div class="blob blob1"></div>
-  <div class="blob blob2"></div>
-  <div class="blob blob3"></div>
-</div>
-
+    <div class="background-blobs">
+      <div class="blob blob1"></div>
+      <div class="blob blob2"></div>
+      <div class="blob blob3"></div>
+    </div>
 
     <div class="container">
       <!-- User Profile Card -->
