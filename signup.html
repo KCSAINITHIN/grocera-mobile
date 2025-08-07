@@ -305,6 +305,43 @@
         margin-bottom: 20px;
       }
     }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--pink);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -330,6 +367,14 @@
     
     <div class="login-link">
       Already have an account? <a href="index.html">Login</a>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <h3 id="loadingText">Creating your account...</h3>
     </div>
   </div>
 
@@ -362,6 +407,8 @@
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const button = document.getElementById("signupButton");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      const loadingText = document.getElementById("loadingText");
 
       // Validate inputs
       if (name.length < 3) {
@@ -386,9 +433,10 @@
         return;
       }
 
-      // Update button state
-      button.innerHTML = 'Creating Account...';
-      button.style.background = 'linear-gradient(45deg, var(--purple), var(--blue))';
+      // Show loading overlay
+      loadingOverlay.style.display = 'flex';
+      loadingText.textContent = 'Creating your account...';
+      button.disabled = true;
 
       // Create user with Firebase Auth
       auth.createUserWithEmailAndPassword(email, password)
@@ -405,7 +453,14 @@
           });
         })
         .then(() => {
-          // Success
+          // Save to localStorage for immediate access
+          localStorage.setItem("userName", name);
+          localStorage.setItem("userMobile", mobile);
+          localStorage.setItem("userEmail", email);
+          localStorage.setItem("isLoggedIn", "true");
+          
+          // Update UI
+          loadingText.textContent = 'Account created successfully!';
           button.innerHTML = '✓ Account Created!';
           button.style.background = 'linear-gradient(45deg, var(--mango), var(--orange))';
           
@@ -418,15 +473,21 @@
           const errorCode = error.code;
           const errorMessage = error.message;
           
-          // Error effect
-          button.innerHTML = '✗ ' + getFriendlyError(errorCode);
-          button.style.background = 'linear-gradient(45deg, var(--pink), var(--orange))';
+          // Hide loading overlay
+          loadingOverlay.style.display = 'none';
+          button.disabled = false;
           
-          // Reset button after delay
-          setTimeout(() => {
-            button.innerHTML = 'Create Account';
-            button.style.background = 'linear-gradient(45deg, var(--pink), var(--purple))';
-          }, 3000);
+          // Handle specific errors
+          if (errorCode === 'auth/email-already-in-use') {
+            alert('This email is already registered. Please login instead.');
+            window.location.href = "index.html";
+          } else if (errorCode === 'auth/invalid-email') {
+            alert('Please enter a valid email address.');
+          } else if (errorCode === 'auth/weak-password') {
+            alert('Password should be at least 6 characters.');
+          } else {
+            alert('Error: ' + errorMessage);
+          }
         });
     });
 
@@ -453,22 +514,6 @@
         strengthMeter.style.background = '#33cc33';
       }
     });
-
-    // Helper function to convert Firebase error codes to friendly messages
-    function getFriendlyError(errorCode) {
-      switch(errorCode) {
-        case 'auth/email-already-in-use':
-          return 'Email already in use';
-        case 'auth/invalid-email':
-          return 'Invalid email format';
-        case 'auth/weak-password':
-          return 'Password too weak';
-        case 'auth/operation-not-allowed':
-          return 'Operation not allowed';
-        default:
-          return 'Signup failed';
-      }
-    }
   </script>
 </body>
 </html>
