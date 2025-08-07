@@ -456,7 +456,7 @@
       <input type="email" id="email" placeholder="Email Address" required>
       <input type="password" id="password" placeholder="Password" required>
       <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
-      <button type="submit">Login</button>
+      <button type="submit" id="loginButton">Login</button>
     </form>
     
     <div class="social-login">
@@ -479,19 +479,11 @@
     </div>
   </div>
 
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      sendPasswordResetEmail,
-      GoogleAuthProvider,
-      FacebookAuthProvider,
-      OAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
+  <script>
     // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
@@ -503,8 +495,8 @@
     };
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
     // Email/Password Login
     document.getElementById("loginForm").addEventListener("submit", function(e) {
@@ -512,14 +504,14 @@
       
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-      const button = document.querySelector('button');
+      const button = document.getElementById("loginButton");
       
       // Original button state
       button.innerHTML = 'Authenticating...';
       button.style.background = 'linear-gradient(45deg, var(--violet), var(--electric-blue))';
       
       // Firebase email/password authentication
-      signInWithEmailAndPassword(auth, email, password)
+      auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
@@ -550,31 +542,13 @@
         });
     });
 
-    // Google Login
-    document.getElementById("googleLogin").addEventListener("click", function() {
-      const provider = new GoogleAuthProvider();
-      socialLogin(provider);
-    });
-
-    // Facebook Login
-    document.getElementById("facebookLogin").addEventListener("click", function() {
-      const provider = new FacebookAuthProvider();
-      socialLogin(provider);
-    });
-
-    // Apple Login
-    document.getElementById("appleLogin").addEventListener("click", function() {
-      const provider = new OAuthProvider('apple.com');
-      socialLogin(provider);
-    });
-
     // Forgot Password
     document.getElementById("forgotPassword").addEventListener("click", function(e) {
       e.preventDefault();
       const email = prompt("Please enter your email address to reset your password:");
       
       if (email) {
-        sendPasswordResetEmail(auth, email)
+        auth.sendPasswordResetEmail(email)
           .then(() => {
             alert("Password reset email sent. Please check your inbox.");
           })
@@ -583,25 +557,6 @@
           });
       }
     });
-
-    // Helper function for social logins
-    function socialLogin(provider) {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          // Successful login
-          const button = document.querySelector('button');
-          button.innerHTML = '✓ Welcome!';
-          button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
-          button.style.color = 'var(--black)';
-          
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1500);
-        })
-        .catch((error) => {
-          alert("Login failed: " + getFriendlyError(error.code));
-        });
-    }
 
     // Helper function to convert Firebase error codes to friendly messages
     function getFriendlyError(errorCode) {
