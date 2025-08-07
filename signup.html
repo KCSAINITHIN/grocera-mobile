@@ -315,7 +315,7 @@
   <img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
 
   <div class="signup-box">
-     <img src="logo.png" alt="GROCERA Logo">
+    <img src="logo.png" alt="GROCERA Logo">
     <h2>Join GROCERA</h2>
     <form id="signupForm">
       <input type="text" id="name" placeholder="Full Name" required>
@@ -325,7 +325,7 @@
       <div class="password-strength">
         <div class="strength-meter" id="strengthMeter"></div>
       </div>
-      <button type="submit">Create Account</button>
+      <button type="submit" id="signupButton">Create Account</button>
     </form>
     
     <div class="login-link">
@@ -333,15 +333,37 @@
     </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
   <script>
-    document.getElementById("signupForm").addEventListener("submit", function (e) {
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+      authDomain: "grocera-nithin.firebaseapp.com",
+      projectId: "grocera-nithin",
+      storageBucket: "grocera-nithin.firebasestorage.app",
+      messagingSenderId: "824896008507",
+      appId: "1:824896008507:web:136d071d696f9ff190071e"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
       const mobile = document.getElementById("mobile").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
+      const button = document.getElementById("signupButton");
 
+      // Validate inputs
       if (name.length < 3) {
         alert("Name must be at least 3 characters.");
         return;
@@ -364,20 +386,48 @@
         return;
       }
 
-      // Save to localStorage
-      localStorage.setItem("userName", name);
-      localStorage.setItem("userMobile", mobile);
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPassword", password);
+      // Update button state
+      button.innerHTML = 'Creating Account...';
+      button.style.background = 'linear-gradient(45deg, var(--purple), var(--blue))';
 
-      // Create a colorful success effect
-      const button = document.querySelector('button');
-      button.innerHTML = '✓ Account Created!';
-      button.style.background = 'linear-gradient(45deg, var(--mango), var(--orange))';
-      
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1500);
+      // Create user with Firebase Auth
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          
+          // Save additional user data to Firestore
+          return db.collection("users").doc(user.uid).set({
+            name: name,
+            mobile: mobile,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(() => {
+          // Success
+          button.innerHTML = '✓ Account Created!';
+          button.style.background = 'linear-gradient(45deg, var(--mango), var(--orange))';
+          
+          // Redirect after delay
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1500);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          
+          // Error effect
+          button.innerHTML = '✗ ' + getFriendlyError(errorCode);
+          button.style.background = 'linear-gradient(45deg, var(--pink), var(--orange))';
+          
+          // Reset button after delay
+          setTimeout(() => {
+            button.innerHTML = 'Create Account';
+            button.style.background = 'linear-gradient(45deg, var(--pink), var(--purple))';
+          }, 3000);
+        });
     });
 
     // Password strength indicator
@@ -393,7 +443,32 @@
       if (/[^A-Za-z0-9]/.test(password)) strength += 20;
       
       strengthMeter.style.width = strength + '%';
+      
+      // Update color based on strength
+      if (strength < 40) {
+        strengthMeter.style.background = '#ff0000';
+      } else if (strength < 80) {
+        strengthMeter.style.background = '#ff9900';
+      } else {
+        strengthMeter.style.background = '#33cc33';
+      }
     });
+
+    // Helper function to convert Firebase error codes to friendly messages
+    function getFriendlyError(errorCode) {
+      switch(errorCode) {
+        case 'auth/email-already-in-use':
+          return 'Email already in use';
+        case 'auth/invalid-email':
+          return 'Invalid email format';
+        case 'auth/weak-password':
+          return 'Password too weak';
+        case 'auth/operation-not-allowed':
+          return 'Operation not allowed';
+        default:
+          return 'Signup failed';
+      }
+    }
   </script>
 </body>
 </html>
