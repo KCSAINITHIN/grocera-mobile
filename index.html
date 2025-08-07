@@ -146,6 +146,11 @@
       box-sizing: border-box;
     }
 
+    .login-box button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .login-box button::before {
       content: '';
       position: absolute;
@@ -162,7 +167,7 @@
       transition: all 0.5s ease;
     }
 
-    .login-box button:hover {
+    .login-box button:hover:not(:disabled) {
       background: linear-gradient(45deg, var(--violet), var(--electric-blue));
       box-shadow: 
         0 8px 25px rgba(138, 43, 226, 0.6),
@@ -170,11 +175,11 @@
       transform: translateY(-3px);
     }
 
-    .login-box button:hover::before {
+    .login-box button:hover:not(:disabled)::before {
       left: 100%;
     }
 
-    .login-box button:active {
+    .login-box button:active:not(:disabled) {
       transform: translateY(1px);
     }
 
@@ -337,6 +342,22 @@
       display: none;
     }
 
+    /* Debug console */
+    .debug-console {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00ff00;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 150px;
+      overflow-y: auto;
+      display: none;
+    }
+
     /* Media Queries */
     @media (min-width: 768px) {
       .login-box {
@@ -479,11 +500,30 @@
     </div>
   </div>
 
+  <!-- Debug console (toggle with Ctrl+Shift+D) -->
+  <div class="debug-console" id="debugConsole"></div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
   <script>
+    // Debugging functions
+    function debugLog(message) {
+      const consoleElement = document.getElementById('debugConsole');
+      consoleElement.innerHTML += `${new Date().toLocaleTimeString()}: ${message}<br>`;
+      consoleElement.scrollTop = consoleElement.scrollHeight;
+      console.log(message);
+    }
+
+    // Toggle debug console with Ctrl+Shift+D
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        const consoleElement = document.getElementById('debugConsole');
+        consoleElement.style.display = consoleElement.style.display === 'block' ? 'none' : 'block';
+      }
+    });
+
     // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
@@ -495,92 +535,134 @@
     };
 
     // Initialize Firebase
+    debugLog("Initializing Firebase...");
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    debugLog("Firebase initialized successfully");
+
+    // Check Firebase auth state
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        debugLog(`User already signed in: ${user.email}`);
+      } else {
+        debugLog("No user currently signed in");
+      }
+    });
 
     // Email/Password Login
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const button = document.getElementById("loginButton");
       
-      // Original button state
-      button.innerHTML = 'Authenticating...';
-      button.style.background = 'linear-gradient(45deg, var(--violet), var(--electric-blue))';
+      debugLog(`Attempting login with email: ${email}`);
       
-      // Firebase email/password authentication
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          
-          // Success effect
-          button.innerHTML = '✓ Welcome!';
-          button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
-          button.style.color = 'var(--black)';
-          
-          // Redirect after delay
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1500);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          
-          // Error effect
-          button.innerHTML = '✗ ' + getFriendlyError(errorCode);
-          button.style.background = 'linear-gradient(45deg, var(--neon-pink), var(--violet))';
-          
-          // Reset button after delay
-          setTimeout(() => {
-            button.innerHTML = 'Login';
-            button.style.background = 'linear-gradient(45deg, var(--electric-blue), var(--violet))';
-          }, 3000);
-        });
+      // Disable button during authentication
+      button.innerHTML = 'Authenticating...';
+      button.disabled = true;
+      
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        debugLog(`Login successful for user: ${user.email}`);
+        
+        // Success effect
+        button.innerHTML = '✓ Welcome!';
+        button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
+        button.style.color = 'var(--black)';
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      } catch (error) {
+        debugLog(`Login error: ${error.code} - ${error.message}`);
+        const errorMessage = getFriendlyError(error.code);
+        
+        // Error effect
+        button.innerHTML = '✗ ' + errorMessage;
+        button.style.background = 'linear-gradient(45deg, var(--neon-pink), var(--violet))';
+        
+        // Show detailed error to user
+        alert(`Error: ${errorMessage}\n\nDetails: ${error.message}`);
+        
+        // Reset button after delay
+        setTimeout(() => {
+          button.innerHTML = 'Login';
+          button.style.background = 'linear-gradient(45deg, var(--electric-blue), var(--violet))';
+          button.disabled = false;
+        }, 3000);
+      }
     });
 
     // Forgot Password
-    document.getElementById("forgotPassword").addEventListener("click", function(e) {
+    document.getElementById("forgotPassword").addEventListener("click", async function(e) {
       e.preventDefault();
       const email = prompt("Please enter your email address to reset your password:");
       
       if (email) {
-        auth.sendPasswordResetEmail(email)
-          .then(() => {
-            alert("Password reset email sent. Please check your inbox.");
-          })
-          .catch((error) => {
-            alert("Error: " + getFriendlyError(error.code));
-          });
+        debugLog(`Attempting password reset for email: ${email}`);
+        try {
+          await auth.sendPasswordResetEmail(email);
+          debugLog("Password reset email sent successfully");
+          alert("Password reset email sent. Please check your inbox.");
+        } catch (error) {
+          debugLog(`Password reset error: ${error.code} - ${error.message}`);
+          alert(`Error: ${getFriendlyError(error.code)}\n\nDetails: ${error.message}`);
+        }
       }
     });
 
-    // Helper function to convert Firebase error codes to friendly messages
+    // Enhanced error handling
     function getFriendlyError(errorCode) {
-      switch(errorCode) {
-        case 'auth/invalid-email':
-          return 'Invalid email format';
-        case 'auth/user-disabled':
-          return 'Account disabled';
-        case 'auth/user-not-found':
-          return 'User not found';
-        case 'auth/wrong-password':
-          return 'Incorrect password';
-        case 'auth/too-many-requests':
-          return 'Too many attempts. Try again later';
-        case 'auth/account-exists-with-different-credential':
-          return 'Account already exists with different method';
-        case 'auth/popup-closed-by-user':
-          return 'Login popup was closed';
-        case 'auth/cancelled-popup-request':
-          return 'Login cancelled';
-        default:
-          return 'Login failed';
-      }
+      const errorMap = {
+        // Authentication errors
+        'auth/invalid-email': 'Invalid email address format',
+        'auth/user-disabled': 'This account has been disabled',
+        'auth/user-not-found': 'No account found with this email',
+        'auth/wrong-password': 'Incorrect password',
+        'auth/too-many-requests': 'Too many attempts. Please try again later',
+        'auth/operation-not-allowed': 'Email/password login is not enabled',
+        'auth/email-already-in-use': 'Email already in use',
+        'auth/weak-password': 'Password should be at least 6 characters',
+        'auth/invalid-credential': 'Invalid login credentials',
+        'auth/account-exists-with-different-credential': 'Account already exists with different method',
+        
+        // Network errors
+        'auth/network-request-failed': 'Network error. Please check your internet connection',
+        
+        // Other errors
+        'auth/popup-closed-by-user': 'Login popup was closed',
+        'auth/cancelled-popup-request': 'Login cancelled',
+        'auth/invalid-user-token': 'Session expired. Please login again',
+        'auth/user-token-expired': 'Session expired. Please login again',
+        'auth/null-user': 'No user is currently signed in',
+        'auth/app-not-authorized': 'Application not authorized',
+        'auth/invalid-api-key': 'Invalid API key',
+        'auth/requires-recent-login': 'Please login again to perform this action'
+      };
+      
+      return errorMap[errorCode] || `An error occurred (${errorCode})`;
     }
+
+    // Social login handlers (placeholder - you'll need to implement these)
+    document.getElementById("facebookLogin").addEventListener("click", () => {
+      debugLog("Facebook login clicked - not implemented");
+      alert("Facebook login is not yet implemented");
+    });
+
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      debugLog("Google login clicked - not implemented");
+      alert("Google login is not yet implemented");
+    });
+
+    document.getElementById("appleLogin").addEventListener("click", () => {
+      debugLog("Apple login clicked - not implemented");
+      alert("Apple login is not yet implemented");
+    });
   </script>
 </body>
 </html>
