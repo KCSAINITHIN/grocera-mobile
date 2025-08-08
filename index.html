@@ -48,7 +48,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
+      background: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
       background-size: cover;
       opacity: 0.3;
       z-index: -1;
@@ -864,10 +864,10 @@
     }
 
     // Update UI with user data
-    function updateUI(user) {
+    function updateUI(user, showWelcomeMessage = false) {
       if (user) {
         // User is logged in
-        const displayName = user.displayName || localStorage.getItem('userName') || 'User';
+        const displayName = user.displayName || 'User';
         const email = user.email || '';
         
         userName.textContent = displayName;
@@ -876,12 +876,18 @@
         
         if (user.photoURL) {
           userAvatar.src = user.photoURL;
+        } else {
+          userAvatar.src = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
         }
         
         toggleViews(true);
-        showNotification('Logged in successfully');
+        if (showWelcomeMessage) {
+          showNotification('Logged in successfully');
+        }
       } else {
         // User is logged out
+        userName.textContent = 'Guest';
+        userAvatar.src = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
         toggleViews(false);
       }
     }
@@ -914,17 +920,22 @@
               if (doc.exists) {
                 const userData = doc.data();
                 if (userData.name) {
-                  localStorage.setItem('userName', userData.name);
+                  // Update display name if available in Firestore
+                  return user.updateProfile({
+                    displayName: userData.name
+                  }).then(() => {
+                    updateUI(user, true); // Show welcome message
+                  });
+                } else {
+                  updateUI(user, true); // Show welcome message
                 }
+              } else {
+                updateUI(user, true); // Show welcome message
               }
-              return user;
             })
-            .catch(() => user); // Fallback to basic user info if Firestore fails
-        })
-        .then((user) => {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userEmail', user.email || '');
-          updateUI(user);
+            .catch(() => {
+              updateUI(user, true); // Show welcome message even if Firestore fails
+            });
         })
         .catch((error) => {
           console.error('Login error:', error);
@@ -1073,18 +1084,7 @@
       auth.signInWithPopup(authProvider)
         .then((result) => {
           const user = result.user;
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userEmail', user.email || '');
-          
-          if (user.displayName) {
-            localStorage.setItem('userName', user.displayName);
-          }
-          
-          if (user.photoURL) {
-            userAvatar.src = user.photoURL;
-          }
-          
-          updateUI(user);
+          updateUI(user, true); // Show welcome message
         })
         .catch((error) => {
           console.error('Social login error:', error);
@@ -1100,9 +1100,6 @@
     logoutButton.addEventListener('click', function() {
       auth.signOut()
         .then(() => {
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('userName');
-          localStorage.removeItem('userEmail');
           updateUI(null);
           showNotification('Logged out successfully');
         })
@@ -1120,19 +1117,24 @@
       auth.onAuthStateChanged((user) => {
         if (user) {
           // User is signed in
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userEmail', user.email || '');
-          
           // Try to get user data (works offline if previously cached)
           db.collection('users').doc(user.uid).get()
             .then((doc) => {
               if (doc.exists) {
                 const userData = doc.data();
                 if (userData.name) {
-                  localStorage.setItem('userName', userData.name);
+                  // Update display name if available in Firestore
+                  user.updateProfile({
+                    displayName: userData.name
+                  }).then(() => {
+                    updateUI(user);
+                  });
+                } else {
+                  updateUI(user);
                 }
+              } else {
+                updateUI(user);
               }
-              updateUI(user);
             })
             .catch(() => {
               // Still update UI with basic user info if Firestore fails
@@ -1140,9 +1142,6 @@
             });
         } else {
           // User is signed out
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('userName');
-          localStorage.removeItem('userEmail');
           updateUI(null);
         }
       });
