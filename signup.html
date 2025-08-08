@@ -414,7 +414,7 @@
     <div class="auth-container">
       <div class="signup-box">
         <div class="signup-header">
-          <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="GROCERA Logo">
+          <img src="logo.png" alt="GROCERA Logo">
           <h2>Join GROCERA</h2>
           <p>Create your account to start shopping</p>
         </div>
@@ -663,8 +663,8 @@
           .then(() => {
             showNotification('Account created successfully! Please login', true);
             setTimeout(() => {
-              window.location.href = 'login.html';
-            }, 2000);
+              window.location.href = 'index.html';
+            }, 4000);
           });
         })
         .catch((error) => {
@@ -709,7 +709,7 @@
       auth.onAuthStateChanged((user) => {
         if (user) {
           // User is signed in, redirect to dashboard
-          window.location.href = 'dashboard.html';
+          window.location.href = 'index.html';
         }
       });
     }
@@ -719,3 +719,4 @@
   </script>
 </body>
 </html>
+
