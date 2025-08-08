@@ -2,42 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - GROCERA</title>
+  <title>GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
+      --mango: #FFBE0B;
+      --orange: #FB5607;
+      --pink: #FF006E;
+      --purple: #8338EC;
       --electric-blue: #00F5FF;
       --neon-pink: #FF00F5;
       --acid-green: #A5FF00;
       --violet: #8A2BE2;
       --sunshine: #FFDE00;
-      --white: rgba(255, 255, 255, 0.9);
+      --white: #FFFFFF;
       --black: #121212;
-      --glass: rgba(20, 20, 20, 0.6);
-      --error: #FF4D4D;
+      --glass: rgba(255, 255, 255, 0.15);
+      --error: #ff4d4d;
+      --success: #4BB543;
+      --dark-glass: rgba(20, 20, 20, 0.6);
     }
-    
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
       font-family: 'Poppins', sans-serif;
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-        url('https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80') no-repeat center center fixed;
-      background-size: cover;
+      background: var(--black);
+      color: var(--white);
       min-height: 100vh;
-      padding: 20px;
+      transition: all 0.4s ease;
+      overflow-x: hidden;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: var(--white);
+      z-index: 1000;
+      transition: opacity 0.4s ease;
     }
 
-    .login-container {
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-content {
+      background: rgba(30, 30, 30, 0.9);
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      border-top: 4px solid var(--pink);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      max-width: 300px;
+      width: 90%;
+    }
+
+    .spinner {
+      border: 5px solid rgba(255, 255, 255, 0.1);
+      border-top: 5px solid var(--pink);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      background: var(--success);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notification.error {
+      background: var(--error);
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.85);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--pink), var(--orange), var(--mango));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--pink);
+      box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+    }
+
+    /* Auth Container */
+    .auth-container {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Login Form */
+    .login-box {
       width: 100%;
       max-width: 420px;
-      background: var(--glass);
+      background: var(--dark-glass);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-radius: 16px;
@@ -46,9 +185,19 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      transform: scale(0.95);
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
     }
 
-    .login-container::before {
+    @keyframes fadeIn {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .login-box::before {
       content: '';
       position: absolute;
       top: -50%;
@@ -58,10 +207,6 @@
       background: radial-gradient(circle, rgba(0,245,255,0.1) 0%, transparent 70%);
       z-index: -1;
       animation: rotate 20s linear infinite;
-    }
-
-    @keyframes rotate {
-      100% { transform: rotate(360deg); }
     }
 
     .login-header {
@@ -122,7 +267,7 @@
       background: rgba(20, 20, 20, 0.6);
     }
 
-    .input-container .input-icon {
+    .input-icon {
       position: absolute;
       right: 15px;
       top: 50%;
@@ -136,68 +281,6 @@
       font-size: 12px;
       margin-top: 5px;
       display: none;
-    }
-
-    #togglePassword {
-      transition: all 0.3s ease;
-    }
-
-    #togglePassword:hover {
-      color: var(--electric-blue);
-    }
-
-    .login-btn {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(45deg, var(--electric-blue), var(--violet));
-      color: var(--black);
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-      );
-      transition: 0.5s;
-    }
-
-    .login-btn:hover {
-      background: linear-gradient(45deg, var(--violet), var(--electric-blue));
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
-    }
-
-    .login-btn:hover::before {
-      left: 100%;
-    }
-
-    .login-btn:active {
-      transform: translateY(0);
-    }
-
-    .login-btn:disabled {
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.5);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
     }
 
     .forgot-password {
@@ -218,21 +301,36 @@
       text-decoration: underline;
     }
 
-    .signup-link {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 15px;
-    }
-
-    .signup-link a {
-      color: var(--sunshine);
-      text-decoration: none;
-      font-weight: 600;
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: none;
     }
 
-    .signup-link a:hover {
-      text-decoration: underline;
+    .btn-primary {
+      background: linear-gradient(45deg, var(--electric-blue), var(--violet));
+      color: var(--black);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, var(--violet), var(--electric-blue));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .social-login {
@@ -288,84 +386,84 @@
       overflow: hidden;
     }
 
-    .social-icon::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-      );
-      transition: 0.5s;
-    }
-
     .social-icon:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
-    .social-icon:hover::before {
-      left: 100%;
-    }
-
     .social-icon.facebook:hover {
       background: linear-gradient(45deg, #3b5998, #00F5FF);
-      box-shadow: 0 5px 20px rgba(59, 89, 152, 0.5);
     }
 
     .social-icon.google:hover {
       background: linear-gradient(45deg, #DB4437, #FFDE00);
-      box-shadow: 0 5px 20px rgba(219, 68, 55, 0.5);
     }
 
     .social-icon.apple:hover {
       background: linear-gradient(45deg, #000000, #8A2BE2);
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
     }
 
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .loading-content {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 30px;
-      border-radius: 16px;
+    .signup-link {
       text-align: center;
-      border-top: 4px solid var(--electric-blue);
+      margin-top: 25px;
+      font-size: 15px;
     }
 
-    .spinner {
-      border: 4px solid rgba(255, 255, 255, 0.1);
-      border-top: 4px solid var(--electric-blue);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
+    .signup-link a {
+      color: var(--sunshine);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .signup-link a:hover {
+      text-decoration: underline;
     }
 
-    @media (max-width: 480px) {
-      .login-container {
+    /* Dashboard Content */
+    .dashboard {
+      display: none;
+      flex: 1;
+      padding: 30px 20px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .welcome-message {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--pink), var(--mango));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .user-email {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .login-box {
         padding: 30px 20px;
       }
       
@@ -376,72 +474,132 @@
       .login-header h2 {
         font-size: 24px;
       }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .social-icons {
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 25px 15px;
+      }
+
+      .welcome-message {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-header">
-      <img src="logo.png" alt="GROCERA Logo">
-      <h2>Welcome Back</h2>
-    </div>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <div class="input-container">
-          <input type="email" id="email" placeholder="Enter your email" required>
-          <i class="fas fa-envelope input-icon"></i>
-        </div>
-        <div class="error-message" id="emailError">Please enter a valid email</div>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="input-container">
-          <input type="password" id="password" placeholder="Enter your password" required>
-          <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
-        </div>
-        <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
-      </div>
-
-      <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
-
-      <button type="submit" class="login-btn" id="loginButton">Login</button>
-    </form>
-
-    <div class="social-login">
-      <p>or continue with</p>
-      <div class="social-icons">
-        <div class="social-icon facebook" id="facebookLogin">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
-        </div>
-        <div class="social-icon google" id="googleLogin">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972-3.332 0-6.033-2.701-6.033-6.032s2.701-6.032 6.033-6.032c1.498 0 2.866.549 3.921 1.453l2.814-2.814c-1.784-1.664-4.146-2.675-6.735-2.675-5.522 0-10 4.477-10 10s4.478 10 10 10c8.396 0 10-7.524 10-10 0-.67-.069-1.325-.173-1.971h-9.827z"/></svg>
-        </div>
-        <div class="social-icon apple" id="appleLogin">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53-1.71-2.47-3-7.01-1.26-10.08 1.7-2.93 4.5-3.9 6.65-3.9 1.56 0 3.04.9 4.05.9.99 0 2.56-1.12 4.36-.96.76.03 2.87.31 4.17 2.32-.11.07-2.44 1.43-2.42 4.26.03 3.38 3.03 4.54 3.09 4.57-.03.07-.42 1.44-1.39 2.83m-2.99-14.88c.78-1.01 1.3-2.39 1.16-3.62-1.2.05-2.66.82-3.53 1.84-.77.92-1.46 2.38-1.26 3.8 1.34.1 2.71-.69 3.63-1.82z"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <div class="signup-link">
-      New to GROCERA? <a href="signup.html">Create account</a>
-    </div>
-  </div>
-
+  <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
       <div class="spinner"></div>
-      <h3 id="loadingText">Signing you in...</h3>
+      <h3 id="loadingText">Loading...</h3>
     </div>
   </div>
 
+  <!-- Notification -->
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Navigation -->
+    <nav>
+      <div class="logo">GROCERA</div>
+      <div class="user-menu">
+        <span id="userName">Guest</span>
+        <img id="userAvatar" class="user-avatar" src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="User">
+      </div>
+    </nav>
+
+    <!-- Auth Container (Login Form) -->
+    <div class="auth-container" id="authContainer">
+      <div class="login-box">
+        <div class="login-header">
+          <img src="logo.png" alt="GROCERA Logo">
+          <h2>Welcome Back</h2>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-container">
+              <input type="email" id="email" placeholder="Enter your email" required>
+              <i class="fas fa-envelope input-icon"></i>
+            </div>
+            <div class="error-message" id="emailError">Please enter a valid email</div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-container">
+              <input type="password" id="password" placeholder="Enter your password" required>
+              <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
+            </div>
+            <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+          </div>
+
+          <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
+
+          <button type="submit" class="btn btn-primary" id="loginButton">Login</button>
+        </form>
+
+        <div class="social-login">
+          <p>or continue with</p>
+          <div class="social-icons">
+            <div class="social-icon facebook" id="facebookLogin">
+              <i class="fab fa-facebook-f"></i>
+            </div>
+            <div class="social-icon google" id="googleLogin">
+              <i class="fab fa-google"></i>
+            </div>
+            <div class="social-icon apple" id="appleLogin">
+              <i class="fab fa-apple"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="signup-link">
+          New to GROCERA? <a href="#" id="showSignup">Create account</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard" id="dashboard">
+      <h1 class="welcome-message">Welcome back, <span id="welcomeName">User</span>!</h1>
+      <p class="user-email">You're logged in as: <span id="userEmail"></span></p>
+      
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="window.location.href='shop.html'">
+          <i class="fas fa-shopping-cart"></i> Start Shopping
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='account.html'">
+          <i class="fas fa-user-cog"></i> Manage Account
+        </button>
+        <button id="logoutButton" class="btn btn-secondary">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
   <script>
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
       authDomain: "grocera-nithin.firebaseapp.com",
@@ -451,29 +609,47 @@
       appId: "1:824896008507:web:136d071d696f9ff190071e"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // DOM Elements
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notificationText');
+    const authContainer = document.getElementById('authContainer');
+    const dashboard = document.getElementById('dashboard');
+    const userName = document.getElementById('userName');
+    const welcomeName = document.getElementById('welcomeName');
+    const userEmail = document.getElementById('userEmail');
+    const userAvatar = document.getElementById('userAvatar');
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
     const loginButton = document.getElementById('loginButton');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
     const forgotPasswordLink = document.getElementById('forgotPassword');
     const emailError = document.getElementById('emailError');
     const passwordError = document.getElementById('passwordError');
+    const logoutButton = document.getElementById('logoutButton');
     const facebookLogin = document.getElementById('facebookLogin');
     const googleLogin = document.getElementById('googleLogin');
     const appleLogin = document.getElementById('appleLogin');
+    const showSignup = document.getElementById('showSignup');
 
-    function clearErrors() {
-      emailError.style.display = 'none';
-      passwordError.style.display = 'none';
+    // Show notification
+    function showNotification(message, isSuccess = true) {
+      notificationText.textContent = message;
+      notification.className = isSuccess ? 'notification show' : 'notification error show';
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
     }
 
+    // Toggle password visibility
     togglePassword.addEventListener('click', function() {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
@@ -481,6 +657,7 @@
       this.classList.toggle('fa-eye-slash');
     });
 
+    // Form validation
     emailInput.addEventListener('input', validateEmail);
     passwordInput.addEventListener('input', validatePassword);
 
@@ -509,6 +686,47 @@
       }
     }
 
+    // Clear all errors
+    function clearErrors() {
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+    }
+
+    // Toggle between auth and dashboard views
+    function toggleViews(showDashboard) {
+      if (showDashboard) {
+        authContainer.style.display = 'none';
+        dashboard.style.display = 'block';
+      } else {
+        authContainer.style.display = 'flex';
+        dashboard.style.display = 'none';
+      }
+    }
+
+    // Update UI with user data
+    function updateUI(user) {
+      if (user) {
+        // User is logged in
+        const displayName = user.displayName || localStorage.getItem('userName') || 'User';
+        const email = user.email || '';
+        
+        userName.textContent = displayName;
+        welcomeName.textContent = displayName;
+        userEmail.textContent = email;
+        
+        if (user.photoURL) {
+          userAvatar.src = user.photoURL;
+        }
+        
+        toggleViews(true);
+        showNotification('Logged in successfully');
+      } else {
+        // User is logged out
+        toggleViews(false);
+      }
+    }
+
+    // Login with email/password
     loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
       clearErrors();
@@ -524,20 +742,16 @@
       }
       
       loginButton.disabled = true;
-      loginButton.textContent = 'Authenticating...';
-      loadingOverlay.style.display = 'flex';
+      loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+      loadingOverlay.classList.remove('hidden');
+      loadingText.textContent = 'Signing you in...';
       
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
           
-          loginButton.textContent = '✓ Success!';
-          loadingText.textContent = 'Redirecting to dashboard...';
-          
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userEmail', email);
-          
-          db.collection('users').doc(user.uid).get()
+          // Get additional user data from Firestore
+          return db.collection('users').doc(user.uid).get()
             .then((doc) => {
               if (doc.exists) {
                 const userData = doc.data();
@@ -545,17 +759,18 @@
                   localStorage.setItem('userName', userData.name);
                 }
               }
-              setTimeout(() => {
-                window.location.href = 'index.html';
-              }, 1500);
+              return user;
             });
+        })
+        .then((user) => {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', user.email || '');
+          updateUI(user);
         })
         .catch((error) => {
           console.error('Login error:', error);
-          loginButton.disabled = false;
-          loginButton.textContent = 'Login';
-          loadingOverlay.style.display = 'none';
           
+          let errorMessage = 'Login failed. Please try again.';
           switch(error.code) {
             case 'auth/user-not-found':
               emailError.textContent = 'No account found with this email.';
@@ -566,15 +781,22 @@
               passwordError.style.display = 'block';
               break;
             case 'auth/too-many-requests':
-              passwordError.textContent = 'Too many attempts. Try again later.';
-              passwordError.style.display = 'block';
+              errorMessage = 'Too many attempts. Please try again later.';
               break;
             default:
-              alert('Login error: ' + error.message);
+              errorMessage = error.message;
           }
+          
+          showNotification(errorMessage, false);
+        })
+        .finally(() => {
+          loginButton.disabled = false;
+          loginButton.textContent = 'Login';
+          loadingOverlay.classList.add('hidden');
         });
     });
 
+    // Forgot password
     forgotPasswordLink.addEventListener('click', function(e) {
       e.preventDefault();
       const email = prompt('Please enter your email address to reset your password:');
@@ -582,17 +804,33 @@
       if (email) {
         auth.sendPasswordResetEmail(email)
           .then(() => {
-            alert('Password reset email sent. Please check your inbox.');
+            showNotification('Password reset email sent. Please check your inbox.');
           })
           .catch((error) => {
-            alert('Error: ' + error.message);
+            showNotification('Error: ' + error.message, false);
           });
       }
     });
 
     // Social login handlers
     function handleSocialLogin(provider) {
-      const authProvider = new firebase.auth[provider]();
+      let authProvider;
+      
+      switch(provider) {
+        case 'facebook':
+          authProvider = new firebase.auth.FacebookAuthProvider();
+          break;
+        case 'google':
+          authProvider = new firebase.auth.GoogleAuthProvider();
+          break;
+        case 'apple':
+          authProvider = new firebase.auth.OAuthProvider('apple.com');
+          break;
+      }
+      
+      loadingOverlay.classList.remove('hidden');
+      loadingText.textContent = `Signing in with ${provider}...`;
+      
       auth.signInWithPopup(authProvider)
         .then((result) => {
           const user = result.user;
@@ -603,17 +841,110 @@
             localStorage.setItem('userName', user.displayName);
           }
           
-          window.location.href = 'index.html';
+          if (user.photoURL) {
+            userAvatar.src = user.photoURL;
+          }
+          
+          updateUI(user);
         })
         .catch((error) => {
           console.error('Social login error:', error);
-          alert('Login failed: ' + error.message);
+          showNotification('Login failed: ' + error.message, false);
+        })
+        .finally(() => {
+          loadingOverlay.classList.add('hidden');
         });
     }
 
-    facebookLogin.addEventListener('click', () => handleSocialLogin('FacebookAuthProvider'));
-    googleLogin.addEventListener('click', () => handleSocialLogin('GoogleAuthProvider'));
-    appleLogin.addEventListener('click', () => handleSocialLogin('OAuthProvider'));
+    facebookLogin.addEventListener('click', () => handleSocialLogin('facebook'));
+    googleLogin.addEventListener('click', () => handleSocialLogin('google'));
+    appleLogin.addEventListener('click', () => handleSocialLogin('apple'));
+
+    // Logout
+    logoutButton.addEventListener('click', function() {
+      loadingOverlay.classList.remove('hidden');
+      loadingText.textContent = 'Logging out...';
+      
+      auth.signOut()
+        .then(() => {
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('userEmail');
+          updateUI(null);
+          showNotification('Logged out successfully');
+        })
+        .catch((error) => {
+          console.error('Logout error:', error);
+          showNotification('Logout failed: ' + error.message, false);
+        })
+        .finally(() => {
+          loadingOverlay.classList.add('hidden');
+        });
+    });
+
+    // Show signup page (placeholder)
+    showSignup.addEventListener('click', function(e) {
+      e.preventDefault();
+      showNotification('Signup page would open here', false);
+    });
+
+    // Initialize the app
+    function initApp() {
+      loadingOverlay.classList.remove('hidden');
+      loadingText.textContent = 'Checking authentication...';
+      
+      // Check localStorage first for quick UI update
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      
+      if (isLoggedIn) {
+        toggleViews(true);
+      } else {
+        toggleViews(false);
+      }
+      
+      // Then verify with Firebase
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // User is signed in
+          if (!isLoggedIn) {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', user.email || '');
+            
+            // Get additional user data
+            db.collection('users').doc(user.uid).get()
+              .then((doc) => {
+                if (doc.exists) {
+                  const userData = doc.data();
+                  if (userData.name) {
+                    localStorage.setItem('userName', userData.name);
+                  }
+                }
+                updateUI(user);
+              });
+          } else {
+            updateUI(user);
+          }
+        } else {
+          // User is signed out
+          if (isLoggedIn) {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            updateUI(null);
+          }
+        }
+        
+        loadingOverlay.classList.add('hidden');
+      });
+      
+      // Fallback in case Firebase is slow
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Start the app
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
