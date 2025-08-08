@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <title>GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -40,7 +40,6 @@
       position: relative;
     }
 
-    /* Background Image with Overlay */
     body::before {
       content: '';
       position: fixed;
@@ -54,7 +53,6 @@
       z-index: -1;
     }
 
-    /* Floating Icons Animation */
     .floating-icons {
       position: fixed;
       top: 0;
@@ -81,7 +79,6 @@
       }
     }
 
-    /* Notification */
     .notification {
       position: fixed;
       bottom: 20px;
@@ -110,7 +107,6 @@
       opacity: 1;
     }
 
-    /* Reset Password Modal */
     .reset-modal {
       position: fixed;
       top: 0;
@@ -205,7 +201,6 @@
       font-size: 14px;
     }
 
-    /* Main Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -214,7 +209,6 @@
       flex-direction: column;
     }
 
-    /* Navigation */
     nav {
       display: flex;
       justify-content: space-between;
@@ -253,7 +247,6 @@
       box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
     }
 
-    /* Auth Container */
     .auth-container {
       display: flex;
       flex: 1;
@@ -262,7 +255,6 @@
       padding: 20px;
     }
 
-    /* Login Form */
     .login-box {
       width: 100%;
       max-width: 420px;
@@ -510,7 +502,6 @@
       text-decoration: underline;
     }
 
-    /* Dashboard Content */
     .dashboard {
       display: none;
       flex: 1;
@@ -551,7 +542,6 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .login-box {
         padding: 30px 20px;
@@ -583,6 +573,7 @@
         font-size: 2rem;
       }
     }
+  </style>
 </head>
 <body>
   <!-- Floating Icons Background -->
@@ -917,7 +908,8 @@
           
           // Verify the email is verified before allowing access
           if (!user.emailVerified) {
-            throw new Error('Please verify your email before logging in.');
+            auth.signOut();
+            throw new Error('Please verify your email before logging in. Check your inbox for the verification link.');
           }
           
           // Try to get user data from Firestore
