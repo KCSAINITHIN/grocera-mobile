@@ -8,21 +8,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
-      --mango: #FFBE0B;
-      --orange: #FB5607;
-      --pink: #FF006E;
-      --purple: #8338EC;
-      --electric-blue: #00F5FF;
-      --neon-pink: #FF00F5;
-      --acid-green: #A5FF00;
-      --violet: #8A2BE2;
-      --sunshine: #FFDE00;
+      --pink: #FF6B9D;
+      --lavender: #B399D4;
+      --mint: #8BD8BD;
+      --gold: #FFD166;
+      --teal: #06D6A0;
       --white: #FFFFFF;
       --black: #121212;
-      --glass: rgba(255, 255, 255, 0.15);
-      --error: #ff4d4d;
+      --light-pink: #FFB6C1;
+      --light-lavender: #E6E6FA;
+      --error: #FF4D4D;
       --success: #4BB543;
-      --dark-glass: rgba(20, 20, 20, 0.6);
+      --glass: rgba(255, 255, 255, 0.2);
     }
 
     * {
@@ -40,7 +37,7 @@
       position: relative;
     }
 
-    /* Background Image with Overlay */
+    /* New Grocery-Themed Background */
     body::before {
       content: '';
       position: fixed;
@@ -48,13 +45,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
+      background: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
       background-size: cover;
-      opacity: 0.3;
+      opacity: 0.4;
       z-index: -1;
     }
 
-    /* Floating Icons Animation */
+    /* Animated Floating Grocery Icons */
     .floating-icons {
       position: fixed;
       top: 0;
@@ -68,16 +65,20 @@
 
     .floating-icon {
       position: absolute;
-      opacity: 0.1;
+      opacity: 0.8;
       animation: float linear infinite;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
     }
 
     @keyframes float {
       0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(0) rotate(0deg) translateX(0);
+      }
+      50% {
+        transform: translateY(-20px) rotate(5deg) translateX(5px);
       }
       100% {
-        transform: translateY(-100vh) rotate(360deg);
+        transform: translateY(0) rotate(0deg) translateX(0);
       }
     }
 
@@ -87,14 +88,14 @@
       bottom: 20px;
       right: 20px;
       padding: 15px 25px;
-      border-radius: 8px;
-      background: var(--success);
+      border-radius: 12px;
+      background: var(--pink);
       color: white;
       font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 20px rgba(255, 107, 157, 0.4);
       transform: translateY(100px);
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -103,6 +104,7 @@
 
     .notification.error {
       background: var(--error);
+      box-shadow: 0 4px 20px rgba(255, 77, 77, 0.4);
     }
 
     .notification.show {
@@ -124,23 +126,24 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 20px;
-      background: rgba(0, 0, 0, 0.85);
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.7);
       position: sticky;
       top: 0;
       z-index: 100;
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--lavender);
     }
 
     .logo {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 800;
-      background: linear-gradient(90deg, var(--pink), var(--orange), var(--mango));
+      background: linear-gradient(90deg, var(--pink), var(--lavender));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+      text-shadow: 0 0 15px rgba(179, 153, 212, 0.5);
+      letter-spacing: 1px;
     }
 
     /* Auth Container */
@@ -149,25 +152,27 @@
       flex: 1;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 30px;
     }
 
-    /* Signup Form */
+    /* Signup Form - New Vibrant Design */
     .signup-box {
       width: 100%;
-      max-width: 450px;
-      background: var(--dark-glass);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      border-top: 4px solid var(--acid-green);
+      max-width: 480px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid var(--glass);
       padding: 40px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+                  0 0 0 2px var(--pink),
+                  0 0 0 5px var(--lavender);
       position: relative;
       overflow: hidden;
       transform: scale(0.95);
       opacity: 0;
-      animation: fadeIn 0.5s ease forwards;
+      animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
     @keyframes fadeIn {
@@ -184,7 +189,10 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(165,255,0,0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, 
+        rgba(255, 107, 157, 0.1) 0%, 
+        rgba(179, 153, 212, 0.1) 50%, 
+        transparent 70%);
       z-index: -1;
       animation: rotate 20s linear infinite;
     }
@@ -195,33 +203,40 @@
     }
 
     .signup-header img {
-      width: 120px;
+      width: 100px;
       margin-bottom: 15px;
-      filter: drop-shadow(0 0 10px rgba(165, 255, 0, 0.5));
+      filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5));
     }
 
     .signup-header h2 {
       margin: 0;
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 700;
-      background: linear-gradient(90deg, var(--acid-green), var(--electric-blue));
+      background: linear-gradient(90deg, var(--pink), var(--lavender), var(--mint));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 15px rgba(165, 255, 0, 0.3);
+      text-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+      margin-bottom: 10px;
+    }
+
+    .signup-header p {
+      color: var(--light-lavender);
+      font-size: 15px;
+      opacity: 0.8;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       position: relative;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 10px;
+      font-size: 15px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--light-lavender);
     }
 
     .input-container {
@@ -230,60 +245,71 @@
 
     .input-container input {
       width: 100%;
-      padding: 14px 16px;
-      padding-right: 40px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      background: rgba(10, 10, 10, 0.4);
+      padding: 16px 20px;
+      padding-right: 50px;
+      border: 2px solid var(--lavender);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.4);
       color: var(--white);
-      font-size: 15px;
+      font-size: 16px;
       transition: all 0.3s ease;
+      box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.3);
     }
 
     .input-container input:focus {
-      border-color: var(--acid-green);
-      box-shadow: 0 0 0 3px rgba(165, 255, 0, 0.2);
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.3),
+                  0 0 15px rgba(255, 107, 157, 0.2);
       outline: none;
-      background: rgba(20, 20, 20, 0.6);
+      background: rgba(0, 0, 0, 0.6);
     }
 
     .input-icon {
       position: absolute;
-      right: 15px;
+      right: 20px;
       top: 50%;
       transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--lavender);
+      font-size: 18px;
     }
 
     .error-message {
       color: var(--error);
-      font-size: 12px;
-      margin-top: 5px;
+      font-size: 13px;
+      margin-top: 8px;
       display: none;
+      font-weight: 500;
     }
 
     .btn {
       width: 100%;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 17px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       overflow: hidden;
       border: none;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
     }
 
     .btn-primary {
-      background: linear-gradient(45deg, var(--acid-green), var(--violet));
-      color: var(--black);
+      background: linear-gradient(45deg, var(--pink), var(--lavender));
+      color: var(--white);
+      box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
     }
 
     .btn-primary:hover {
-      background: linear-gradient(45deg, var(--violet), var(--acid-green));
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(165, 255, 0, 0.4);
+      background: linear-gradient(45deg, var(--lavender), var(--pink));
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
     }
 
     .btn-primary:disabled {
@@ -296,45 +322,79 @@
 
     .login-link {
       text-align: center;
-      margin-top: 25px;
-      font-size: 15px;
+      margin-top: 30px;
+      font-size: 16px;
+      color: var(--light-lavender);
     }
 
     .login-link a {
-      color: var(--sunshine);
+      color: var(--pink);
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
+      position: relative;
     }
 
-    .login-link a:hover {
-      text-decoration: underline;
+    .login-link a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--pink);
+      transition: width 0.3s ease;
+    }
+
+    .login-link a:hover::after {
+      width: 100%;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
       .signup-box {
-        padding: 30px 20px;
+        padding: 30px;
+        max-width: 90%;
       }
       
       .signup-header img {
-        width: 100px;
+        width: 80px;
       }
       
       .signup-header h2 {
-        font-size: 24px;
+        font-size: 28px;
+      }
+
+      .input-container input {
+        padding: 14px 16px;
+      }
+
+      .btn {
+        padding: 16px;
       }
     }
 
     @media (max-width: 480px) {
       .signup-box {
-        padding: 25px 15px;
+        padding: 25px 20px;
+      }
+
+      .signup-header h2 {
+        font-size: 24px;
+      }
+
+      nav {
+        padding: 15px 20px;
+      }
+
+      .logo {
+        font-size: 24px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Floating Icons Background -->
+  <!-- Animated Floating Grocery Icons -->
   <div class="floating-icons" id="floatingIcons"></div>
 
   <!-- Notification -->
@@ -354,8 +414,9 @@
     <div class="auth-container">
       <div class="signup-box">
         <div class="signup-header">
-          <img src="logo.png" alt="GROCERA Logo">
-          <h2>Create Account</h2>
+          <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="GROCERA Logo">
+          <h2>Join GROCERA</h2>
+          <p>Create your account to start shopping</p>
         </div>
 
         <form id="signupForm">
@@ -380,7 +441,7 @@
           <div class="form-group">
             <label for="signupPassword">Password</label>
             <div class="input-container">
-              <input type="password" id="signupPassword" placeholder="Create a password" required>
+              <input type="password" id="signupPassword" placeholder="Create a password (min 6 chars)" required>
               <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
             </div>
             <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
@@ -395,11 +456,13 @@
             <div class="error-message" id="confirmPasswordError">Passwords don't match</div>
           </div>
 
-          <button type="submit" class="btn btn-primary" id="signupButton">Sign Up</button>
+          <button type="submit" class="btn btn-primary" id="signupButton">
+            <i class="fas fa-user-plus"></i> Sign Up
+          </button>
         </form>
 
         <div class="login-link">
-          Already have an account? <a href="login.html">Login</a>
+          Already have an account? <a href="index.html">Login here</a>
         </div>
       </div>
     </div>
@@ -449,19 +512,23 @@
     const confirmPasswordError = document.getElementById('confirmPasswordError');
     const floatingIcons = document.getElementById('floatingIcons');
 
-    // Create floating icons
+    // Grocery icons for floating animation
+    const groceryIcons = [
+      '🍎', '🍌', '🍊', '🍓', '🍇', '🍉', '🍍', '🥑', '🥦', '🥕',
+      '🧀', '🍗', '🍞', '🥚', '🥛', '🍯', '🥨', '🍋', '🍒', '🥝'
+    ];
+
+    // Create floating grocery icons
     function createFloatingIcons() {
-      const icons = ['🍎', '🍌', '🍊', '🍓', '🍇', '🍉', '🍍', '🥑', '🥦', '🥕', '🧀', '🍗', '🍞', '🥚', '🥛'];
-      const colors = ['#FFBE0B', '#FB5607', '#FF006E', '#8338EC', '#00F5FF', '#A5FF00', '#FFDE00'];
-      
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 20; i++) {
         const icon = document.createElement('div');
         icon.className = 'floating-icon';
-        icon.textContent = icons[Math.floor(Math.random() * icons.length)];
-        icon.style.color = colors[Math.floor(Math.random() * colors.length)];
-        icon.style.fontSize = `${Math.random() * 20 + 10}px`;
+        icon.textContent = groceryIcons[Math.floor(Math.random() * groceryIcons.length)];
+        icon.style.color = `hsl(${Math.random() * 360}, 80%, 70%)`;
+        icon.style.fontSize = `${Math.random() * 24 + 16}px`;
         icon.style.left = `${Math.random() * 100}%`;
-        icon.style.animationDuration = `${Math.random() * 20 + 10}s`;
+        icon.style.top = `${Math.random() * 100}%`;
+        icon.style.animationDuration = `${Math.random() * 10 + 5}s`;
         icon.style.animationDelay = `${Math.random() * 5}s`;
         floatingIcons.appendChild(icon);
       }
@@ -486,10 +553,6 @@
         this.classList.toggle('fa-eye-slash');
       });
     }
-
-    // Initialize password visibility toggles
-    setupPasswordToggle(passwordInput, togglePassword);
-    setupPasswordToggle(confirmPasswordInput, toggleConfirmPassword);
 
     // Form validation
     function validateName() {
@@ -578,7 +641,7 @@
       }
       
       signupButton.disabled = true;
-      signupButton.textContent = 'Creating Account...';
+      signupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
       
       // Create user with email and password
       auth.createUserWithEmailAndPassword(email, password)
@@ -598,16 +661,10 @@
             });
           })
           .then(() => {
-            // Save to localStorage
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userEmail', email);
-            
-            // Redirect to dashboard or show success
-            showNotification('Account created successfully!');
+            showNotification('Account created successfully! Please login', true);
             setTimeout(() => {
-              window.location.href = 'dashboard.html';
-            }, 1500);
+              window.location.href = 'login.html';
+            }, 2000);
           });
         })
         .catch((error) => {
@@ -638,13 +695,15 @@
         })
         .finally(() => {
           signupButton.disabled = false;
-          signupButton.textContent = 'Sign Up';
+          signupButton.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
         });
     });
 
     // Initialize the app
     function initApp() {
       createFloatingIcons();
+      setupPasswordToggle(passwordInput, togglePassword);
+      setupPasswordToggle(confirmPasswordInput, toggleConfirmPassword);
       
       // Check if user is already logged in
       auth.onAuthStateChanged((user) => {
