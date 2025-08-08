@@ -164,7 +164,7 @@
       text-align: right;
     }
 
-     /* Floating animation for decorative elements */
+    /* Floating animation for decorative elements */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -177,83 +177,6 @@
       animation: float 6s ease-in-out infinite;
       display: none;
     }
-
-    /* Media Queries */
-    @media (min-width: 768px) {
-      .login-box {
-        padding: 40px 35px;
-      }
-      
-      .login-box img {
-        width: 180px;
-        margin-bottom: 25px;
-      }
-      
-      .login-box h2 {
-        font-size: 32px;
-        margin-bottom: 25px;
-      }
-      
-      .login-box input {
-        padding: 16px 20px;
-        font-size: 16px;
-      }
-      
-      .login-box button {
-        padding: 16px;
-        font-size: 18px;
-      }
-      
-      .signup-link {
-        font-size: 16px;
-        margin-top: 25px;
-      }
-      
-      .social-icon {
-        width: 50px;
-        height: 50px;
-      }
-      
-      .social-icons {
-        gap: 20px;
-      }
-      
-      .floating {
-        display: block;
-      }
-      
-      .floating:nth-child(1) {
-        top: 10%;
-        left: 10%;
-        width: 40px;
-        filter: drop-shadow(0 0 10px var(--electric-blue));
-      }
-
-      .floating:nth-child(2) {
-        top: 70%;
-        left: 80%;
-        width: 60px;
-        filter: drop-shadow(0 0 10px var(--neon-pink));
-        animation-delay: 1s;
-      }
-
-      .floating:nth-child(3) {
-        top: 30%;
-        left: 85%;
-        width: 30px;
-        filter: drop-shadow(0 0 10px var(--acid-green));
-        animation-delay: 2s;
-      }
-
-      .floating:nth-child(4) {
-        top: 80%;
-        left: 15%;
-        width: 50px;
-        filter: drop-shadow(0 0 10px var(--sunshine));
-        animation-delay: 3s;
-      }
-    }
-
 
     /* ----- BUTTON ----- */
     .btn {
@@ -316,6 +239,7 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      transition: opacity 0.3s ease;
     }
 
     .loading-content {
@@ -344,6 +268,77 @@
     }
 
     /* ----- RESPONSIVE ADJUSTMENTS ----- */
+    @media (min-width: 768px) {
+      .login-box {
+        padding: 40px 35px;
+      }
+      
+      .login-box img {
+        width: 180px;
+        margin-bottom: 25px;
+      }
+      
+      .login-box h2 {
+        font-size: 32px;
+        margin-bottom: 25px;
+      }
+      
+      .login-box input {
+        padding: 16px 20px;
+        font-size: 16px;
+      }
+      
+      .login-box button {
+        padding: 16px;
+        font-size: 18px;
+      }
+      
+      .signup-link {
+        font-size: 16px;
+        margin-top: 25px;
+      }
+      
+      .social-icon {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .social-icons {
+        gap: 20px;
+      }
+      
+      .floating {
+        display: block;
+      }
+      
+      .floating:nth-child(1) {
+        top: 10%;
+        left: 10%;
+        width: 40px;
+      }
+
+      .floating:nth-child(2) {
+        top: 70%;
+        left: 80%;
+        width: 60px;
+        animation-delay: 1s;
+      }
+
+      .floating:nth-child(3) {
+        top: 30%;
+        left: 85%;
+        width: 30px;
+        animation-delay: 2s;
+      }
+
+      .floating:nth-child(4) {
+        top: 80%;
+        left: 15%;
+        width: 50px;
+        animation-delay: 3s;
+      }
+    }
+
     @media (max-width: 480px) {
       .signup-box {
         padding: 25px 20px;
@@ -363,275 +358,282 @@
 <body>
 
 <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
+<img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
+<img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
+<img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
 
+<div class="signup-box">
+  <h2>Join GROCERA</h2>
+  <p>Create your account to start shopping</p>
   
-  <div class="signup-box">
-    <h2>Join GROCERA</h2>
-    <p>Create your account to start shopping</p>
-    
-    <form id="signupForm">
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" placeholder="John Doe" required>
-        <div class="error-message" id="nameError">Name must be at least 3 characters</div>
-      </div>
-      
-      <div class="form-group">
-        <label for="mobile">Mobile Number</label>
-        <input type="tel" id="mobile" placeholder="9876543210" maxlength="10" required>
-        <div class="error-message" id="mobileError">Enter a valid 10-digit mobile number</div>
-      </div>
-      
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" placeholder="john@example.com" required>
-        <div class="error-message" id="emailError">Enter a valid email address</div>
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Create Password</label>
-        <input type="password" id="password" placeholder="••••••••" required>
-        <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
-        <div class="password-strength">
-          <div class="strength-meter" id="strengthMeter"></div>
-        </div>
-        <div class="strength-text" id="strengthText">Password strength: weak</div>
-        <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
-      </div>
-      
-      <button type="submit" class="btn" id="signupButton">Create Account</button>
-    </form>
-    
-    <div class="success-message" id="successMessage"></div>
-    
-    <p>Already have an account? <a href="index.html">Login</a></p>
-  </div>
-
-  <!-- Loading overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <h3 id="loadingText">Creating your account...</h3>
-      <p id="loadingSubtext">Please wait while we set up your account</p>
+  <form id="signupForm">
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="John Doe" required>
+      <div class="error-message" id="nameError">Name must be at least 3 characters</div>
     </div>
+    
+    <div class="form-group">
+      <label for="mobile">Mobile Number</label>
+      <input type="tel" id="mobile" placeholder="9876543210" maxlength="10" required>
+      <div class="error-message" id="mobileError">Enter a valid 10-digit mobile number</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="john@example.com" required>
+      <div class="error-message" id="emailError">Enter a valid email address</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Create Password</label>
+      <input type="password" id="password" placeholder="••••••••" required>
+      <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
+      <div class="password-strength">
+        <div class="strength-meter" id="strengthMeter"></div>
+      </div>
+      <div class="strength-text" id="strengthText">Password strength: weak</div>
+      <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+    </div>
+    
+    <button type="submit" class="btn" id="signupButton">Create Account</button>
+  </form>
+  
+  <div class="success-message" id="successMessage"></div>
+  
+  <p>Already have an account? <a href="index.html">Login</a></p>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <h3 id="loadingText">Creating your account...</h3>
+    <p id="loadingSubtext">Please wait while we set up your account</p>
   </div>
+</div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
-      authDomain: "grocera-nithin.firebaseapp.com",
-      projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.appspot.com",
-      messagingSenderId: "824896008507",
-      appId: "1:824896008507:web:136d071d696f9ff190071e"
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+    authDomain: "grocera-nithin.firebaseapp.com",
+    projectId: "grocera-nithin",
+    storageBucket: "grocera-nithin.appspot.com",
+    messagingSenderId: "824896008507",
+    appId: "1:824896008507:web:136d071d696f9ff190071e"
+  };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    // DOM Elements
-    const signupForm = document.getElementById("signupForm");
-    const nameInput = document.getElementById("name");
-    const mobileInput = document.getElementById("mobile");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const signupButton = document.getElementById("signupButton");
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    const loadingText = document.getElementById("loadingText");
-    const loadingSubtext = document.getElementById("loadingSubtext");
-    const successMessage = document.getElementById("successMessage");
+  // DOM Elements
+  const signupForm = document.getElementById("signupForm");
+  const nameInput = document.getElementById("name");
+  const mobileInput = document.getElementById("mobile");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const signupButton = document.getElementById("signupButton");
+  const loadingOverlay = document.getElementById("loadingOverlay");
+  const loadingText = document.getElementById("loadingText");
+  const loadingSubtext = document.getElementById("loadingSubtext");
+  const successMessage = document.getElementById("successMessage");
 
-    // Error message elements
-    const nameError = document.getElementById("nameError");
-    const mobileError = document.getElementById("mobileError");
-    const emailError = document.getElementById("emailError");
-    const passwordError = document.getElementById("passwordError");
+  // Error message elements
+  const nameError = document.getElementById("nameError");
+  const mobileError = document.getElementById("mobileError");
+  const emailError = document.getElementById("emailError");
+  const passwordError = document.getElementById("passwordError");
 
-    // Toggle password visibility
-    document.getElementById("togglePassword").addEventListener("click", function () {
-      const pwd = document.getElementById("password");
-      const type = pwd.getAttribute("type") === "password" ? "text" : "password";
-      pwd.setAttribute("type", type);
-      this.classList.toggle("fa-eye");
-      this.classList.toggle("fa-eye-slash");
-    });
+  // Toggle password visibility
+  document.getElementById("togglePassword").addEventListener("click", function () {
+    const pwd = document.getElementById("password");
+    const type = pwd.getAttribute("type") === "password" ? "text" : "password";
+    pwd.setAttribute("type", type);
+    this.classList.toggle("fa-eye");
+    this.classList.toggle("fa-eye-slash");
+  });
 
-    // Real-time validation
-    nameInput.addEventListener('input', validateName);
-    mobileInput.addEventListener('input', validateMobile);
-    emailInput.addEventListener('input', validateEmail);
-    passwordInput.addEventListener('input', validatePassword);
+  // Real-time validation
+  nameInput.addEventListener('input', validateName);
+  mobileInput.addEventListener('input', validateMobile);
+  emailInput.addEventListener('input', validateEmail);
+  passwordInput.addEventListener('input', validatePassword);
 
-    function validateName() {
-      const name = nameInput.value.trim();
-      if (name.length < 3) {
-        nameError.style.display = 'block';
-        return false;
-      } else {
-        nameError.style.display = 'none';
-        return true;
-      }
+  function validateName() {
+    const name = nameInput.value.trim();
+    if (name.length < 3) {
+      nameError.style.display = 'block';
+      return false;
+    } else {
+      nameError.style.display = 'none';
+      return true;
     }
+  }
 
-    function validateMobile() {
-      const mobile = mobileInput.value.trim();
-      if (!/^[6-9]\d{9}$/.test(mobile)) {
-        mobileError.style.display = 'block';
-        return false;
-      } else {
-        mobileError.style.display = 'none';
-        return true;
-      }
+  function validateMobile() {
+    const mobile = mobileInput.value.trim();
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      mobileError.style.display = 'block';
+      return false;
+    } else {
+      mobileError.style.display = 'none';
+      return true;
     }
+  }
 
-    function validateEmail() {
-      const email = emailInput.value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        emailError.style.display = 'block';
-        return false;
-      } else {
-        emailError.style.display = 'none';
-        return true;
-      }
+  function validateEmail() {
+    const email = emailInput.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailError.style.display = 'block';
+      return false;
+    } else {
+      emailError.style.display = 'none';
+      return true;
     }
+  }
 
-    function validatePassword() {
-      const password = passwordInput.value.trim();
-      if (password.length < 6) {
-        passwordError.style.display = 'block';
-        return false;
-      } else {
-        passwordError.style.display = 'none';
-        return true;
-      }
+  function validatePassword() {
+    const password = passwordInput.value.trim();
+    if (password.length < 6) {
+      passwordError.style.display = 'block';
+      return false;
+    } else {
+      passwordError.style.display = 'none';
+      return true;
     }
+  }
 
-    // Password strength meter
-    passwordInput.addEventListener("input", function() {
-      const strengthMeter = document.getElementById("strengthMeter");
-      const strengthText = document.getElementById("strengthText");
-      let strength = 0;
-      const password = this.value;
-      
-      // Length check
-      if (password.length > 0) strength += 20;
-      if (password.length >= 8) strength += 20;
-      
-      // Complexity checks
-      if (/[A-Z]/.test(password)) strength += 20;
-      if (/[0-9]/.test(password)) strength += 20;
-      if (/[^A-Za-z0-9]/.test(password)) strength += 20;
-      
-      strengthMeter.style.width = strength + "%";
-      
-      // Update color and text based on strength
-      if (strength < 40) {
-        strengthMeter.style.background = "#ff0000";
-        strengthText.textContent = "Password strength: weak";
-        strengthText.style.color = "#ff4d4d";
-      } else if (strength < 80) {
-        strengthMeter.style.background = "#ff9900";
-        strengthText.textContent = "Password strength: medium";
-        strengthText.style.color = "#ff9900";
-      } else {
-        strengthMeter.style.background = "#33cc33";
-        strengthText.textContent = "Password strength: strong";
-        strengthText.style.color = "#33cc33";
-      }
-    });
+  // Password strength meter
+  passwordInput.addEventListener("input", function() {
+    const strengthMeter = document.getElementById("strengthMeter");
+    const strengthText = document.getElementById("strengthText");
+    let strength = 0;
+    const password = this.value;
+    
+    // Length check
+    if (password.length > 0) strength += 20;
+    if (password.length >= 8) strength += 20;
+    
+    // Complexity checks
+    if (/[A-Z]/.test(password)) strength += 20;
+    if (/[0-9]/.test(password)) strength += 20;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+    
+    strengthMeter.style.width = strength + "%";
+    
+    // Update color and text based on strength
+    if (strength < 40) {
+      strengthMeter.style.background = "#ff0000";
+      strengthText.textContent = "Password strength: weak";
+      strengthText.style.color = "#ff4d4d";
+    } else if (strength < 80) {
+      strengthMeter.style.background = "#ff9900";
+      strengthText.textContent = "Password strength: medium";
+      strengthText.style.color = "#ff9900";
+    } else {
+      strengthMeter.style.background = "#33cc33";
+      strengthText.textContent = "Password strength: strong";
+      strengthText.style.color = "#33cc33";
+    }
+  });
 
-    // Form submission
-    signupForm.addEventListener("submit", async function(e) {
-      e.preventDefault();
+  // Form submission
+  signupForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    
+    // Validate all fields
+    const isNameValid = validateName();
+    const isMobileValid = validateMobile();
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    
+    if (!isNameValid || !isMobileValid || !isEmailValid || !isPasswordValid) {
+      return;
+    }
+    
+    const name = nameInput.value.trim();
+    const mobile = mobileInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    // Disable button to prevent multiple submissions
+    signupButton.disabled = true;
+    signupButton.textContent = "Creating Account...";
+    
+    // Show loading overlay
+    loadingOverlay.style.display = "flex";
+    loadingText.textContent = "Creating your account...";
+    loadingSubtext.textContent = "This may take a few seconds";
+    
+    try {
+      // Create user with email and password
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
       
-      // Validate all fields
-      const isNameValid = validateName();
-      const isMobileValid = validateMobile();
-      const isEmailValid = validateEmail();
-      const isPasswordValid = validatePassword();
+      // Save additional user data to Firestore
+      await db.collection("users").doc(user.uid).set({
+        name,
+        mobile,
+        email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
       
-      if (!isNameValid || !isMobileValid || !isEmailValid || !isPasswordValid) {
-        return;
-      }
+      // Store user data in localStorage
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userMobile", mobile);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("isLoggedIn", "true");
       
-      const name = nameInput.value.trim();
-      const mobile = mobileInput.value.trim();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+      // Show success message
+      loadingText.textContent = "Account Created!";
+      loadingSubtext.textContent = "Redirecting to your dashboard...";
       
-      // Disable button to prevent multiple submissions
-      signupButton.disabled = true;
-      signupButton.textContent = "Creating Account...";
-      
-      // Show loading overlay
-      loadingOverlay.style.display = "flex";
-      loadingText.textContent = "Creating your account...";
-      loadingSubtext.textContent = "This may take a few seconds";
-      
-      try {
-        // Create user with email and password
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        // Save additional user data to Firestore
-        await db.collection("users").doc(user.uid).set({
-          name,
-          mobile,
-          email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        // Store user data in localStorage
-        localStorage.setItem("userName", name);
-        localStorage.setItem("userMobile", mobile);
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("isLoggedIn", "true");
-        
-        // Show success message
-        loadingText.textContent = "Account Created!";
-        loadingSubtext.textContent = "Redirecting to your dashboard...";
-        
-        // Add slight delay before redirect
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1500);
-        
-      } catch (error) {
-        // Handle errors
-        console.error("Signup error:", error);
-        
-        // Hide loading overlay
+      // Add slight delay before redirect
+      setTimeout(() => {
         loadingOverlay.style.display = "none";
-        
-        // Re-enable button
-        signupButton.disabled = false;
-        signupButton.textContent = "Create Account";
-        
-        // Show appropriate error message
-        let errorMessage = "An error occurred. Please try again.";
-        
-        if (error.code === "auth/email-already-in-use") {
-          errorMessage = "This email is already registered. Please login instead.";
-        } else if (error.code === "auth/weak-password") {
-          errorMessage = "Password should be at least 6 characters.";
-        } else if (error.code === "auth/invalid-email") {
-          errorMessage = "Please enter a valid email address.";
-        }
-        
-        alert(errorMessage);
+        window.location.href = "index.html";
+      }, 1500);
+      
+    } catch (error) {
+      // Handle errors
+      console.error("Signup error:", error);
+      
+      // Hide loading overlay
+      loadingOverlay.style.display = "none";
+      
+      // Re-enable button
+      signupButton.disabled = false;
+      signupButton.textContent = "Create Account";
+      
+      // Show appropriate error message
+      let errorMessage = "An error occurred. Please try again.";
+      
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "This email is already registered. Please login instead.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password should be at least 6 characters.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address.";
       }
-    });
-  </script>
+      
+      // Show error message in the form
+      successMessage.textContent = errorMessage;
+      successMessage.style.color = "var(--error)";
+      successMessage.style.display = "block";
+      
+      // Hide the error message after 5 seconds
+      setTimeout(() => {
+        successMessage.style.display = "none";
+      }, 5000);
+    }
+  });
+</script>
 </body>
 </html>
-
