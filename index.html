@@ -569,7 +569,7 @@
         </div>
 
         <div class="signup-link">
-          New to GROCERA? <a href="#" id="showSignup">Create account</a>
+          New to GROCERA? <a href="signup.html">Create account</a>
         </div>
       </div>
     </div>
@@ -945,6 +945,179 @@
 
     // Start the app
     document.addEventListener('DOMContentLoaded', initApp);
+
+   
+ 
+  // Improved Forgot Password functionality
+  forgotPasswordLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Create a modal for better UX
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '2000';
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = 'var(--dark-glass)';
+    modalContent.style.padding = '30px';
+    modalContent.style.borderRadius = '16px';
+    modalContent.style.width = '90%';
+    modalContent.style.maxWidth = '400px';
+    modalContent.style.borderTop = '4px solid var(--pink)';
+    
+    const closeBtn = document.createElement('span');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '15px';
+    closeBtn.style.right = '15px';
+    closeBtn.style.fontSize = '24px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.addEventListener('click', () => document.body.removeChild(modal));
+    
+    const title = document.createElement('h3');
+    title.textContent = 'Reset Password';
+    title.style.marginBottom = '20px';
+    title.style.textAlign = 'center';
+    title.style.color = 'var(--electric-blue)';
+    
+    const description = document.createElement('p');
+    description.textContent = 'Enter your email address and we\'ll send you a link to reset your password.';
+    description.style.marginBottom = '20px';
+    description.style.textAlign = 'center';
+    description.style.color = 'rgba(255,255,255,0.8)';
+    
+    const formGroup = document.createElement('div');
+    formGroup.className = 'form-group';
+    
+    const label = document.createElement('label');
+    label.textContent = 'Email Address';
+    label.setAttribute('for', 'resetEmail');
+    
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'input-container';
+    
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.id = 'resetEmail';
+    emailInput.placeholder = 'Enter your email';
+    emailInput.required = true;
+    emailInput.style.width = '100%';
+    
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'error-message';
+    errorMsg.id = 'resetEmailError';
+    errorMsg.textContent = 'Please enter a valid email';
+    errorMsg.style.display = 'none';
+    
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn btn-primary';
+    submitBtn.textContent = 'Send Reset Link';
+    submitBtn.style.marginTop = '20px';
+    
+    // Build the modal
+    inputContainer.appendChild(emailInput);
+    formGroup.appendChild(label);
+    formGroup.appendChild(inputContainer);
+    formGroup.appendChild(errorMsg);
+    
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(title);
+    modalContent.appendChild(description);
+    modalContent.appendChild(formGroup);
+    modalContent.appendChild(submitBtn);
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // Focus on the email input
+    emailInput.focus();
+    
+    // Email validation
+    emailInput.addEventListener('input', function() {
+      const email = emailInput.value.trim();
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      
+      if (!isValid && email.length > 0) {
+        errorMsg.style.display = 'block';
+      } else {
+        errorMsg.style.display = 'none';
+      }
+    });
+    
+    // Handle form submission
+    submitBtn.addEventListener('click', function() {
+      const email = emailInput.value.trim();
+      
+      // Validate email
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      
+      // Send password reset email
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          // Success - show confirmation
+          modalContent.innerHTML = `
+            <span style="position:absolute;top:15px;right:15px;font-size:24px;cursor:pointer" onclick="document.body.removeChild(this.parentNode.parentNode)">&times;</span>
+            <div style="text-align:center;padding:20px 0">
+              <i class="fas fa-check-circle" style="font-size:50px;color:var(--success);margin-bottom:20px"></i>
+              <h3 style="margin-bottom:15px;color:var(--electric-blue)">Email Sent!</h3>
+              <p style="margin-bottom:20px;color:rgba(255,255,255,0.8)">
+                We've sent a password reset link to <strong>${email}</strong>.
+                Please check your inbox and follow the instructions.
+              </p>
+              <p style="color:rgba(255,255,255,0.6);font-size:14px">
+                Didn't receive the email? Check your spam folder or try again.
+              </p>
+            </div>
+          `;
+        })
+        .catch((error) => {
+          console.error('Password reset error:', error);
+          
+          let errorMessage = 'Failed to send reset email. Please try again.';
+          switch(error.code) {
+            case 'auth/user-not-found':
+              errorMessage = 'No account found with this email address.';
+              break;
+            case 'auth/too-many-requests':
+              errorMessage = 'Too many attempts. Please try again later.';
+              break;
+            default:
+              errorMessage = error.message;
+          }
+          
+          errorMsg.textContent = errorMessage;
+          errorMsg.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Reset Link';
+        });
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        document.body.removeChild(modal);
+      }
+    });
+  });
+
+  // ... (keep all the rest of your existing code)
+
   </script>
 </body>
 </html>
+
