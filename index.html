@@ -701,7 +701,7 @@
         </div>
 
         <div class="signup-link">
-          New to GROCERA? <a href="signup.html">Create account</a>
+          New to GROCERA? <a href="#" id="showSignup">Create account</a>
         </div>
       </div>
     </div>
@@ -1113,7 +1113,10 @@
       }
       
       // Then verify with Firebase
-      auth.onAuthStateChanged((user) => {
+      const authCheck = auth.onAuthStateChanged((user) => {
+        // Remove this listener after first check
+        authCheck();
+        
         if (user) {
           // User is signed in
           if (!isLoggedIn) {
@@ -1130,9 +1133,15 @@
                   }
                 }
                 updateUI(user);
+                loadingOverlay.classList.add('hidden');
+              })
+              .catch(() => {
+                updateUI(user);
+                loadingOverlay.classList.add('hidden');
               });
           } else {
             updateUI(user);
+            loadingOverlay.classList.add('hidden');
           }
         } else {
           // User is signed out
@@ -1140,11 +1149,10 @@
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('userName');
             localStorage.removeItem('userEmail');
-            updateUI(null);
           }
+          updateUI(null);
+          loadingOverlay.classList.add('hidden');
         }
-        
-        loadingOverlay.classList.add('hidden');
       });
       
       // Fallback in case Firebase is slow
