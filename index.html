@@ -38,6 +38,48 @@
       min-height: 100vh;
       transition: all 0.4s ease;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Image with Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
+      background-size: cover;
+      opacity: 0.3;
+      z-index: -1;
+    }
+
+    /* Floating Icons Animation */
+    .floating-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .floating-icon {
+      position: absolute;
+      opacity: 0.1;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+      }
     }
 
     /* Loading Overlay */
@@ -86,46 +128,6 @@
       100% { transform: rotate(360deg); }
     }
 
-.floating-icons {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: -1;
-}
-
-.floating-icons i {
-  position: absolute;
-  color: rgba(255,255,255,0.1);
-  font-size: 30px;
-  animation: float 15s infinite linear;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-  90% { opacity: 0.3; }
-  100% {
-    transform: translateY(-10vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* Random positions for variety */
-.floating-icons i:nth-child(1) { left: 10%; animation-duration: 20s; font-size: 25px; }
-.floating-icons i:nth-child(2) { left: 30%; animation-duration: 18s; font-size: 40px; }
-.floating-icons i:nth-child(3) { left: 50%; animation-duration: 22s; font-size: 35px; }
-.floating-icons i:nth-child(4) { left: 70%; animation-duration: 19s; font-size: 45px; }
-.floating-icons i:nth-child(5) { left: 85%; animation-duration: 21s; font-size: 28px; }
-
-    
     /* Notification */
     .notification {
       position: fixed;
@@ -298,17 +300,6 @@
       box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
     }
 
-body {
-  background: url('https://images.unsplash.com/photo-1606813902914-2a77b9cbca49?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
-}
-
-body {
-  background: radial-gradient(circle at top left, #00f5ff33, transparent 60%),
-              radial-gradient(circle at bottom right, #ff00f533, transparent 60%),
-              #121212;
-}
-
-    
     /* Auth Container */
     .auth-container {
       display: flex;
@@ -642,16 +633,9 @@ body {
   </style>
 </head>
 <body>
+  <!-- Floating Icons Background -->
+  <div class="floating-icons" id="floatingIcons"></div>
 
-  <div class="floating-icons">
-  <i class="fas fa-apple-alt"></i>
-  <i class="fas fa-carrot"></i>
-  <i class="fas fa-bread-slice"></i>
-  <i class="fas fa-fish"></i>
-  <i class="fas fa-wine-bottle"></i>
-</div>
-
-  
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
@@ -773,10 +757,10 @@ body {
       <p class="user-email">You're logged in as: <span id="userEmail"></span></p>
       
       <div class="action-buttons">
-        <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+        <button class="btn btn-primary" onclick="window.location.href='shop.html'">
           <i class="fas fa-shopping-cart"></i> Start Shopping
         </button>
-        <button class="btn btn-secondary" onclick="window.location.href='about.html'">
+        <button class="btn btn-secondary" onclick="window.location.href='account.html'">
           <i class="fas fa-user-cog"></i> Manage Account
         </button>
         <button id="logoutButton" class="btn btn-secondary">
@@ -830,7 +814,6 @@ body {
     const facebookLogin = document.getElementById('facebookLogin');
     const googleLogin = document.getElementById('googleLogin');
     const appleLogin = document.getElementById('appleLogin');
-    const showSignup = document.getElementById('showSignup');
     const resetModal = document.getElementById('resetModal');
     const resetClose = document.getElementById('resetClose');
     const resetEmail = document.getElementById('resetEmail');
@@ -838,8 +821,26 @@ body {
     const resetSubmit = document.getElementById('resetSubmit');
     const resetForm = document.getElementById('resetForm');
     const resetSuccess = document.getElementById('resetSuccess');
-    const resetSuccessText = document.getElementById('resetSuccessText');
     const resetEmailDisplay = document.getElementById('resetEmailDisplay');
+    const floatingIcons = document.getElementById('floatingIcons');
+
+    // Create floating icons
+    function createFloatingIcons() {
+      const icons = ['🍎', '🍌', '🍊', '🍓', '🍇', '🍉', '🍍', '🥑', '🥦', '🥕', '🧀', '🍗', '🍞', '🥚', '🥛'];
+      const colors = ['#FFBE0B', '#FB5607', '#FF006E', '#8338EC', '#00F5FF', '#A5FF00', '#FFDE00'];
+      
+      for (let i = 0; i < 15; i++) {
+        const icon = document.createElement('div');
+        icon.className = 'floating-icon';
+        icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+        icon.style.color = colors[Math.floor(Math.random() * colors.length)];
+        icon.style.fontSize = `${Math.random() * 20 + 10}px`;
+        icon.style.left = `${Math.random() * 100}%`;
+        icon.style.animationDuration = `${Math.random() * 20 + 10}s`;
+        icon.style.animationDelay = `${Math.random() * 5}s`;
+        floatingIcons.appendChild(icon);
+      }
+    }
 
     // Show notification
     function showNotification(message, isSuccess = true) {
@@ -1043,8 +1044,16 @@ body {
     resetSubmit.addEventListener('click', function() {
       const email = resetEmail.value.trim();
       
-      // Validate email
+      // Validate email format and Gmail domain
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        resetEmailError.textContent = 'Please enter a valid email address';
+        resetEmailError.style.display = 'block';
+        return;
+      }
+      
+      // Check if it's a Gmail address (optional)
+      if (!email.endsWith('@gmail.com')) {
+        resetEmailError.textContent = 'Please use your Gmail account';
         resetEmailError.style.display = 'block';
         return;
       }
@@ -1153,14 +1162,9 @@ body {
         });
     });
 
-    // Show signup page (placeholder)
-    showSignup.addEventListener('click', function(e) {
-      e.preventDefault();
-      showNotification('Signup page would open here', false);
-    });
-
     // Initialize the app
     function initApp() {
+      createFloatingIcons();
       loadingOverlay.classList.remove('hidden');
       loadingText.textContent = 'Checking authentication...';
       
@@ -1219,7 +1223,7 @@ body {
       // Fallback in case Firebase is slow
       setTimeout(() => {
         loadingOverlay.classList.add('hidden');
-      }, 3000);
+      }, 2000); // Reduced from 3000 to 2000
     }
 
     // Start the app
@@ -1227,5 +1231,3 @@ body {
   </script>
 </body>
 </html>
-
-
