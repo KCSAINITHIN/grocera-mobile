@@ -5,6 +5,7 @@
   <title>Login - GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
       --electric-blue: #00F5FF;
@@ -15,6 +16,7 @@
       --white: rgba(255, 255, 255, 0.9);
       --black: #121212;
       --glass: rgba(20, 20, 20, 0.6);
+      --error: #FF4D4D;
     }
     
     body {
@@ -26,54 +28,34 @@
       background-size: cover;
       min-height: 100vh;
       padding: 20px;
-      box-sizing: border-box;
       display: flex;
       justify-content: center;
       align-items: center;
       color: var(--white);
-      overflow: auto;
     }
 
-    .login-box {
+    .login-container {
+      width: 100%;
+      max-width: 420px;
       background: var(--glass);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-top: 4px solid var(--electric-blue);
-      padding: 30px 25px;
       border-radius: 16px;
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(0, 245, 255, 0.2);
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
+      border-top: 4px solid var(--electric-blue);
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
-      z-index: 1;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      margin: 20px;
-      box-sizing: border-box;
     }
 
-    .login-box:hover {
-      transform: translateY(-8px);
-      box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(0, 245, 255, 0.3);
-    }
-
-    .login-box::after {
+    .login-container::before {
       content: '';
       position: absolute;
       top: -50%;
       left: -50%;
       width: 200%;
       height: 200%;
-      background: 
-        radial-gradient(circle, rgba(0,245,255,0.1) 0%, transparent 70%),
-        radial-gradient(circle, rgba(255,0,245,0.05) 0%, transparent 70%),
-        radial-gradient(circle, rgba(165,255,0,0.05) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(0,245,255,0.1) 0%, transparent 70%);
       z-index: -1;
       animation: rotate 20s linear infinite;
     }
@@ -82,53 +64,91 @@
       100% { transform: rotate(360deg); }
     }
 
-    .login-box img {
-      width: 150px;
-      margin-bottom: 20px;
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header img {
+      width: 120px;
+      margin-bottom: 15px;
       filter: drop-shadow(0 0 10px rgba(0, 245, 255, 0.5));
     }
 
-    .login-box h2 {
-      margin-bottom: 20px;
-      font-weight: 700;
+    .login-header h2 {
+      margin: 0;
       font-size: 28px;
-      background: linear-gradient(90deg, var(--electric-blue), var(--neon-pink), var(--acid-green));
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--electric-blue), var(--neon-pink));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
     }
 
-    .login-box input {
-      width: 100%;
-      padding: 14px 16px;
+    .form-group {
       margin-bottom: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      background: rgba(10, 10, 10, 0.4);
-      color: var(--white);
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-      box-sizing: border-box;
+      position: relative;
     }
 
-    .login-box input:focus {
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    .input-container input {
+      width: 100%;
+      padding: 14px 16px;
+      padding-right: 40px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(10, 10, 10, 0.4);
+      color: var(--white);
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .input-container input:focus {
       border-color: var(--electric-blue);
-      box-shadow: 
-        inset 0 0 10px rgba(0, 245, 255, 0.3),
-        0 0 15px rgba(0, 245, 255, 0.2);
+      box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.2);
       outline: none;
       background: rgba(20, 20, 20, 0.6);
     }
 
-    .login-box input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+    .input-container .input-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
     }
 
-    .login-box button {
+    .error-message {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    #togglePassword {
+      transition: all 0.3s ease;
+    }
+
+    #togglePassword:hover {
+      color: var(--electric-blue);
+    }
+
+    .login-btn {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       background: linear-gradient(45deg, var(--electric-blue), var(--violet));
       color: var(--black);
       border: none;
@@ -137,51 +157,71 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 
-        0 5px 15px rgba(0, 245, 255, 0.4),
-        inset 0 0 10px rgba(255, 255, 255, 0.2);
-      margin: 15px 0;
+      margin-top: 10px;
       position: relative;
       overflow: hidden;
-      box-sizing: border-box;
     }
 
-    .login-box button::before {
+    .login-btn::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
       background: linear-gradient(
-        to bottom right,
-        rgba(255, 255, 255, 0.3) 0%,
-        rgba(255, 255, 255, 0) 60%
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
       );
-      transform: rotate(30deg);
-      transition: all 0.5s ease;
+      transition: 0.5s;
     }
 
-    .login-box button:hover {
+    .login-btn:hover {
       background: linear-gradient(45deg, var(--violet), var(--electric-blue));
-      box-shadow: 
-        0 8px 25px rgba(138, 43, 226, 0.6),
-        inset 0 0 15px rgba(255, 255, 255, 0.3);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
     }
 
-    .login-box button:hover::before {
+    .login-btn:hover::before {
       left: 100%;
     }
 
-    .login-box button:active {
-      transform: translateY(1px);
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .forgot-password a {
+      color: var(--neon-pink);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
     }
 
     .signup-link {
-      margin-top: 20px;
+      text-align: center;
+      margin-top: 25px;
       font-size: 15px;
-      color: rgba(255, 255, 255, 0.7);
     }
 
     .signup-link a {
@@ -189,57 +229,23 @@
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .signup-link a::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--sunshine);
-      transition: width 0.3s ease;
     }
 
     .signup-link a:hover {
-      color: var(--acid-green);
-      text-shadow: 0 0 10px rgba(165, 255, 0, 0.5);
-    }
-
-    .signup-link a:hover::after {
-      width: 100%;
-      background: var(--acid-green);
-    }
-
-    .forgot-password {
-      display: block;
-      text-align: right;
-      margin: -10px 0 20px;
-      font-size: 14px;
-    }
-
-    .forgot-password a {
-      color: var(--neon-pink);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .forgot-password a:hover {
-      text-shadow: 0 0 10px rgba(255, 0, 245, 0.5);
+      text-decoration: underline;
     }
 
     .social-login {
-      margin: 25px 0 15px;
+      margin: 25px 0;
+      position: relative;
     }
 
     .social-login p {
+      text-align: center;
       color: rgba(255, 255, 255, 0.7);
       font-size: 14px;
-      position: relative;
       margin-bottom: 20px;
+      position: relative;
     }
 
     .social-login p::before,
@@ -275,7 +281,7 @@
       justify-content: center;
       background: rgba(30, 30, 30, 0.5);
       color: var(--white);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.3s ease;
       cursor: pointer;
       border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
@@ -286,26 +292,25 @@
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
+      left: -100%;
       width: 100%;
       height: 100%;
       background: linear-gradient(
-        45deg,
+        90deg,
         transparent,
-        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.2),
         transparent
       );
-      transform: translateX(-100%);
-      transition: transform 0.6s ease;
+      transition: 0.5s;
     }
 
     .social-icon:hover {
-      transform: translateY(-5px) scale(1.1);
+      transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     .social-icon:hover::before {
-      transform: translateX(100%);
+      left: 100%;
     }
 
     .social-icon.facebook:hover {
@@ -323,142 +328,88 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
     }
 
-    /* Floating animation for decorative elements */
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .floating {
-      position: absolute;
-      opacity: 0.6;
-      z-index: -1;
-      animation: float 6s ease-in-out infinite;
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
       display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
-    /* Media Queries */
-    @media (min-width: 768px) {
-      .login-box {
-        padding: 40px 35px;
-      }
-      
-      .login-box img {
-        width: 180px;
-        margin-bottom: 25px;
-      }
-      
-      .login-box h2 {
-        font-size: 32px;
-        margin-bottom: 25px;
-      }
-      
-      .login-box input {
-        padding: 16px 20px;
-        font-size: 16px;
-      }
-      
-      .login-box button {
-        padding: 16px;
-        font-size: 18px;
-      }
-      
-      .signup-link {
-        font-size: 16px;
-        margin-top: 25px;
-      }
-      
-      .social-icon {
-        width: 50px;
-        height: 50px;
-      }
-      
-      .social-icons {
-        gap: 20px;
-      }
-      
-      .floating {
-        display: block;
-      }
-      
-      .floating:nth-child(1) {
-        top: 10%;
-        left: 10%;
-        width: 40px;
-        filter: drop-shadow(0 0 10px var(--electric-blue));
-      }
-
-      .floating:nth-child(2) {
-        top: 70%;
-        left: 80%;
-        width: 60px;
-        filter: drop-shadow(0 0 10px var(--neon-pink));
-        animation-delay: 1s;
-      }
-
-      .floating:nth-child(3) {
-        top: 30%;
-        left: 85%;
-        width: 30px;
-        filter: drop-shadow(0 0 10px var(--acid-green));
-        animation-delay: 2s;
-      }
-
-      .floating:nth-child(4) {
-        top: 80%;
-        left: 15%;
-        width: 50px;
-        filter: drop-shadow(0 0 10px var(--sunshine));
-        animation-delay: 3s;
-      }
+    .loading-content {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      border-top: 4px solid var(--electric-blue);
     }
 
-    @media (max-width: 400px) {
-      .login-box {
-        padding: 25px 20px;
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid var(--electric-blue);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
       }
       
-      .login-box h2 {
+      .login-header img {
+        width: 100px;
+      }
+      
+      .login-header h2 {
         font-size: 24px;
-      }
-      
-      .signup-link {
-        font-size: 14px;
-      }
-    }
-
-    @media (max-height: 500px) {
-      body {
-        align-items: flex-start;
-        padding-top: 20px;
-        padding-bottom: 20px;
-      }
-      
-      .login-box {
-        margin-top: 20px;
-        margin-bottom: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Decorative floating elements -->
-  <img src="https://cdn-icons-png.flaticon.com/512/891/891364.png" class="floating" alt="fruit">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081985.png" class="floating" alt="vegetable">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="floating" alt="grocery">
-  <img src="https://cdn-icons-png.flaticon.com/512/3081/3081525.png" class="floating" alt="shopping">
+  <div class="login-container">
+    <div class="login-header">
+      <img src="logo.png" alt="GROCERA Logo">
+      <h2>Welcome Back</h2>
+    </div>
 
-  <div class="login-box">
-    <img src="logo.png" alt="GROCERA Logo">
-
-    <h2>Welcome Back!</h2>
     <form id="loginForm">
-      <input type="email" id="email" placeholder="Email Address" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
-      <button type="submit">Login</button>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-container">
+          <input type="email" id="email" placeholder="Enter your email" required>
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+        <div class="error-message" id="emailError">Please enter a valid email</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-container">
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <i class="fas fa-eye-slash input-icon" id="togglePassword"></i>
+        </div>
+        <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+      </div>
+
+      <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
+
+      <button type="submit" class="login-btn" id="loginButton">Login</button>
     </form>
-    
+
     <div class="social-login">
       <p>or continue with</p>
       <div class="social-icons">
@@ -473,159 +424,196 @@
         </div>
       </div>
     </div>
-    
+
     <div class="signup-link">
       New to GROCERA? <a href="signup.html">Create account</a>
     </div>
   </div>
 
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      sendPasswordResetEmail,
-      GoogleAuthProvider,
-      FacebookAuthProvider,
-      OAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <h3 id="loadingText">Signing you in...</h3>
+    </div>
+  </div>
 
-    // Your web app's Firebase configuration
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
       authDomain: "grocera-nithin.firebaseapp.com",
       projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.firebasestorage.app",
+      storageBucket: "grocera-nithin.appspot.com",
       messagingSenderId: "824896008507",
       appId: "1:824896008507:web:136d071d696f9ff190071e"
     };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Email/Password Login
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const loginButton = document.getElementById('loginButton');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const forgotPasswordLink = document.getElementById('forgotPassword');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const facebookLogin = document.getElementById('facebookLogin');
+    const googleLogin = document.getElementById('googleLogin');
+    const appleLogin = document.getElementById('appleLogin');
+
+    function clearErrors() {
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+    }
+
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    emailInput.addEventListener('input', validateEmail);
+    passwordInput.addEventListener('input', validatePassword);
+
+    function validateEmail() {
+      const email = emailInput.value.trim();
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      
+      if (!isValid && email.length > 0) {
+        emailError.style.display = 'block';
+        return false;
+      } else {
+        emailError.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validatePassword() {
+      const password = passwordInput.value.trim();
+      
+      if (password.length > 0 && password.length < 6) {
+        passwordError.style.display = 'block';
+        return false;
+      } else {
+        passwordError.style.display = 'none';
+        return true;
+      }
+    }
+
+    loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      clearErrors();
       
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const button = document.querySelector('button');
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
       
-      // Original button state
-      button.innerHTML = 'Authenticating...';
-      button.style.background = 'linear-gradient(45deg, var(--violet), var(--electric-blue))';
+      const isEmailValid = validateEmail();
+      const isPasswordValid = validatePassword();
       
-      // Firebase email/password authentication
-      signInWithEmailAndPassword(auth, email, password)
+      if (!isEmailValid || !isPasswordValid) {
+        return;
+      }
+      
+      loginButton.disabled = true;
+      loginButton.textContent = 'Authenticating...';
+      loadingOverlay.style.display = 'flex';
+      
+      auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // Signed in
           const user = userCredential.user;
           
-          // Success effect
-          button.innerHTML = '✓ Welcome!';
-          button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
-          button.style.color = 'var(--black)';
+          loginButton.textContent = '✓ Success!';
+          loadingText.textContent = 'Redirecting to dashboard...';
           
-          // Redirect after delay
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1500);
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', email);
+          
+          db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                const userData = doc.data();
+                if (userData.name) {
+                  localStorage.setItem('userName', userData.name);
+                }
+              }
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 1500);
+            });
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          console.error('Login error:', error);
+          loginButton.disabled = false;
+          loginButton.textContent = 'Login';
+          loadingOverlay.style.display = 'none';
           
-          // Error effect
-          button.innerHTML = '✗ ' + getFriendlyError(errorCode);
-          button.style.background = 'linear-gradient(45deg, var(--neon-pink), var(--violet))';
-          
-          // Reset button after delay
-          setTimeout(() => {
-            button.innerHTML = 'Login';
-            button.style.background = 'linear-gradient(45deg, var(--electric-blue), var(--violet))';
-          }, 3000);
+          switch(error.code) {
+            case 'auth/user-not-found':
+              emailError.textContent = 'No account found with this email.';
+              emailError.style.display = 'block';
+              break;
+            case 'auth/wrong-password':
+              passwordError.textContent = 'Incorrect password. Please try again.';
+              passwordError.style.display = 'block';
+              break;
+            case 'auth/too-many-requests':
+              passwordError.textContent = 'Too many attempts. Try again later.';
+              passwordError.style.display = 'block';
+              break;
+            default:
+              alert('Login error: ' + error.message);
+          }
         });
     });
 
-    // Google Login
-    document.getElementById("googleLogin").addEventListener("click", function() {
-      const provider = new GoogleAuthProvider();
-      socialLogin(provider);
-    });
-
-    // Facebook Login
-    document.getElementById("facebookLogin").addEventListener("click", function() {
-      const provider = new FacebookAuthProvider();
-      socialLogin(provider);
-    });
-
-    // Apple Login
-    document.getElementById("appleLogin").addEventListener("click", function() {
-      const provider = new OAuthProvider('apple.com');
-      socialLogin(provider);
-    });
-
-    // Forgot Password
-    document.getElementById("forgotPassword").addEventListener("click", function(e) {
+    forgotPasswordLink.addEventListener('click', function(e) {
       e.preventDefault();
-      const email = prompt("Please enter your email address to reset your password:");
+      const email = prompt('Please enter your email address to reset your password:');
       
       if (email) {
-        sendPasswordResetEmail(auth, email)
+        auth.sendPasswordResetEmail(email)
           .then(() => {
-            alert("Password reset email sent. Please check your inbox.");
+            alert('Password reset email sent. Please check your inbox.');
           })
           .catch((error) => {
-            alert("Error: " + getFriendlyError(error.code));
+            alert('Error: ' + error.message);
           });
       }
     });
 
-    // Helper function for social logins
-    function socialLogin(provider) {
-      signInWithPopup(auth, provider)
+    // Social login handlers
+    function handleSocialLogin(provider) {
+      const authProvider = new firebase.auth[provider]();
+      auth.signInWithPopup(authProvider)
         .then((result) => {
-          // Successful login
-          const button = document.querySelector('button');
-          button.innerHTML = '✓ Welcome!';
-          button.style.background = 'linear-gradient(45deg, var(--acid-green), var(--sunshine))';
-          button.style.color = 'var(--black)';
+          const user = result.user;
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', user.email || '');
           
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1500);
+          if (user.displayName) {
+            localStorage.setItem('userName', user.displayName);
+          }
+          
+          window.location.href = 'index.html';
         })
         .catch((error) => {
-          alert("Login failed: " + getFriendlyError(error.code));
+          console.error('Social login error:', error);
+          alert('Login failed: ' + error.message);
         });
     }
 
-    // Helper function to convert Firebase error codes to friendly messages
-    function getFriendlyError(errorCode) {
-      switch(errorCode) {
-        case 'auth/invalid-email':
-          return 'Invalid email format';
-        case 'auth/user-disabled':
-          return 'Account disabled';
-        case 'auth/user-not-found':
-          return 'User not found';
-        case 'auth/wrong-password':
-          return 'Incorrect password';
-        case 'auth/too-many-requests':
-          return 'Too many attempts. Try again later';
-        case 'auth/account-exists-with-different-credential':
-          return 'Account already exists with different method';
-        case 'auth/popup-closed-by-user':
-          return 'Login popup was closed';
-        case 'auth/cancelled-popup-request':
-          return 'Login cancelled';
-        default:
-          return 'Login failed';
-      }
-    }
+    facebookLogin.addEventListener('click', () => handleSocialLogin('FacebookAuthProvider'));
+    googleLogin.addEventListener('click', () => handleSocialLogin('GoogleAuthProvider'));
+    appleLogin.addEventListener('click', () => handleSocialLogin('OAuthProvider'));
   </script>
 </body>
 </html>
