@@ -36,7 +36,6 @@
       background: var(--black);
       color: var(--white);
       min-height: 100vh;
-      transition: all 0.4s ease;
       overflow-x: hidden;
       position: relative;
     }
@@ -80,52 +79,6 @@
       100% {
         transform: translateY(-100vh) rotate(360deg);
       }
-    }
-
-    /* Loading Overlay */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.95);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: opacity 0.4s ease;
-    }
-
-    .loading-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .loading-content {
-      background: rgba(30, 30, 30, 0.9);
-      padding: 30px;
-      border-radius: 16px;
-      text-align: center;
-      border-top: 4px solid var(--pink);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      max-width: 300px;
-      width: 90%;
-    }
-
-    .spinner {
-      border: 5px solid rgba(255, 255, 255, 0.1);
-      border-top: 5px solid var(--pink);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
 
     /* Notification */
@@ -636,14 +589,6 @@
   <!-- Floating Icons Background -->
   <div class="floating-icons" id="floatingIcons"></div>
 
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <h3 id="loadingText">Loading...</h3>
-    </div>
-  </div>
-
   <!-- Notification -->
   <div id="notification" class="notification">
     <i class="fas fa-check-circle"></i>
@@ -787,13 +732,17 @@
     };
 
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Enable Firestore offline persistence
+    db.enablePersistence()
+      .catch((err) => {
+        console.log("Firestore offline persistence not enabled:", err);
+      });
+
     // DOM Elements
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notificationText');
     const authContainer = document.getElementById('authContainer');
@@ -860,10 +809,20 @@
       this.classList.toggle('fa-eye-slash');
     });
 
-    // Form validation
-    emailInput.addEventListener('input', validateEmail);
-    passwordInput.addEventListener('input', validatePassword);
+    // Password validation
+    function validatePassword() {
+      const password = passwordInput.value.trim();
+      
+      if (password.length > 0 && password.length < 6) {
+        passwordError.style.display = 'block';
+        return false;
+      } else {
+        passwordError.style.display = 'none';
+        return true;
+      }
+    }
 
+    // Email validation
     function validateEmail() {
       const email = emailInput.value.trim();
       const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -877,17 +836,15 @@
       }
     }
 
-    function validatePassword() {
-      const password = passwordInput.value.trim();
-      
-      if (password.length > 0 && password.length < 6) {
-        passwordError.style.display = 'block';
-        return false;
-      } else {
-        passwordError.style.display = 'none';
-        return true;
-      }
-    }
+    // Password input handler
+    passwordInput.addEventListener('input', function() {
+      validatePassword();
+    });
+
+    // Email input handler
+    emailInput.addEventListener('input', function() {
+      validateEmail();
+    });
 
     // Clear all errors
     function clearErrors() {
@@ -945,15 +902,13 @@
       }
       
       loginButton.disabled = true;
-      loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-      loadingOverlay.classList.remove('hidden');
-      loadingText.textContent = 'Signing you in...';
+      loginButton.textContent = 'Authenticating...';
       
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
           
-          // Get additional user data from Firestore
+          // Try to get user data from Firestore (works offline if previously cached)
           return db.collection('users').doc(user.uid).get()
             .then((doc) => {
               if (doc.exists) {
@@ -963,7 +918,8 @@
                 }
               }
               return user;
-            });
+            })
+            .catch(() => user); // Fallback to basic user info if Firestore fails
         })
         .then((user) => {
           localStorage.setItem('isLoggedIn', 'true');
@@ -986,6 +942,16 @@
             case 'auth/too-many-requests':
               errorMessage = 'Too many attempts. Please try again later.';
               break;
+            case 'auth/network-request-failed':
+              // Check if we have cached credentials
+              if (auth.currentUser) {
+                updateUI(auth.currentUser);
+                errorMessage = 'Working offline with cached credentials';
+                showNotification(errorMessage, true);
+                return;
+              }
+              errorMessage = 'Network error. Please check your connection.';
+              break;
             default:
               errorMessage = error.message;
           }
@@ -995,7 +961,6 @@
         .finally(() => {
           loginButton.disabled = false;
           loginButton.textContent = 'Login';
-          loadingOverlay.classList.add('hidden');
         });
     });
 
@@ -1044,23 +1009,15 @@
     resetSubmit.addEventListener('click', function() {
       const email = resetEmail.value.trim();
       
-      // Validate email format and Gmail domain
+      // Validate email format
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         resetEmailError.textContent = 'Please enter a valid email address';
         resetEmailError.style.display = 'block';
         return;
       }
       
-      // Check if it's a Gmail address (optional)
-      if (!email.endsWith('@gmail.com')) {
-        resetEmailError.textContent = 'Please use your Gmail account';
-        resetEmailError.style.display = 'block';
-        return;
-      }
-      
-      // Show loading state
       resetSubmit.disabled = true;
-      resetSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      resetSubmit.textContent = 'Sending...';
       
       // Send password reset email
       auth.sendPasswordResetEmail(email)
@@ -1081,12 +1038,17 @@
             case 'auth/too-many-requests':
               errorMessage = 'Too many attempts. Please try again later.';
               break;
+            case 'auth/network-request-failed':
+              errorMessage = 'Network error. Please check your connection.';
+              break;
             default:
               errorMessage = error.message;
           }
           
           resetEmailError.textContent = errorMessage;
           resetEmailError.style.display = 'block';
+        })
+        .finally(() => {
           resetSubmit.disabled = false;
           resetSubmit.textContent = 'Send Reset Link';
         });
@@ -1108,9 +1070,6 @@
           break;
       }
       
-      loadingOverlay.classList.remove('hidden');
-      loadingText.textContent = `Signing in with ${provider}...`;
-      
       auth.signInWithPopup(authProvider)
         .then((result) => {
           const user = result.user;
@@ -1130,9 +1089,6 @@
         .catch((error) => {
           console.error('Social login error:', error);
           showNotification('Login failed: ' + error.message, false);
-        })
-        .finally(() => {
-          loadingOverlay.classList.add('hidden');
         });
     }
 
@@ -1142,9 +1098,6 @@
 
     // Logout
     logoutButton.addEventListener('click', function() {
-      loadingOverlay.classList.remove('hidden');
-      loadingText.textContent = 'Logging out...';
-      
       auth.signOut()
         .then(() => {
           localStorage.removeItem('isLoggedIn');
@@ -1156,74 +1109,43 @@
         .catch((error) => {
           console.error('Logout error:', error);
           showNotification('Logout failed: ' + error.message, false);
-        })
-        .finally(() => {
-          loadingOverlay.classList.add('hidden');
         });
     });
 
     // Initialize the app
     function initApp() {
       createFloatingIcons();
-      loadingOverlay.classList.remove('hidden');
-      loadingText.textContent = 'Checking authentication...';
       
-      // Check localStorage first for quick UI update
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      
-      if (isLoggedIn) {
-        toggleViews(true);
-      } else {
-        toggleViews(false);
-      }
-      
-      // Then verify with Firebase
-      const authCheck = auth.onAuthStateChanged((user) => {
-        // Remove this listener after first check
-        authCheck();
-        
+      // Check authentication state
+      auth.onAuthStateChanged((user) => {
         if (user) {
           // User is signed in
-          if (!isLoggedIn) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userEmail', user.email || '');
-            
-            // Get additional user data
-            db.collection('users').doc(user.uid).get()
-              .then((doc) => {
-                if (doc.exists) {
-                  const userData = doc.data();
-                  if (userData.name) {
-                    localStorage.setItem('userName', userData.name);
-                  }
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', user.email || '');
+          
+          // Try to get user data (works offline if previously cached)
+          db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                const userData = doc.data();
+                if (userData.name) {
+                  localStorage.setItem('userName', userData.name);
                 }
-                updateUI(user);
-                loadingOverlay.classList.add('hidden');
-              })
-              .catch(() => {
-                updateUI(user);
-                loadingOverlay.classList.add('hidden');
-              });
-          } else {
-            updateUI(user);
-            loadingOverlay.classList.add('hidden');
-          }
+              }
+              updateUI(user);
+            })
+            .catch(() => {
+              // Still update UI with basic user info if Firestore fails
+              updateUI(user);
+            });
         } else {
           // User is signed out
-          if (isLoggedIn) {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userEmail');
-          }
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('userEmail');
           updateUI(null);
-          loadingOverlay.classList.add('hidden');
         }
       });
-      
-      // Fallback in case Firebase is slow
-      setTimeout(() => {
-        loadingOverlay.classList.add('hidden');
-      }, 2000); // Reduced from 3000 to 2000
     }
 
     // Start the app
@@ -1231,4 +1153,3 @@
   </script>
 </body>
 </html>
-
