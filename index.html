@@ -47,7 +47,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
+      background: url('https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center;
       background-size: cover;
       opacity: 0.3;
       z-index: -1;
@@ -542,6 +542,36 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
+    .email-not-verified {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .email-not-verified i {
+      color: var(--error);
+      font-size: 20px;
+    }
+
+    .email-not-verified p {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .email-not-verified a {
+      color: var(--electric-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .email-not-verified a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       .login-box {
         padding: 30px 20px;
@@ -691,6 +721,11 @@
       <h1 class="welcome-message">Welcome back, <span id="welcomeName">User</span>!</h1>
       <p class="user-email">You're logged in as: <span id="userEmail"></span></p>
       
+      <div id="emailNotVerified" class="email-not-verified" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Your email is not verified. <a href="#" id="resendVerification">Resend verification email</a></p>
+      </div>
+      
       <div class="action-buttons">
         <button class="btn btn-primary" id="startShoppingBtn">
           <i class="fas fa-shopping-cart"></i> Start Shopping
@@ -764,6 +799,8 @@
     const floatingIcons = document.getElementById('floatingIcons');
     const startShoppingBtn = document.getElementById('startShoppingBtn');
     const manageAccountBtn = document.getElementById('manageAccountBtn');
+    const emailNotVerified = document.getElementById('emailNotVerified');
+    const resendVerification = document.getElementById('resendVerification');
 
     // Create floating icons
     function createFloatingIcons() {
@@ -872,6 +909,13 @@
           userAvatar.src = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
         }
         
+        // Show email verification warning if needed
+        if (!user.emailVerified) {
+          emailNotVerified.style.display = 'flex';
+        } else {
+          emailNotVerified.style.display = 'none';
+        }
+        
         toggleViews(true);
         if (showWelcomeMessage) {
           showNotification('Logged in successfully');
@@ -905,12 +949,6 @@
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          
-          // Verify the email is verified before allowing access
-          if (!user.emailVerified) {
-            auth.signOut();
-            throw new Error('Please verify your email before logging in. Check your inbox for the verification link.');
-          }
           
           // Try to get user data from Firestore
           return db.collection('users').doc(user.uid).get()
@@ -1087,6 +1125,23 @@
     googleLogin.addEventListener('click', () => handleSocialLogin('google'));
     appleLogin.addEventListener('click', () => handleSocialLogin('apple'));
 
+    // Resend verification email
+    resendVerification.addEventListener('click', function(e) {
+      e.preventDefault();
+      const user = auth.currentUser;
+      
+      if (user) {
+        user.sendEmailVerification()
+          .then(() => {
+            showNotification('Verification email sent. Please check your inbox.');
+          })
+          .catch((error) => {
+            console.error('Error sending verification email:', error);
+            showNotification('Failed to send verification email: ' + error.message, false);
+          });
+      }
+    });
+
     // Logout
     logoutButton.addEventListener('click', function() {
       auth.signOut()
@@ -1118,33 +1173,26 @@
       // Check authentication state
       auth.onAuthStateChanged((user) => {
         if (user) {
-          // Only show dashboard if email is verified
-          if (user.emailVerified) {
-            db.collection('users').doc(user.uid).get()
-              .then((doc) => {
-                if (doc.exists) {
-                  const userData = doc.data();
-                  if (userData.name) {
-                    user.updateProfile({
-                      displayName: userData.name
-                    }).then(() => {
-                      updateUI(user);
-                    });
-                  } else {
+          db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                const userData = doc.data();
+                if (userData.name) {
+                  user.updateProfile({
+                    displayName: userData.name
+                  }).then(() => {
                     updateUI(user);
-                  }
+                  });
                 } else {
                   updateUI(user);
                 }
-              })
-              .catch(() => {
+              } else {
                 updateUI(user);
-              });
-          } else {
-            // If email not verified, sign out and show message
-            auth.signOut();
-            showNotification('Please verify your email before logging in.', false);
-          }
+              }
+            })
+            .catch(() => {
+              updateUI(user);
+            });
         } else {
           updateUI(null);
         }
