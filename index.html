@@ -115,6 +115,101 @@
       opacity: 1;
     }
 
+    /* Reset Password Modal */
+    .reset-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .reset-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .reset-content {
+      background: var(--dark-glass);
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      border-top: 4px solid var(--pink);
+      backdrop-filter: blur(10px);
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .reset-modal.active .reset-content {
+      transform: translateY(0);
+    }
+
+    .reset-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.2s ease;
+    }
+
+    .reset-close:hover {
+      color: var(--white);
+    }
+
+    .reset-title {
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--electric-blue);
+      font-size: 24px;
+    }
+
+    .reset-description {
+      margin-bottom: 20px;
+      text-align: center;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+    }
+
+    .reset-success {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .reset-success-icon {
+      font-size: 50px;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+
+    .reset-success-title {
+      margin-bottom: 15px;
+      color: var(--electric-blue);
+      font-size: 24px;
+    }
+
+    .reset-success-text {
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+    }
+
+    .reset-success-note {
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+    }
+
     /* Main Container */
     .container {
       max-width: 1200px;
@@ -510,6 +605,43 @@
     <span id="notificationText"></span>
   </div>
 
+  <!-- Reset Password Modal -->
+  <div class="reset-modal" id="resetModal">
+    <div class="reset-content">
+      <span class="reset-close" id="resetClose">&times;</span>
+      <div id="resetForm">
+        <h3 class="reset-title">Reset Password</h3>
+        <p class="reset-description">
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+        <div class="form-group">
+          <label for="resetEmail">Email Address</label>
+          <div class="input-container">
+            <input type="email" id="resetEmail" placeholder="Enter your email" required>
+            <i class="fas fa-envelope input-icon"></i>
+          </div>
+          <div class="error-message" id="resetEmailError">Please enter a valid email</div>
+        </div>
+        <button class="btn btn-primary" id="resetSubmit">
+          Send Reset Link
+        </button>
+      </div>
+      <div id="resetSuccess" style="display: none;">
+        <div class="reset-success">
+          <i class="fas fa-check-circle reset-success-icon"></i>
+          <h3 class="reset-success-title">Email Sent!</h3>
+          <p class="reset-success-text" id="resetSuccessText">
+            We've sent a password reset link to <strong id="resetEmailDisplay"></strong>.
+            Please check your inbox and follow the instructions.
+          </p>
+          <p class="reset-success-note">
+            Didn't receive the email? Check your spam folder or try again.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <div class="container">
     <!-- Navigation -->
@@ -638,6 +770,15 @@
     const googleLogin = document.getElementById('googleLogin');
     const appleLogin = document.getElementById('appleLogin');
     const showSignup = document.getElementById('showSignup');
+    const resetModal = document.getElementById('resetModal');
+    const resetClose = document.getElementById('resetClose');
+    const resetEmail = document.getElementById('resetEmail');
+    const resetEmailError = document.getElementById('resetEmailError');
+    const resetSubmit = document.getElementById('resetSubmit');
+    const resetForm = document.getElementById('resetForm');
+    const resetSuccess = document.getElementById('resetSuccess');
+    const resetSuccessText = document.getElementById('resetSuccessText');
+    const resetEmailDisplay = document.getElementById('resetEmailDisplay');
 
     // Show notification
     function showNotification(message, isSuccess = true) {
@@ -796,20 +937,89 @@
         });
     });
 
-    // Forgot password
+    // Reset password modal functions
+    function openResetModal() {
+      resetModal.classList.add('active');
+      resetEmail.focus();
+    }
+
+    function closeResetModal() {
+      resetModal.classList.remove('active');
+      // Reset form
+      resetForm.style.display = 'block';
+      resetSuccess.style.display = 'none';
+      resetEmail.value = '';
+      resetEmailError.style.display = 'none';
+    }
+
+    // Forgot password link
     forgotPasswordLink.addEventListener('click', function(e) {
       e.preventDefault();
-      const email = prompt('Please enter your email address to reset your password:');
-      
-      if (email) {
-        auth.sendPasswordResetEmail(email)
-          .then(() => {
-            showNotification('Password reset email sent. Please check your inbox.');
-          })
-          .catch((error) => {
-            showNotification('Error: ' + error.message, false);
-          });
+      openResetModal();
+    });
+
+    // Close reset modal
+    resetClose.addEventListener('click', closeResetModal);
+    resetModal.addEventListener('click', function(e) {
+      if (e.target === resetModal) {
+        closeResetModal();
       }
+    });
+
+    // Validate reset email
+    resetEmail.addEventListener('input', function() {
+      const email = resetEmail.value.trim();
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      
+      if (!isValid && email.length > 0) {
+        resetEmailError.style.display = 'block';
+      } else {
+        resetEmailError.style.display = 'none';
+      }
+    });
+
+    // Handle reset password submission
+    resetSubmit.addEventListener('click', function() {
+      const email = resetEmail.value.trim();
+      
+      // Validate email
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        resetEmailError.style.display = 'block';
+        return;
+      }
+      
+      // Show loading state
+      resetSubmit.disabled = true;
+      resetSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      
+      // Send password reset email
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          // Show success message
+          resetForm.style.display = 'none';
+          resetSuccess.style.display = 'block';
+          resetEmailDisplay.textContent = email;
+        })
+        .catch((error) => {
+          console.error('Password reset error:', error);
+          
+          let errorMessage = 'Failed to send reset email. Please try again.';
+          switch(error.code) {
+            case 'auth/user-not-found':
+              errorMessage = 'No account found with this email address.';
+              break;
+            case 'auth/too-many-requests':
+              errorMessage = 'Too many attempts. Please try again later.';
+              break;
+            default:
+              errorMessage = error.message;
+          }
+          
+          resetEmailError.textContent = errorMessage;
+          resetEmailError.style.display = 'block';
+          resetSubmit.disabled = false;
+          resetSubmit.textContent = 'Send Reset Link';
+        });
     });
 
     // Social login handlers
@@ -945,179 +1155,6 @@
 
     // Start the app
     document.addEventListener('DOMContentLoaded', initApp);
-
-   
- 
-  // Improved Forgot Password functionality
-  forgotPasswordLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // Create a modal for better UX
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '2000';
-    
-    const modalContent = document.createElement('div');
-    modalContent.style.backgroundColor = 'var(--dark-glass)';
-    modalContent.style.padding = '30px';
-    modalContent.style.borderRadius = '16px';
-    modalContent.style.width = '90%';
-    modalContent.style.maxWidth = '400px';
-    modalContent.style.borderTop = '4px solid var(--pink)';
-    
-    const closeBtn = document.createElement('span');
-    closeBtn.innerHTML = '&times;';
-    closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '15px';
-    closeBtn.style.right = '15px';
-    closeBtn.style.fontSize = '24px';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.addEventListener('click', () => document.body.removeChild(modal));
-    
-    const title = document.createElement('h3');
-    title.textContent = 'Reset Password';
-    title.style.marginBottom = '20px';
-    title.style.textAlign = 'center';
-    title.style.color = 'var(--electric-blue)';
-    
-    const description = document.createElement('p');
-    description.textContent = 'Enter your email address and we\'ll send you a link to reset your password.';
-    description.style.marginBottom = '20px';
-    description.style.textAlign = 'center';
-    description.style.color = 'rgba(255,255,255,0.8)';
-    
-    const formGroup = document.createElement('div');
-    formGroup.className = 'form-group';
-    
-    const label = document.createElement('label');
-    label.textContent = 'Email Address';
-    label.setAttribute('for', 'resetEmail');
-    
-    const inputContainer = document.createElement('div');
-    inputContainer.className = 'input-container';
-    
-    const emailInput = document.createElement('input');
-    emailInput.type = 'email';
-    emailInput.id = 'resetEmail';
-    emailInput.placeholder = 'Enter your email';
-    emailInput.required = true;
-    emailInput.style.width = '100%';
-    
-    const errorMsg = document.createElement('div');
-    errorMsg.className = 'error-message';
-    errorMsg.id = 'resetEmailError';
-    errorMsg.textContent = 'Please enter a valid email';
-    errorMsg.style.display = 'none';
-    
-    const submitBtn = document.createElement('button');
-    submitBtn.className = 'btn btn-primary';
-    submitBtn.textContent = 'Send Reset Link';
-    submitBtn.style.marginTop = '20px';
-    
-    // Build the modal
-    inputContainer.appendChild(emailInput);
-    formGroup.appendChild(label);
-    formGroup.appendChild(inputContainer);
-    formGroup.appendChild(errorMsg);
-    
-    modalContent.appendChild(closeBtn);
-    modalContent.appendChild(title);
-    modalContent.appendChild(description);
-    modalContent.appendChild(formGroup);
-    modalContent.appendChild(submitBtn);
-    
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-    
-    // Focus on the email input
-    emailInput.focus();
-    
-    // Email validation
-    emailInput.addEventListener('input', function() {
-      const email = emailInput.value.trim();
-      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      
-      if (!isValid && email.length > 0) {
-        errorMsg.style.display = 'block';
-      } else {
-        errorMsg.style.display = 'none';
-      }
-    });
-    
-    // Handle form submission
-    submitBtn.addEventListener('click', function() {
-      const email = emailInput.value.trim();
-      
-      // Validate email
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errorMsg.style.display = 'block';
-        return;
-      }
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-      
-      // Send password reset email
-      auth.sendPasswordResetEmail(email)
-        .then(() => {
-          // Success - show confirmation
-          modalContent.innerHTML = `
-            <span style="position:absolute;top:15px;right:15px;font-size:24px;cursor:pointer" onclick="document.body.removeChild(this.parentNode.parentNode)">&times;</span>
-            <div style="text-align:center;padding:20px 0">
-              <i class="fas fa-check-circle" style="font-size:50px;color:var(--success);margin-bottom:20px"></i>
-              <h3 style="margin-bottom:15px;color:var(--electric-blue)">Email Sent!</h3>
-              <p style="margin-bottom:20px;color:rgba(255,255,255,0.8)">
-                We've sent a password reset link to <strong>${email}</strong>.
-                Please check your inbox and follow the instructions.
-              </p>
-              <p style="color:rgba(255,255,255,0.6);font-size:14px">
-                Didn't receive the email? Check your spam folder or try again.
-              </p>
-            </div>
-          `;
-        })
-        .catch((error) => {
-          console.error('Password reset error:', error);
-          
-          let errorMessage = 'Failed to send reset email. Please try again.';
-          switch(error.code) {
-            case 'auth/user-not-found':
-              errorMessage = 'No account found with this email address.';
-              break;
-            case 'auth/too-many-requests':
-              errorMessage = 'Too many attempts. Please try again later.';
-              break;
-            default:
-              errorMessage = error.message;
-          }
-          
-          errorMsg.textContent = errorMessage;
-          errorMsg.style.display = 'block';
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send Reset Link';
-        });
-    });
-    
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        document.body.removeChild(modal);
-      }
-    });
-  });
-
-  // ... (keep all the rest of your existing code)
-
   </script>
 </body>
 </html>
-
