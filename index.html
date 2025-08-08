@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+   <meta charset="UTF-8">
   <title>GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -583,7 +583,6 @@
         font-size: 2rem;
       }
     }
-  </style>
 </head>
 <body>
   <!-- Floating Icons Background -->
@@ -696,16 +695,16 @@
       </div>
     </div>
 
-    <!-- Dashboard Content -->
-    <div class="dashboard" id="dashboard">
+    <!-- Dashboard Content (Hidden by default) -->
+    <div class="dashboard" id="dashboard" style="display: none;">
       <h1 class="welcome-message">Welcome back, <span id="welcomeName">User</span>!</h1>
       <p class="user-email">You're logged in as: <span id="userEmail"></span></p>
       
       <div class="action-buttons">
-        <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+        <button class="btn btn-primary" id="startShoppingBtn">
           <i class="fas fa-shopping-cart"></i> Start Shopping
         </button>
-        <button class="btn btn-secondary" onclick="window.location.href='about.html'">
+        <button class="btn btn-secondary" id="manageAccountBtn">
           <i class="fas fa-user-cog"></i> Manage Account
         </button>
         <button id="logoutButton" class="btn btn-secondary">
@@ -772,6 +771,8 @@
     const resetSuccess = document.getElementById('resetSuccess');
     const resetEmailDisplay = document.getElementById('resetEmailDisplay');
     const floatingIcons = document.getElementById('floatingIcons');
+    const startShoppingBtn = document.getElementById('startShoppingBtn');
+    const manageAccountBtn = document.getElementById('manageAccountBtn');
 
     // Create floating icons
     function createFloatingIcons() {
@@ -914,7 +915,12 @@
         .then((userCredential) => {
           const user = userCredential.user;
           
-          // Try to get user data from Firestore (works offline if previously cached)
+          // Verify the email is verified before allowing access
+          if (!user.emailVerified) {
+            throw new Error('Please verify your email before logging in.');
+          }
+          
+          // Try to get user data from Firestore
           return db.collection('users').doc(user.uid).get()
             .then((doc) => {
               if (doc.exists) {
@@ -924,17 +930,17 @@
                   return user.updateProfile({
                     displayName: userData.name
                   }).then(() => {
-                    updateUI(user, true); // Show welcome message
+                    updateUI(user, true);
                   });
                 } else {
-                  updateUI(user, true); // Show welcome message
+                  updateUI(user, true);
                 }
               } else {
-                updateUI(user, true); // Show welcome message
+                updateUI(user, true);
               }
             })
             .catch(() => {
-              updateUI(user, true); // Show welcome message even if Firestore fails
+              updateUI(user, true);
             });
         })
         .catch((error) => {
@@ -954,17 +960,10 @@
               errorMessage = 'Too many attempts. Please try again later.';
               break;
             case 'auth/network-request-failed':
-              // Check if we have cached credentials
-              if (auth.currentUser) {
-                updateUI(auth.currentUser);
-                errorMessage = 'Working offline with cached credentials';
-                showNotification(errorMessage, true);
-                return;
-              }
               errorMessage = 'Network error. Please check your connection.';
               break;
             default:
-              errorMessage = error.message;
+              errorMessage = error.message || 'Login failed. Please try again.';
           }
           
           showNotification(errorMessage, false);
@@ -1084,7 +1083,7 @@
       auth.signInWithPopup(authProvider)
         .then((result) => {
           const user = result.user;
-          updateUI(user, true); // Show welcome message
+          updateUI(user, true);
         })
         .catch((error) => {
           console.error('Social login error:', error);
@@ -1109,6 +1108,17 @@
         });
     });
 
+    // Dashboard button handlers
+    startShoppingBtn.addEventListener('click', function() {
+      showNotification('Redirecting to shopping...');
+      // You can add actual redirection logic here
+    });
+
+    manageAccountBtn.addEventListener('click', function() {
+      showNotification('Redirecting to account management...');
+      // You can add actual redirection logic here
+    });
+
     // Initialize the app
     function initApp() {
       createFloatingIcons();
@@ -1116,32 +1126,34 @@
       // Check authentication state
       auth.onAuthStateChanged((user) => {
         if (user) {
-          // User is signed in
-          // Try to get user data (works offline if previously cached)
-          db.collection('users').doc(user.uid).get()
-            .then((doc) => {
-              if (doc.exists) {
-                const userData = doc.data();
-                if (userData.name) {
-                  // Update display name if available in Firestore
-                  user.updateProfile({
-                    displayName: userData.name
-                  }).then(() => {
+          // Only show dashboard if email is verified
+          if (user.emailVerified) {
+            db.collection('users').doc(user.uid).get()
+              .then((doc) => {
+                if (doc.exists) {
+                  const userData = doc.data();
+                  if (userData.name) {
+                    user.updateProfile({
+                      displayName: userData.name
+                    }).then(() => {
+                      updateUI(user);
+                    });
+                  } else {
                     updateUI(user);
-                  });
+                  }
                 } else {
                   updateUI(user);
                 }
-              } else {
+              })
+              .catch(() => {
                 updateUI(user);
-              }
-            })
-            .catch(() => {
-              // Still update UI with basic user info if Firestore fails
-              updateUI(user);
-            });
+              });
+          } else {
+            // If email not verified, sign out and show message
+            auth.signOut();
+            showNotification('Please verify your email before logging in.', false);
+          }
         } else {
-          // User is signed out
           updateUI(null);
         }
       });
