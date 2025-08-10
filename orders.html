@@ -281,34 +281,6 @@
       display: none;
     }
 
-    #debugBtn {
-      margin-bottom: 20px;
-      padding: 10px 16px;
-      background: linear-gradient(to right, var(--secondary), #FF8A9D);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
-    }
-
-    #debugBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
-    }
-
-    #debugOutput {
-      margin-top: 20px;
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
-      border: 1px dashed var(--gray);
-      display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
     .items-count {
       background-color: var(--primary-light);
       color: white;
@@ -353,10 +325,6 @@
   <div class="orders-container">
     <h2 class="page-title">Order History</h2>
     
-    <button id="debugBtn" style="margin-bottom: 20px;">
-      Debug Orders Data
-    </button>
-    
     <div id="ordersList"></div>
 
     <div id="emptyState" class="empty-orders hidden">
@@ -367,7 +335,6 @@
     </div>
 
     <div id="errorState" class="error-message hidden"></div>
-    <div id="debugOutput"></div>
   </div>
 
   <!-- Bottom Navigation -->
@@ -425,24 +392,16 @@
     let orders = [];
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Debug button
-      document.getElementById('debugBtn').addEventListener('click', function() {
-        const debugOutput = document.getElementById('debugOutput');
-        debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
-        displayDebugInfo();
-      });
-
       // Check auth state
       auth.onAuthStateChanged((user) => {
         if (user) {
           currentUser = user;
           console.log("User authenticated:", user.uid);
-          checkForLocalOrdersToMigrate(user.uid);
           loadOrdersFromFirebase(user.uid);
         } else {
           currentUser = null;
           console.log("No user signed in");
-          loadOrdersFromLocalStorage();
+          document.getElementById('emptyState').classList.remove('hidden');
         }
       });
     });
@@ -451,7 +410,7 @@
     window.createOrderFromCart = function(cartItems, paymentMethod, totalAmount) {
       if (!currentUser) {
         console.error("User not logged in");
-        return false;
+        return Promise.resolve(false);
       }
 
       // Create order object with cart data
@@ -472,50 +431,13 @@
       return firebase.set(orderRef, orderData)
         .then(() => {
           console.log("Order saved to Firebase:", orderData.id);
-          // Also save to localStorage for redundancy
-          saveOrderToLocalStorage(orderData);
           return true;
         })
         .catch(error => {
           console.error("Error saving to Firebase:", error);
-          // Fallback to localStorage
-          saveOrderToLocalStorage(orderData);
-          showError("Order saved locally. Will sync to server when online.");
           return false;
         });
     };
-
-    // Check for local orders that need to be migrated to Firebase
-    function checkForLocalOrdersToMigrate(userId) {
-      const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
-      if (localOrders.length > 0) {
-        console.log("Migrating local orders to Firebase:", localOrders.length);
-        
-        localOrders.forEach(order => {
-          const orderRef = firebase.ref(db, `users/${userId}/orders/${order.id}`);
-          firebase.set(orderRef, order)
-            .then(() => {
-              console.log("Order migrated:", order.id);
-            })
-            .catch(error => {
-              console.error("Migration failed for order:", order.id, error);
-            });
-        });
-        
-        // Clear local orders after migration
-        localStorage.removeItem('orders');
-      }
-    }
-
-    // Save order to localStorage
-    function saveOrderToLocalStorage(orderData) {
-      let existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
-      // Remove if already exists (update case)
-      existingOrders = existingOrders.filter(o => o.id !== orderData.id);
-      existingOrders.push(orderData);
-      localStorage.setItem('orders', JSON.stringify(existingOrders));
-      console.log("Order saved to localStorage:", orderData.id);
-    }
 
     // Load orders from Firebase
     function loadOrdersFromFirebase(userId) {
@@ -529,37 +451,16 @@
             id: key,
             ...data[key]
           }));
-          console.log("Loaded orders from Firebase:", orders.length);
+          console.log("Loaded orders from Firebase:", orders);
           displayOrders(orders);
-          // Also save to localStorage for offline access
-          localStorage.setItem('orders', JSON.stringify(orders));
         } else {
           console.log("No orders in Firebase");
-          loadOrdersFromLocalStorage();
+          document.getElementById('emptyState').classList.remove('hidden');
         }
       }, (error) => {
         console.error("Firebase error:", error);
-        showError("Failed to load from Firebase. Using local data.");
-        loadOrdersFromLocalStorage();
+        showError("Failed to load orders. Please try again later.");
       });
-    }
-
-    // Load orders from localStorage
-    function loadOrdersFromLocalStorage() {
-      try {
-        orders = JSON.parse(localStorage.getItem('orders')) || [];
-        console.log("Loaded orders from localStorage:", orders.length);
-        
-        if (orders.length > 0) {
-          displayOrders(orders);
-        } else {
-          showEmptyState();
-        }
-      } catch (error) {
-        console.error("Error loading local orders:", error);
-        showError("Failed to load orders from any source.");
-        showEmptyState();
-      }
     }
 
     // Display orders in the UI
@@ -568,7 +469,7 @@
       ordersList.innerHTML = '';
 
       if (!orders || orders.length === 0) {
-        showEmptyState();
+        document.getElementById('emptyState').classList.remove('hidden');
         return;
       }
 
@@ -594,7 +495,7 @@
 
       const statusClass = getStatusClass(order.status || 'Pending');
 
-      // Calculate totals if not provided
+      // Calculate totals
       let totalItems = 0;
       let totalAmount = order.totalAmount || 0;
       
@@ -651,12 +552,6 @@
       `;
     }
 
-    function showEmptyState() {
-      document.getElementById('emptyState').classList.remove('hidden');
-      document.getElementById('ordersList').innerHTML = '';
-      document.getElementById('errorState').classList.add('hidden');
-    }
-
     function showError(message) {
       const errorElement = document.getElementById('errorState');
       errorElement.textContent = message;
@@ -673,40 +568,6 @@
       if (status.includes('shipped')) return 'status-shipped';
       return 'status-processing';
     }
-
-    function displayDebugInfo() {
-      const debugOutput = document.getElementById('debugOutput');
-      
-      debugOutput.innerHTML = `
-        <h3>Debug Information</h3>
-        <p><strong>User:</strong> ${currentUser ? currentUser.uid : 'Not signed in'}</p>
-        <p><strong>Orders Loaded:</strong> ${orders.length}</p>
-        <p><strong>LocalStorage Orders:</strong> ${JSON.parse(localStorage.getItem('orders'))?.length || 0}</p>
-        <button onclick="testFirebaseConnection()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; margin-top: 10px;">
-          Test Firebase Connection
-        </button>
-      `;
-    }
-
-    window.testFirebaseConnection = function() {
-      const connectedRef = firebase.ref(db, '.info/connected');
-      firebase.onValue(connectedRef, (snap) => {
-        alert(snap.val() ? "Connected to Firebase!" : "Not connected to Firebase");
-      });
-    };
-
-    // Test function - call this from your payment page after checkout
-    window.testOrderCreation = function() {
-      const testCartItems = [
-        { name: "Test Product 1", price: 12.99, quantity: 2 },
-        { name: "Test Product 2", price: 5.49, quantity: 3 }
-      ];
-      
-      createOrderFromCart(testCartItems, "Credit Card", 37.95)
-        .then(success => {
-          alert(success ? "Test order created!" : "Failed to create test order");
-        });
-    };
   </script>
 </body>
 </html>
