@@ -456,8 +456,31 @@
       font-weight: 600;
       font-size: 14px;
     }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Add Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <header>
@@ -520,12 +543,16 @@
       <div id="addressSuccess" class="success-message"></div>
     </div>
 
-    <div id="cartItems"></div>
+    <div id="cartItems">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
     <div id="summary" class="summary" style="display: none;"></div>
     <button id="checkoutBtn" class="checkout-btn" style="display: none;">
       <i class="fas fa-lock"></i> Secure Checkout
     </button>
-    <div id="emptyCart" class="empty-cart">
+    <div id="emptyCart" class="empty-cart" style="display: none;">
       <h3>Your Shopping Cart is Empty</h3>
       <p>Start adding delicious items to your cart</p>
       <button class="continue-shopping" onclick="window.location.href='dashboard.html'">
@@ -563,74 +590,135 @@
   </div>
 
   <script>
-    // Load cart items
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+      authDomain: "grocera-nithin.firebaseapp.com",
+      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
+      projectId: "grocera-nithin",
+      storageBucket: "grocera-nithin.firebasestorage.app",
+      messagingSenderId: "824896008507",
+      appId: "1:824896008507:web:136d071d696f9ff190071e"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Get current user ID (you'll need to implement your auth system)
+    function getUserId() {
+      // For demo purposes, using a hardcoded user ID
+      // In a real app, you'd get this from your authentication system
+      return "demo_user_123";
+    }
+
+    // Load cart items from Firebase
     function loadCart() {
-      const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      const container = document.getElementById("cartItems");
-      const summary = document.getElementById("summary");
-      const checkoutBtn = document.getElementById("checkoutBtn");
-      const emptyCart = document.getElementById("emptyCart");
-
-      container.innerHTML = "";
-
-      if (cart.length === 0) {
-        emptyCart.style.display = "block";
-        summary.style.display = "none";
-        checkoutBtn.style.display = "none";
-        return;
-      }
-
-      emptyCart.style.display = "none";
-      summary.style.display = "block";
-      checkoutBtn.style.display = "block";
-
-      let subtotal = 0;
-
-      cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        subtotal += itemTotal;
-
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "cart-item";
-        itemDiv.innerHTML = `
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">₹${item.price.toFixed(2)} each</div>
-          </div>
-          <div class="item-details">
-            <div class="item-quantity">
-              <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
-              <span>${item.quantity}</span>
-              <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
-            </div>
-            <div class="item-total">₹${itemTotal.toFixed(2)}</div>
-          </div>
-          <button class="remove-btn" onclick="removeItem(${index})">
-            <i class="fas fa-trash-alt"></i> Remove
-          </button>
-        `;
-        container.appendChild(itemDiv);
-      });
-
-      const gst = subtotal * 0.1;
-      const discount = subtotal >= 500 ? subtotal * 0.1 : 0;
-      const delivery = subtotal >= 1000 ? 0 : 50;
-      const total = subtotal + gst - discount + delivery;
-
-      summary.innerHTML = `
-        <div class="summary-row"><span>Subtotal:</span><span>₹${subtotal.toFixed(2)}</span></div>
-        <div class="summary-row"><span>GST (10%):</span><span>₹${gst.toFixed(2)}</span></div>
-        <div class="summary-row"><span>Discount:</span><span>-₹${discount.toFixed(2)}</span></div>
-        <div class="summary-row"><span>Delivery:</span><span>${delivery === 0 ? 'FREE' : '₹' + delivery.toFixed(2)}</span></div>
-        <div class="summary-row"><span>Total:</span><span>₹${total.toFixed(2)}</span></div>
-      `;
-
-      localStorage.setItem("orderTotal", total.toFixed(2));
+      const userId = getUserId();
+      const cartRef = database.ref(`users/${userId}/cart`);
       
-      // Check if address is already validated
-      if (localStorage.getItem("addressValidated") === "true") {
-        document.getElementById("addressSection").style.display = "none";
-      }
+      // Show loading state
+      document.getElementById("cartItems").innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      `;
+      
+      cartRef.on('value', (snapshot) => {
+        const cartData = snapshot.val();
+        const container = document.getElementById("cartItems");
+        const summary = document.getElementById("summary");
+        const checkoutBtn = document.getElementById("checkoutBtn");
+        const emptyCart = document.getElementById("emptyCart");
+
+        container.innerHTML = "";
+
+        if (!cartData || Object.keys(cartData).length === 0) {
+          emptyCart.style.display = "block";
+          summary.style.display = "none";
+          checkoutBtn.style.display = "none";
+          return;
+        }
+
+        emptyCart.style.display = "none";
+        summary.style.display = "block";
+        checkoutBtn.style.display = "block";
+
+        let subtotal = 0;
+        const cartItems = Object.values(cartData);
+
+        cartItems.forEach((item, index) => {
+          const itemTotal = item.price * item.quantity;
+          subtotal += itemTotal;
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "cart-item";
+          itemDiv.innerHTML = `
+            <div class="item-info">
+              <div class="item-name">${item.name}</div>
+              <div class="item-price">₹${item.price.toFixed(2)} each</div>
+            </div>
+            <div class="item-details">
+              <div class="item-quantity">
+                <button class="quantity-btn" onclick="changeQuantity('${item.id}', -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="changeQuantity('${item.id}', 1)">+</button>
+              </div>
+              <div class="item-total">₹${itemTotal.toFixed(2)}</div>
+            </div>
+            <button class="remove-btn" onclick="removeItem('${item.id}')">
+              <i class="fas fa-trash-alt"></i> Remove
+            </button>
+          `;
+          container.appendChild(itemDiv);
+        });
+
+        const gst = subtotal * 0.1;
+        const discount = subtotal >= 500 ? subtotal * 0.1 : 0;
+        const delivery = subtotal >= 1000 ? 0 : 50;
+        const total = subtotal + gst - discount + delivery;
+
+        summary.innerHTML = `
+          <div class="summary-row"><span>Subtotal:</span><span>₹${subtotal.toFixed(2)}</span></div>
+          <div class="summary-row"><span>GST (10%):</span><span>₹${gst.toFixed(2)}</span></div>
+          <div class="summary-row"><span>Discount:</span><span>-₹${discount.toFixed(2)}</span></div>
+          <div class="summary-row"><span>Delivery:</span><span>${delivery === 0 ? 'FREE' : '₹' + delivery.toFixed(2)}</span></div>
+          <div class="summary-row"><span>Total:</span><span>₹${total.toFixed(2)}</span></div>
+        `;
+
+        localStorage.setItem("orderTotal", total.toFixed(2));
+        
+        // Check if address is already validated
+        if (localStorage.getItem("addressValidated") === "true") {
+          document.getElementById("addressSection").style.display = "none";
+        }
+      });
+    }
+
+    // Change item quantity in Firebase
+    function changeQuantity(itemId, delta) {
+      const userId = getUserId();
+      const cartRef = database.ref(`users/${userId}/cart/${itemId}`);
+      
+      cartRef.once('value').then((snapshot) => {
+        const item = snapshot.val();
+        if (item) {
+          const newQuantity = item.quantity + delta;
+          if (newQuantity <= 0) {
+            // Remove item if quantity is 0 or less
+            cartRef.remove();
+          } else {
+            // Update quantity
+            cartRef.update({ quantity: newQuantity });
+          }
+        }
+      });
+    }
+
+    // Remove item from Firebase
+    function removeItem(itemId) {
+      const userId = getUserId();
+      database.ref(`users/${userId}/cart/${itemId}`).remove();
     }
 
     // Address Validation
@@ -676,6 +764,18 @@
         localStorage.setItem("deliveryAddress", fullAddress);
         localStorage.setItem("addressValidated", "true");
         
+        // Save address to Firebase
+        const userId = getUserId();
+        database.ref(`users/${userId}/address`).set({
+          doorNo,
+          street,
+          area,
+          city: "Bangalore",
+          state: "Karnataka",
+          pincode,
+          landmark: document.getElementById("landmark").value.trim() || ""
+        });
+        
         // Show success message
         successEl.textContent = "✓ Address validated for Bangalore delivery!";
         successEl.style.display = "block";
@@ -690,45 +790,31 @@
       return false;
     }
 
-    // Cart functions
-    function changeQuantity(index, delta) {
-      let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      cart[index].quantity += delta;
-      if (cart[index].quantity <= 0) {
-        cart.splice(index, 1);
-      }
-      localStorage.setItem("cartItems", JSON.stringify(cart));
-      loadCart();
-    }
-
-    function removeItem(index) {
-      let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      cart.splice(index, 1);
-      localStorage.setItem("cartItems", JSON.stringify(cart));
-      loadCart();
-    }
-
     // Checkout button handler
     document.getElementById("checkoutBtn").addEventListener("click", function() {
       // Check if cart is empty
-      const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      if (cart.length === 0) {
-        alert("Your cart is empty. Please add items before checkout.");
-        return;
-      }
+      const userId = getUserId();
+      const cartRef = database.ref(`users/${userId}/cart`);
       
-      // Check if address is validated
-      if (localStorage.getItem("addressValidated") !== "true") {
-        // Show address section if hidden
-        document.getElementById("addressSection").style.display = "block";
-        // Scroll to address section
-        document.getElementById("addressSection").scrollIntoView({ behavior: 'smooth' });
-        alert("Please validate your delivery address first.");
-        return;
-      }
-      
-      // Proceed to payment
-      window.location.href = "payment.html";
+      cartRef.once('value').then((snapshot) => {
+        if (!snapshot.exists()) {
+          alert("Your cart is empty. Please add items before checkout.");
+          return;
+        }
+        
+        // Check if address is validated
+        if (localStorage.getItem("addressValidated") !== "true") {
+          // Show address section if hidden
+          document.getElementById("addressSection").style.display = "block";
+          // Scroll to address section
+          document.getElementById("addressSection").scrollIntoView({ behavior: 'smooth' });
+          alert("Please validate your delivery address first.");
+          return;
+        }
+        
+        // Proceed to payment
+        window.location.href = "payment.html";
+      });
     });
 
     // Load cart on page load
