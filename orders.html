@@ -427,13 +427,13 @@
 
     // Your Firebase configuration
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
+      apiKey: "AIzaSyC0m7Q5g8U3g4v0vY5Xx1H5x5x5x5x5x5x",
       authDomain: "grocera-nithin.firebaseapp.com",
       databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com/",
       projectId: "grocera-nithin",
       storageBucket: "grocera-nithin.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890abcdef"
     };
 
     // Initialize Firebase
@@ -512,6 +512,7 @@
         debugOutput.innerHTML = `
           <h4 style="color:var(--primary)">Debug Information</h4>
           <p><strong>Firebase connected:</strong> ${app ? 'Yes' : 'No'}</p>
+          <p><strong>Database URL:</strong> ${firebaseConfig.databaseURL}</p>
           <p><strong>localStorage supported:</strong> ${typeof localStorage !== 'undefined' ? 'Yes' : 'No'}</p>
           <button onclick="localStorage.clear(); location.reload();" style="
             padding: 8px 16px;
@@ -566,14 +567,12 @@
           totalAmount = order.items.reduce((sum, item) => {
             return sum + ((item.price || 0) * (item.quantity || 1));
           }, 0);
-        } else {
-          // Fallback for Firebase data structure
-          if (order.items) {
-            totalItems = Object.keys(order.items).length;
-            totalAmount = Object.values(order.items).reduce((sum, item) => {
-              return sum + ((item.itemPrice || 0) * (item.quantity || 1));
-            }, 0);
-          }
+        } else if (order.items && typeof order.items === 'object') {
+          // Firebase object structure
+          totalItems = Object.keys(order.items).length;
+          totalAmount = Object.values(order.items).reduce((sum, item) => {
+            return sum + ((item.itemPrice || 0) * (item.quantity || 1));
+          }, 0);
         }
 
         // Use provided totalAmount if available
@@ -620,7 +619,7 @@
               <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
               <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
             </div>`).join('');
-        } else {
+        } else if (typeof order.items === 'object') {
           // Firebase object structure
           return Object.values(order.items).map(item => `
             <div class="order-item">
@@ -628,6 +627,7 @@
               <span class="item-price">₹${((item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
             </div>`).join('');
         }
+        return '';
       }
 
       function showEmptyState() {
