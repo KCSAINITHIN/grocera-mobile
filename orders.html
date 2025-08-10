@@ -21,28 +21,27 @@
     }
 
     body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
-  background-size: 400% 400%;
-  animation: gradientBG 14s ease infinite;
-  color: #1a1a1a;
-  overflow-x: hidden;
-  padding-bottom: 80px;
-}
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
+      background-size: 400% 400%;
+      animation: gradientBG 14s ease infinite;
+      color: #1a1a1a;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
 
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 
     .topbar {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -347,6 +346,21 @@
       font-size: 12px;
       font-weight: 600;
     }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -403,7 +417,29 @@
     </a>
   </div>
 
-  <script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js" type="module"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "grocera-nithin.firebaseapp.com",
+      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com/",
+      projectId: "grocera-nithin",
+      storageBucket: "grocera-nithin.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
     document.addEventListener('DOMContentLoaded', function() {
       const debugBtn = document.getElementById('debugBtn');
       const debugOutput = document.getElementById('debugOutput');
@@ -413,76 +449,70 @@
         displayDebugInfo();
       });
 
-      loadAndDisplayOrders();
+      // Load orders from Firebase
+      loadOrdersFromFirebase();
 
-      function loadAndDisplayOrders() {
+      function loadOrdersFromFirebase() {
+        const ordersRef = ref(db, 'orders');
+        const loadingElement = document.createElement('div');
+        loadingElement.innerHTML = '<p>Loading orders...</p>';
+        document.getElementById('ordersList').appendChild(loadingElement);
+
+        onValue(ordersRef, (snapshot) => {
+          const data = snapshot.val();
+          const ordersList = document.getElementById('ordersList');
+          ordersList.innerHTML = '';
+
+          if (!data) {
+            showEmptyState();
+            return;
+          }
+
+          // Convert Firebase object to array
+          const orders = [];
+          Object.keys(data).forEach(key => {
+            const order = data[key];
+            order.firebaseId = key; // Store the Firebase ID for reference
+            orders.push(order);
+          });
+
+          if (orders.length === 0) {
+            showEmptyState();
+          } else {
+            displayOrders(orders);
+          }
+        }, (error) => {
+          console.error("Error loading orders:", error);
+          debugOutput.innerHTML += `<p style="color:var(--danger)">Firebase Error: ${error.message}</p>`;
+          // Fallback to localStorage if Firebase fails
+          loadAndDisplayLocalOrders();
+        });
+      }
+
+      function loadAndDisplayLocalOrders() {
         try {
-          if (typeof localStorage === 'undefined') throw new Error('localStorage is not available');
           const ordersJSON = localStorage.getItem('orders');
-          debugOutput.innerHTML += `<p>Raw orders data from localStorage: ${ordersJSON}</p>`;
           if (!ordersJSON) return showEmptyState();
 
           let orders = JSON.parse(ordersJSON);
           if (!Array.isArray(orders)) throw new Error('Orders data is not an array');
           
-          // If no orders in localStorage, create some sample data for demonstration
           if (orders.length === 0) {
-            orders = generateSampleOrders();
-            localStorage.setItem('orders', JSON.stringify(orders));
+            showEmptyState();
+          } else {
+            displayOrders(orders);
           }
-          
-          displayOrders(orders);
         } catch (error) {
-          debugOutput.innerHTML += `<p style="color:var(--danger)">Error: ${error.message}</p>`;
+          debugOutput.innerHTML += `<p style="color:var(--danger)">Local Storage Error: ${error.message}</p>`;
           showEmptyState();
         }
-      }
-
-      function generateSampleOrders() {
-        const sampleOrders = [
-          {
-            orderId: 'GR' + Math.floor(Math.random() * 1000000),
-            orderDate: new Date(),
-            status: 'Delivered',
-            items: [
-              { name: 'Organic Bananas', price: 1.99, quantity: 5 },
-              { name: 'Almond Milk', price: 3.49, quantity: 2 },
-              { name: 'Whole Grain Bread', price: 2.99, quantity: 1 }
-            ],
-            totalAmount: 18.42,
-            paymentMethod: 'Credit Card'
-          },
-          {
-            orderId: 'GR' + Math.floor(Math.random() * 1000000),
-            orderDate: new Date(Date.now() - 86400000 * 2),
-            status: 'Shipped',
-            items: [
-              { name: 'Free Range Eggs', price: 4.99, quantity: 1 },
-              { name: 'Organic Spinach', price: 2.49, quantity: 3 }
-            ],
-            totalAmount: 12.46,
-            paymentMethod: 'PayPal'
-          },
-          {
-            orderId: 'GR' + Math.floor(Math.random() * 1000000),
-            orderDate: new Date(Date.now() - 86400000 * 5),
-            status: 'Processing',
-            items: [
-              { name: 'Greek Yogurt', price: 3.99, quantity: 4 },
-              { name: 'Granola', price: 5.49, quantity: 1 }
-            ],
-            totalAmount: 21.45,
-            paymentMethod: 'Credit Card'
-          }
-        ];
-        return sampleOrders;
       }
 
       function displayDebugInfo() {
         debugOutput.innerHTML = `
           <h4 style="color:var(--primary)">Debug Information</h4>
+          <p><strong>Firebase connected:</strong> ${app ? 'Yes' : 'No'}</p>
           <p><strong>localStorage supported:</strong> ${typeof localStorage !== 'undefined' ? 'Yes' : 'No'}</p>
-          <p><strong>Total localStorage space used:</strong> ${JSON.stringify(localStorage).length} bytes</p>
           <button onclick="localStorage.clear(); location.reload();" style="
             padding: 8px 16px;
             background: var(--danger);
@@ -490,7 +520,7 @@
             border: none;
             border-radius: 6px;
             margin-top: 10px;
-          ">Clear All Data</button>
+          ">Clear Local Storage</button>
         `;
       }
 
@@ -500,7 +530,13 @@
         ordersList.innerHTML = '';
         if (orders.length === 0) return showEmptyState();
 
-        orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        // Sort by date (newest first)
+        orders.sort((a, b) => {
+          const dateA = new Date(a.date || a.orderDate || 0);
+          const dateB = new Date(b.date || b.orderDate || 0);
+          return dateB - dateA;
+        });
+
         orders.forEach(order => {
           const orderElement = createOrderElement(order);
           ordersList.appendChild(orderElement);
@@ -513,19 +549,45 @@
         const orderElement = document.createElement('div');
         orderElement.className = 'order-card';
 
-        const formattedDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+        const orderDate = order.date || order.orderDate || new Date().toISOString();
+        const formattedDate = new Date(orderDate).toLocaleDateString('en-US', {
           year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
 
-        const status = order.status || 'Processing';
+        const status = order.status || 'Pending';
         const statusClass = getStatusClass(status);
 
-        const totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        // Calculate total items and amount if not provided
+        let totalItems = 0;
+        let totalAmount = 0;
+        
+        if (order.items && Array.isArray(order.items)) {
+          totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          totalAmount = order.items.reduce((sum, item) => {
+            return sum + ((item.price || 0) * (item.quantity || 1));
+          }, 0);
+        } else {
+          // Fallback for Firebase data structure
+          if (order.items) {
+            totalItems = Object.keys(order.items).length;
+            totalAmount = Object.values(order.items).reduce((sum, item) => {
+              return sum + ((item.itemPrice || 0) * (item.quantity || 1));
+            }, 0);
+          }
+        }
+
+        // Use provided totalAmount if available
+        if (order.totalAmount) {
+          totalAmount = order.totalAmount;
+        }
+
+        // Generate order ID if not provided
+        const orderId = order.orderId || order.firebaseId || 'GR' + Math.floor(Math.random() * 1000000);
 
         orderElement.innerHTML = `
           <div class="order-header">
             <div>
-              <span class="order-id">Order #${order.orderId}</span>
+              <span class="order-id">Order #${orderId}</span>
               <div class="order-date">${formattedDate}</div>
             </div>
             <span class="order-status ${statusClass}">${status}</span>
@@ -534,22 +596,38 @@
             <div style="margin-bottom: 8px; font-size: 14px;">
               <span class="items-count">${totalItems} ${totalItems > 1 ? 'items' : 'item'}</span>
             </div>
-            ${order.items.map(item => `
-              <div class="order-item">
-                <span class="item-name">${item.name || 'Unknown Item'} × ${item.quantity || 1}</span>
-                <span class="item-price">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
-              </div>`).join('')}
+            ${renderOrderItems(order)}
             <div class="order-total">
               <span class="total-label">Total Amount</span>
-              <span class="total-amount">₹${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+              <span class="total-amount">₹${parseFloat(totalAmount).toFixed(2)}</span>
             </div>
-            <div class="payment-method">Paid via <span>${order.paymentMethod || 'Unknown Method'}</span></div>
-            <a href="order-details.html?orderId=${order.orderId}" class="btn-track">
+            ${order.paymentMethod ? `<div class="payment-method">Paid via <span>${order.paymentMethod}</span></div>` : ''}
+            <a href="order-details.html?orderId=${orderId}" class="btn-track">
               ${status === 'Delivered' ? 'View Details' : 'Track Order'}
             </a>
           </div>
         `;
         return orderElement;
+      }
+
+      function renderOrderItems(order) {
+        if (!order.items) return '';
+        
+        // Handle Firebase data structure (object) vs local storage (array)
+        if (Array.isArray(order.items)) {
+          return order.items.map(item => `
+            <div class="order-item">
+              <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
+              <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
+            </div>`).join('');
+        } else {
+          // Firebase object structure
+          return Object.values(order.items).map(item => `
+            <div class="order-item">
+              <span class="item-name">${item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
+              <span class="item-price">₹${((item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
+            </div>`).join('');
+        }
       }
 
       function showEmptyState() {
