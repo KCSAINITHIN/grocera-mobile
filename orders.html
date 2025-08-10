@@ -4,18 +4,19 @@
   <meta charset="UTF-8">
   <title>My Orders - GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Add Firebase SDK -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
   <style>
     :root {
-      --primary: #6C63FF;  /* Vibrant purple */
+      --primary: #6C63FF;
       --primary-light: #A5A2FF;
-      --secondary: #FF6584; /* Pink */
-      --accent: #42C6FF;   /* Bright blue */
-      --success: #4CAF50;  /* Green */
-      --warning: #FFC107;  /* Amber */
-      --danger: #F44336;   /* Red */
+      --secondary: #FF6584;
+      --accent: #42C6FF;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --danger: #F44336;
       --dark: #2D3748;
       --light: #F7FAFC;
       --gray: #E2E8F0;
@@ -35,15 +36,9 @@
     }
 
     @keyframes gradientBG {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .topbar {
@@ -129,35 +124,12 @@
       text-transform: capitalize;
     }
 
-    .status-processing {
-      background-color: rgba(255, 198, 7, 0.2);
-      color: #B78103;
-    }
-
-    .status-confirmed {
-      background-color: rgba(76, 175, 80, 0.2);
-      color: var(--success);
-    }
-
-    .status-delivered {
-      background-color: rgba(66, 198, 255, 0.2);
-      color: #0288D1;
-    }
-
-    .status-pending {
-      background-color: rgba(244, 67, 54, 0.2);
-      color: var(--danger);
-    }
-
-    .status-cancelled {
-      background-color: rgba(244, 67, 54, 0.2);
-      color: var(--danger);
-    }
-
-    .status-shipped {
-      background-color: rgba(108, 99, 255, 0.2);
-      color: var(--primary);
-    }
+    .status-processing { background-color: rgba(255, 198, 7, 0.2); color: #B78103; }
+    .status-confirmed { background-color: rgba(76, 175, 80, 0.2); color: var(--success); }
+    .status-delivered { background-color: rgba(66, 198, 255, 0.2); color: #0288D1; }
+    .status-pending { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
+    .status-cancelled { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
+    .status-shipped { background-color: rgba(108, 99, 255, 0.2); color: var(--primary); }
 
     .order-details {
       margin-top: 12px;
@@ -392,7 +364,7 @@
     <div id="debugOutput"></div>
   </div>
 
-  <!-- Bottom Navigation with SVG Icons -->
+  <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
@@ -436,35 +408,61 @@
       // Initialize Firebase
       const app = firebase.initializeApp(firebaseConfig);
       const database = firebase.database();
+      const auth = firebase.auth();
+      
+      // Make available in console for debugging
+      window.firebase = firebase;
+      window.database = database;
       
       const debugBtn = document.getElementById('debugBtn');
       const debugOutput = document.getElementById('debugOutput');
       const ordersList = document.getElementById('ordersList');
       const emptyState = document.getElementById('emptyState');
 
-      // Get the current user ID (you would replace this with your actual auth logic)
-      let userId = getCurrentUserId();
-      
       debugBtn.addEventListener('click', function() {
         debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
         displayDebugInfo();
       });
 
-      // Load and display orders from Firebase
-      loadOrdersFromFirebase();
+      // Initialize authentication and load orders
+      initAuthAndLoadOrders();
+
+      function initAuthAndLoadOrders() {
+        // For testing, use anonymous authentication
+        // In production, replace with your actual auth method
+        auth.signInAnonymously()
+          .then(() => {
+            console.log("Signed in anonymously");
+            loadOrdersFromFirebase();
+          })
+          .catch(error => {
+            console.error("Anonymous auth failed:", error);
+            // Fallback - still try to load orders (remove in production)
+            loadOrdersFromFirebase();
+          });
+      }
 
       function getCurrentUserId() {
-        // In a real app, you would get this from your authentication system
-        // For demo purposes, we'll use a hardcoded user ID or get from localStorage
-        return localStorage.getItem('currentUserId') || 'demo_user_1';
+        const user = auth.currentUser;
+        if (!user) {
+          console.log("No authenticated user, using demo ID");
+          return "demo_user_1"; // Remove this in production
+        }
+        console.log("Current user ID:", user.uid);
+        return user.uid;
       }
 
       function loadOrdersFromFirebase() {
         showLoadingState();
         
+        const userId = getCurrentUserId();
+        console.log("Loading orders for user:", userId);
+        
         const ordersRef = database.ref('orders').orderByChild('userId').equalTo(userId);
         
         ordersRef.on('value', (snapshot) => {
+          console.log("Firebase snapshot received:", snapshot.val());
+          
           const ordersData = snapshot.val();
           const orders = [];
           
@@ -477,10 +475,15 @@
             });
           }
           
+          console.log("Processed orders:", orders);
+          
           if (orders.length > 0) {
             displayOrders(orders);
           } else {
+            console.log("No orders found for user");
             showEmptyState();
+            // Uncomment to automatically add a test order if none exist
+            // addTestOrder();
           }
         }, (error) => {
           console.error("Error loading orders:", error);
@@ -489,33 +492,28 @@
         });
       }
 
-      function displayDebugInfo() {
-        debugOutput.innerHTML = `
-          <h4 style="color:var(--primary)">Debug Information</h4>
-          <p><strong>Current User ID:</strong> ${userId}</p>
-          <p><strong>Firebase initialized:</strong> ${app ? 'Yes' : 'No'}</p>
-          <button onclick="clearAllOrders()" style="
-            padding: 8px 16px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            margin-top: 10px;
-          ">Clear All Orders (Debug)</button>
-        `;
-      }
+      function addTestOrder() {
+        const testOrder = {
+          userId: getCurrentUserId(),
+          items: [
+            { name: "Organic Bananas", price: 1.99, quantity: 5 },
+            { name: "Almond Milk", price: 3.49, quantity: 2 },
+            { name: "Whole Grain Bread", price: 2.99, quantity: 1 }
+          ],
+          status: "Delivered",
+          totalAmount: 18.42,
+          paymentMethod: "Credit Card",
+          orderDate: new Date().toISOString()
+        };
 
-      function clearAllOrders() {
-        if (confirm("Are you sure you want to delete ALL orders? This is for debugging only!")) {
-          database.ref('orders').remove()
-            .then(() => {
-              alert("All orders cleared!");
-              location.reload();
-            })
-            .catch(error => {
-              alert("Error clearing orders: " + error.message);
-            });
-        }
+        database.ref('orders').push(testOrder)
+          .then(() => {
+            console.log("Test order added successfully");
+            loadOrdersFromFirebase(); // Refresh the list
+          })
+          .catch(error => {
+            console.error("Error adding test order:", error);
+          });
       }
 
       function displayOrders(orders) {
@@ -598,6 +596,56 @@
         `;
       }
 
+      function displayDebugInfo() {
+        const userId = getCurrentUserId();
+        debugOutput.innerHTML = `
+          <h4 style="color:var(--primary)">Debug Information</h4>
+          <p><strong>Current User ID:</strong> ${userId}</p>
+          <p><strong>Firebase initialized:</strong> ${app ? 'Yes' : 'No'}</p>
+          <p><strong>Authentication state:</strong> ${auth.currentUser ? 'Authenticated' : 'Not authenticated'}</p>
+          <button onclick="addTestOrder()" style="
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+            margin-right: 10px;
+          ">Add Test Order</button>
+          <button onclick="clearAllOrders()" style="
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+          ">Clear All Orders</button>
+        `;
+      }
+
+      function clearAllOrders() {
+        if (confirm("Are you sure you want to delete ALL orders for this user?")) {
+          const userId = getCurrentUserId();
+          const ordersRef = database.ref('orders').orderByChild('userId').equalTo(userId);
+          
+          ordersRef.once('value', (snapshot) => {
+            const updates = {};
+            snapshot.forEach(child => {
+              updates[child.key] = null;
+            });
+            
+            database.ref('orders').update(updates)
+              .then(() => {
+                console.log("All orders cleared for user");
+                loadOrdersFromFirebase();
+              })
+              .catch(error => {
+                console.error("Error clearing orders:", error);
+              });
+          });
+        }
+      }
+
       function getStatusClass(status) {
         status = (status || '').toLowerCase();
         if (status.includes('processing')) return 'status-processing';
@@ -609,8 +657,10 @@
         return 'status-processing';
       }
 
-      // Make clearAllOrders available globally for the debug button
+      // Make functions available globally for debugging
+      window.addTestOrder = addTestOrder;
       window.clearAllOrders = clearAllOrders;
+      window.loadOrdersFromFirebase = loadOrdersFromFirebase;
     });
   </script>
 </body>
