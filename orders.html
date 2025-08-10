@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --primary: #6C63FF;  /* Vibrant purple */
+      --primary: #6C63FF;
       --primary-light: #A5A2FF;
-      --secondary: #FF6584; /* Pink */
-      --accent: #42C6FF;   /* Bright blue */
-      --success: #4CAF50;  /* Green */
-      --warning: #FFC107;  /* Amber */
-      --danger: #F44336;   /* Red */
+      --secondary: #FF6584;
+      --accent: #42C6FF;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --danger: #F44336;
       --dark: #2D3748;
       --light: #F7FAFC;
       --gray: #E2E8F0;
@@ -32,15 +32,9 @@
     }
 
     @keyframes gradientBG {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .topbar {
@@ -126,35 +120,12 @@
       text-transform: capitalize;
     }
 
-    .status-processing {
-      background-color: rgba(255, 198, 7, 0.2);
-      color: #B78103;
-    }
-
-    .status-confirmed {
-      background-color: rgba(76, 175, 80, 0.2);
-      color: var(--success);
-    }
-
-    .status-delivered {
-      background-color: rgba(66, 198, 255, 0.2);
-      color: #0288D1;
-    }
-
-    .status-pending {
-      background-color: rgba(244, 67, 54, 0.2);
-      color: var(--danger);
-    }
-
-    .status-cancelled {
-      background-color: rgba(244, 67, 54, 0.2);
-      color: var(--danger);
-    }
-
-    .status-shipped {
-      background-color: rgba(108, 99, 255, 0.2);
-      color: var(--primary);
-    }
+    .status-processing { background-color: rgba(255, 198, 7, 0.2); color: #B78103; }
+    .status-confirmed { background-color: rgba(76, 175, 80, 0.2); color: var(--success); }
+    .status-delivered { background-color: rgba(66, 198, 255, 0.2); color: #0288D1; }
+    .status-pending { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
+    .status-cancelled { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
+    .status-shipped { background-color: rgba(108, 99, 255, 0.2); color: var(--primary); }
 
     .order-details {
       margin-top: 12px;
@@ -310,27 +281,16 @@
       display: none;
     }
 
-    /* Styles for the new form buttons */
-    .action-buttons {
-      display: flex;
-      gap: 10px;
+    #debugBtn {
       margin-bottom: 20px;
-    }
-
-    .action-buttons button {
-      flex: 1;
       padding: 10px 16px;
+      background: linear-gradient(to right, var(--secondary), #FF8A9D);
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    #debugBtn {
-      background: linear-gradient(to right, var(--secondary), #FF8A9D);
       box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
     }
 
@@ -339,91 +299,14 @@
       box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
     }
 
-    #toggleNewOrderFormBtn {
-      background: linear-gradient(to right, var(--primary), var(--primary-light));
-      box-shadow: 0 4px 8px rgba(108, 99, 255, 0.3);
-    }
-
-    #toggleNewOrderFormBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(108, 99, 255, 0.4);
-    }
-
-    /* Styles for the new order form */
-    #newOrderForm {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border-top: 4px solid var(--accent);
-    }
-
-    #newOrderForm h3 {
-      font-size: 20px;
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: var(--dark);
-      border-bottom: 1px solid var(--gray);
-      padding-bottom: 10px;
-    }
-
-    #newOrderForm .form-group {
-      margin-bottom: 15px;
-    }
-
-    #newOrderForm label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-      color: var(--dark);
-    }
-
-    #newOrderForm input[type="text"],
-    #newOrderForm input[type="number"],
-    #newOrderForm input[type="date"],
-    #newOrderForm select,
-    #newOrderForm textarea {
-      width: calc(100% - 20px); /* Adjust for padding */
-      padding: 10px;
-      border: 1px solid var(--gray);
-      border-radius: 8px;
-      font-size: 16px;
-      color: var(--text);
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    #newOrderForm input:focus,
-    #newOrderForm select:focus,
-    #newOrderForm textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
-      outline: none;
-    }
-
-    #newOrderForm textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    #submitNewOrderBtn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(to right, var(--success), #76FF76);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    #debugOutput {
       margin-top: 20px;
-    }
-
-    #submitNewOrderBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      border: 1px dashed var(--gray);
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .items-count {
@@ -449,6 +332,15 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .error-message {
+      color: var(--danger);
+      background: rgba(244, 67, 54, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 16px 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -461,52 +353,9 @@
   <div class="orders-container">
     <h2 class="page-title">Order History</h2>
     
-    <div class="action-buttons">
-      <button id="debugBtn">
-        Debug Orders Data
-      </button>
-      <button id="toggleNewOrderFormBtn">
-        Add New Order
-      </button>
-    </div>
-
-    <!-- NEW ORDER FORM -->
-    <div id="newOrderForm" class="hidden">
-      <h3>Enter New Order Details</h3>
-      <div class="form-group">
-        <label for="orderIdInput">Order ID (Optional):</label>
-        <input type="text" id="orderIdInput" placeholder="e.g., GR123456">
-      </div>
-      <div class="form-group">
-        <label for="orderDateInput">Order Date:</label>
-        <input type="date" id="orderDateInput" value=""> <!-- Will be set by JS -->
-      </div>
-      <div class="form-group">
-        <label for="statusInput">Status:</label>
-        <select id="statusInput">
-          <option value="Processing">Processing</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Cancelled">Cancelled</option>
-          <option value="Pending">Pending</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="totalAmountInput">Total Amount (₹):</label>
-        <input type="number" id="totalAmountInput" step="0.01" min="0" placeholder="e.g., 55.75">
-      </div>
-      <div class="form-group">
-        <label for="paymentMethodInput">Payment Method:</label>
-        <input type="text" id="paymentMethodInput" placeholder="e.g., Credit Card, UPI">
-      </div>
-      <div class="form-group">
-        <label for="itemsJsonInput">Items (JSON Array):</label>
-        <textarea id="itemsJsonInput" placeholder='e.g., [{"itemName": "Milk", "quantity": 1, "itemPrice": 3.00}, {"itemName": "Bread", "quantity": 1, "itemPrice": 2.50}]'></textarea>
-      </div>
-      <button id="submitNewOrderBtn">Submit New Order</button>
-    </div>
-    <!-- END NEW ORDER FORM -->
+    <button id="debugBtn" style="margin-bottom: 20px;">
+      Debug Orders Data
+    </button>
     
     <div id="ordersList"></div>
 
@@ -517,10 +366,11 @@
       <a href="dashboard.html" class="btn-track">Start Shopping</a>
     </div>
 
+    <div id="errorState" class="error-message hidden"></div>
     <div id="debugOutput"></div>
   </div>
 
-  <!-- Bottom Navigation with SVG Icons -->
+  <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
@@ -551,341 +401,249 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" type="module"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" type="module"></script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, off, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // Your Firebase configuration (keep this as is)
+    // Firebase Config - REPLACE WITH YOUR ACTUAL CONFIG
     const firebaseConfig = {
-      apiKey: "AIzaSyC0m7Q5g8U3g4v0vY5Xx1H5x5x5x5x5x5x",
+      apiKey: "AIzaSy...YOUR_API_KEY",
       authDomain: "grocera-nithin.firebaseapp.com",
-      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com/",
+      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
       projectId: "grocera-nithin",
       storageBucket: "grocera-nithin.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdef1234567890abcdef"
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth();
 
     document.addEventListener('DOMContentLoaded', function() {
       const debugBtn = document.getElementById('debugBtn');
       const debugOutput = document.getElementById('debugOutput');
-      const toggleNewOrderFormBtn = document.getElementById('toggleNewOrderFormBtn');
-      const newOrderForm = document.getElementById('newOrderForm');
-      const submitNewOrderBtn = document.getElementById('submitNewOrderBtn');
-
-      // Form input elements
-      const orderIdInput = document.getElementById('orderIdInput');
-      const orderDateInput = document.getElementById('orderDateInput');
-      const statusInput = document.getElementById('statusInput');
-      const totalAmountInput = document.getElementById('totalAmountInput');
-      const paymentMethodInput = document.getElementById('paymentMethodInput');
-      const itemsJsonInput = document.getElementById('itemsJsonInput');
-
-      // Set default date to today
-      orderDateInput.valueAsDate = new Date();
 
       debugBtn.addEventListener('click', function() {
         debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
         displayDebugInfo();
       });
 
-      toggleNewOrderFormBtn.addEventListener('click', function() {
-        newOrderForm.classList.toggle('hidden');
-        if (!newOrderForm.classList.contains('hidden')) {
-          toggleNewOrderFormBtn.textContent = 'Hide Order Form';
-          // Pre-fill date to today if showing the form
-          orderDateInput.valueAsDate = new Date();
+      // Check authentication state
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("User is signed in:", user.uid);
+          loadOrdersFromFirebase(user.uid);
         } else {
-          toggleNewOrderFormBtn.textContent = 'Add New Order';
+          console.log("No user signed in, loading from localStorage");
+          loadOrdersFromLocalStorage();
         }
       });
+    });
 
-      submitNewOrderBtn.addEventListener('click', async function() {
-        let orderId = orderIdInput.value.trim();
-        const orderDate = orderDateInput.value;
-        const status = statusInput.value;
-        const totalAmount = parseFloat(totalAmountInput.value);
-        const paymentMethod = paymentMethodInput.value.trim();
-        let items = [];
+    function loadOrdersFromFirebase(userId) {
+      const ordersRef = ref(db, `users/${userId}/orders`);
+      showLoadingState();
 
-        // Basic validation
-        if (!orderDate || !status || isNaN(totalAmount) || totalAmount < 0 || !paymentMethod) {
-          alert('Please fill in all required fields (Date, Status, Total Amount, Payment Method) with valid data.');
-          return;
+      onValue(ordersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          console.log("Orders from Firebase:", data);
+          // Convert Firebase object to array
+          const orders = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key]
+          }));
+          displayOrders(orders);
+        } else {
+          showMessage("No orders found in Firebase. Checking localStorage...");
+          loadOrdersFromLocalStorage();
         }
-
-        try {
-          // Attempt to parse items JSON
-          const itemsJsonString = itemsJsonInput.value.trim();
-          if (itemsJsonString) {
-            items = JSON.parse(itemsJsonString);
-            if (!Array.isArray(items)) {
-              throw new Error('Items must be a valid JSON array.');
-            }
-            // Basic validation for item structure
-            items.forEach((item, index) => {
-              if (!item.itemName || typeof item.quantity === 'undefined' || typeof item.itemPrice === 'undefined') {
-                throw new Error(`Item at index ${index} is missing 'itemName', 'quantity', or 'itemPrice'.`);
-              }
-            });
-          }
-        } catch (e) {
-          alert('Invalid JSON for items. Please ensure it\'s a valid array of objects. Example: [{"itemName": "Milk", "quantity": 1, "itemPrice": 3.00}]\nError: ' + e.message);
-          return;
-        }
-
-        const newOrderData = {
-          orderId: orderId || undefined, // Use Firebase push key if empty
-          orderDate: new Date(orderDate).toISOString(),
-          status: status,
-          totalAmount: totalAmount,
-          paymentMethod: paymentMethod,
-          items: items // This will be saved as an array in Firebase
-        };
-
-        // Call the function to add the order to Firebase
-        await addNewOrder(newOrderData);
-
-        // Clear the form after submission
-        orderIdInput.value = '';
-        orderDateInput.valueAsDate = new Date(); // Reset to today
-        statusInput.value = 'Processing';
-        totalAmountInput.value = '';
-        paymentMethodInput.value = '';
-        itemsJsonInput.value = '';
-        newOrderForm.classList.add('hidden'); // Hide form after submission
-        toggleNewOrderFormBtn.textContent = 'Add New Order'; // Reset button text
+      }, (error) => {
+        console.error("Firebase error:", error);
+        showError("Failed to load from Firebase. Using local data.");
+        loadOrdersFromLocalStorage();
       });
+    }
 
-      // Load orders from Firebase
-      loadOrdersFromFirebase();
-
-      // --- FUNCTION TO ADD ORDER TO FIREBASE ---
-      async function addNewOrder(orderData) {
-        try {
-          const ordersRef = ref(db, 'orders');
-          let finalRef;
-
-          // If a custom order ID is provided, use it (careful: this overwrites existing data if ID conflicts)
-          if (orderData.orderId) {
-            finalRef = ref(db, `orders/${orderData.orderId}`);
-            // You might want to add logic here to check if orderId exists before setting
-          } else {
-            // Otherwise, use push() to generate a unique key
-            finalRef = push(ordersRef);
-            orderData.orderId = finalRef.key; // Store the generated key in the data itself
-          }
-          
-          await set(finalRef, orderData);
-          console.log("New order added successfully.");
-          debugOutput.innerHTML += `<p style="color:var(--success)">Order added successfully with ID: ${orderData.orderId || finalRef.key}</p>`;
-
-        } catch (error) {
-          console.error("Error adding new order:", error);
-          debugOutput.innerHTML += `<p style="color:var(--danger)">Error adding order: ${error.message}</p>`;
-        }
-      }
-      // --- END FUNCTION ---
-
-      function loadOrdersFromFirebase() {
-        const ordersRef = ref(db, 'orders');
-        const loadingElement = document.createElement('div');
-        loadingElement.innerHTML = '<p>Loading orders...</p>';
-        document.getElementById('ordersList').appendChild(loadingElement);
-
-        onValue(ordersRef, (snapshot) => {
-          const data = snapshot.val();
-          const ordersList = document.getElementById('ordersList');
-          ordersList.innerHTML = '';
-
-          if (!data) {
-            showEmptyState();
-            return;
-          }
-
-          // Convert Firebase object (key-value pairs) to array of orders
-          const orders = [];
-          Object.keys(data).forEach(key => {
-            const order = data[key];
-            order.firebaseId = key; // Store the Firebase ID for reference
-            orders.push(order);
-          });
-
-          if (orders.length === 0) {
-            showEmptyState();
-          } else {
-            displayOrders(orders);
-          }
-        }, (error) => {
-          console.error("Error loading orders:", error);
-          debugOutput.innerHTML += `<p style="color:var(--danger)">Firebase Error: ${error.message}</p>`;
-          // Fallback to localStorage if Firebase fails (though Firebase is the primary source now)
-          loadAndDisplayLocalOrders();
-        });
-      }
-
-      function loadAndDisplayLocalOrders() {
-        try {
-          const ordersJSON = localStorage.getItem('orders');
-          if (!ordersJSON) return showEmptyState();
-
-          let orders = JSON.parse(ordersJSON);
-          if (!Array.isArray(orders)) throw new Error('Orders data is not an array');
-          
-          if (orders.length === 0) {
-            showEmptyState();
-          } else {
-            displayOrders(orders);
-          }
-        } catch (error) {
-          debugOutput.innerHTML += `<p style="color:var(--danger)">Local Storage Error: ${error.message}</p>`;
+    function loadOrdersFromLocalStorage() {
+      try {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        if (orders.length > 0) {
+          displayOrders(orders);
+        } else {
           showEmptyState();
         }
+      } catch (error) {
+        console.error("Error loading local orders:", error);
+        showError("Failed to load orders from any source.");
+        showEmptyState();
+      }
+    }
+
+    function displayOrders(orders) {
+      const ordersList = document.getElementById('ordersList');
+      ordersList.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
+        showEmptyState();
+        return;
       }
 
-      function displayDebugInfo() {
-        debugOutput.innerHTML = `
-          <h4 style="color:var(--primary)">Debug Information</h4>
-          <p><strong>Firebase connected:</strong> ${app ? 'Yes' : 'No'}</p>
-          <p><strong>Database URL:</strong> ${firebaseConfig.databaseURL}</p>
-          <p><strong>localStorage supported:</strong> ${typeof localStorage !== 'undefined' ? 'Yes' : 'No'}</p>
-          <button onclick="localStorage.clear(); location.reload();" style="
-            padding: 8px 16px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            margin-top: 10px;
-          ">Clear Local Storage</button>
-        `;
+      // Sort by date (newest first)
+      orders.sort((a, b) => {
+        const dateA = new Date(a.date || a.orderDate || 0);
+        const dateB = new Date(b.date || b.orderDate || 0);
+        return dateB - dateA;
+      });
+
+      orders.forEach(order => {
+        const orderElement = createOrderElement(order);
+        ordersList.appendChild(orderElement);
+      });
+
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('errorState').classList.add('hidden');
+    }
+
+    function createOrderElement(order) {
+      const orderElement = document.createElement('div');
+      orderElement.className = 'order-card';
+
+      const orderDate = order.date || order.orderDate || new Date().toISOString();
+      const formattedDate = new Date(orderDate).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      const status = order.status || 'Pending';
+      const statusClass = getStatusClass(status);
+
+      // Calculate totals
+      let totalItems = 0;
+      let totalAmount = 0;
+      
+      if (order.items && Array.isArray(order.items)) {
+        totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        totalAmount = order.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+      } else if (order.items && typeof order.items === 'object') {
+        // Firebase object structure
+        totalItems = Object.keys(order.items).length;
+        totalAmount = Object.values(order.items).reduce((sum, item) => {
+          return sum + ((item.itemPrice || 0) * (item.quantity || 1));
+        }, 0);
       }
 
-      function displayOrders(orders) {
-        const ordersList = document.getElementById('ordersList');
-        const emptyState = document.getElementById('emptyState');
-        ordersList.innerHTML = '';
-        if (orders.length === 0) return showEmptyState();
-
-        // Sort by date (newest first)
-        orders.sort((a, b) => {
-          const dateA = new Date(a.date || a.orderDate || 0);
-          const dateB = new Date(b.date || b.orderDate || 0);
-          return dateB - dateA;
-        });
-
-        orders.forEach(order => {
-          const orderElement = createOrderElement(order);
-          ordersList.appendChild(orderElement);
-        });
-
-        emptyState.classList.add('hidden');
+      // Use provided total if available
+      if (order.totalAmount) {
+        totalAmount = order.totalAmount;
       }
 
-      function createOrderElement(order) {
-        const orderElement = document.createElement('div');
-        orderElement.className = 'order-card';
+      const orderId = order.id || order.orderId || 'GR' + Math.floor(Math.random() * 1000000);
 
-        const orderDate = order.date || order.orderDate || new Date().toISOString();
-        const formattedDate = new Date(orderDate).toLocaleDateString('en-US', {
-          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-
-        const status = order.status || 'Pending';
-        const statusClass = getStatusClass(status);
-
-        // Calculate total items and amount if not provided
-        let totalItems = 0;
-        let totalAmount = 0;
-        
-        if (order.items && Array.isArray(order.items)) {
-          totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
-          totalAmount = order.items.reduce((sum, item) => {
-            return sum + ((item.price || item.itemPrice || 0) * (item.quantity || 1));
-          }, 0);
-        } else if (order.items && typeof order.items === 'object') {
-          // Firebase object structure: iterate over values (if stored as object instead of array)
-          totalItems = Object.values(order.items).reduce((sum, item) => sum + (item.quantity || 1), 0);
-          totalAmount = Object.values(order.items).reduce((sum, item) => {
-            return sum + ((item.itemPrice || 0) * (item.quantity || 1));
-          }, 0);
-        }
-
-        // Use provided totalAmount if available (and it's a valid number)
-        if (typeof order.totalAmount === 'number' && !isNaN(order.totalAmount)) {
-          totalAmount = order.totalAmount;
-        }
-
-        // Use the orderId from the data, or firebaseId if orderId isn't explicitly set
-        const displayOrderId = order.orderId || order.firebaseId || 'N/A';
-
-        orderElement.innerHTML = `
-          <div class="order-header">
-            <div>
-              <span class="order-id">Order #${displayOrderId}</span>
-              <div class="order-date">${formattedDate}</div>
-            </div>
-            <span class="order-status ${statusClass}">${status}</span>
+      orderElement.innerHTML = `
+        <div class="order-header">
+          <div>
+            <span class="order-id">Order #${orderId}</span>
+            <div class="order-date">${formattedDate}</div>
           </div>
-          <div class="order-details">
-            <div style="margin-bottom: 8px; font-size: 14px;">
-              <span class="items-count">${totalItems} ${totalItems > 1 ? 'items' : 'item'}</span>
-            </div>
-            ${renderOrderItems(order)}
-            <div class="order-total">
-              <span class="total-label">Total Amount</span>
-              <span class="total-amount">₹${parseFloat(totalAmount).toFixed(2)}</span>
-            </div>
-            ${order.paymentMethod ? `<div class="payment-method">Paid via <span>${order.paymentMethod}</span></div>` : ''}
-            <a href="order-details.html?orderId=${displayOrderId}" class="btn-track">
-              ${status === 'Delivered' ? 'View Details' : 'Track Order'}
-            </a>
+          <span class="order-status ${statusClass}">${status}</span>
+        </div>
+        <div class="order-details">
+          <div style="margin-bottom: 8px; font-size: 14px;">
+            <span class="items-count">${totalItems} ${totalItems > 1 ? 'items' : 'item'}</span>
           </div>
-        `;
-        return orderElement;
-      }
+          ${renderOrderItems(order)}
+          <div class="order-total">
+            <span class="total-label">Total Amount</span>
+            <span class="total-amount">₹${parseFloat(totalAmount).toFixed(2)}</span>
+          </div>
+          ${order.payment?.method ? `<div class="payment-method">Paid via <span>${order.payment.method}</span></div>` : ''}
+          <a href="order-details.html?orderId=${orderId}" class="btn-track">
+            ${status === 'Delivered' ? 'View Details' : 'Track Order'}
+          </a>
+        </div>
+      `;
+      return orderElement;
+    }
 
-      function renderOrderItems(order) {
-        if (!order.items) return '';
-        
-        // Handle Firebase data structure (object) vs local storage (array)
-        if (Array.isArray(order.items)) {
-          return order.items.map(item => `
-            <div class="order-item">
-              <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
-              <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
-            </div>`).join('');
-        } else if (typeof order.items === 'object') {
-          // Firebase object structure: iterate over values (if stored as object instead of array)
-          return Object.values(order.items).map(item => `
-            <div class="order-item">
-              <span class="item-name">${item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
-              <span class="item-price">₹${((item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
-            </div>`).join('');
-        }
-        return '';
+    function renderOrderItems(order) {
+      if (!order.items) return '';
+      
+      if (Array.isArray(order.items)) {
+        return order.items.map(item => `
+          <div class="order-item">
+            <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
+            <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
+          </div>`).join('');
+      } else if (typeof order.items === 'object') {
+        return Object.values(order.items).map(item => `
+          <div class="order-item">
+            <span class="item-name">${item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
+            <span class="item-price">₹${((item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
+          </div>`).join('');
       }
+      return '';
+    }
 
-      function showEmptyState() {
-        document.getElementById('emptyState').classList.remove('hidden');
-        document.getElementById('ordersList').innerHTML = '';
-      }
+    function showLoadingState() {
+      document.getElementById('ordersList').innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <div class="loading-spinner"></div>
+          <p>Loading your orders...</p>
+        </div>
+      `;
+    }
 
-      function getStatusClass(status) {
-        status = (status || '').toLowerCase();
-        if (status.includes('processing')) return 'status-processing';
-        if (status.includes('confirmed')) return 'status-confirmed';
-        if (status.includes('delivered')) return 'status-delivered';
-        if (status.includes('pending')) return 'status-pending';
-        if (status.includes('cancelled')) return 'status-cancelled';
-        if (status.includes('shipped')) return 'status-shipped';
-        return 'status-processing'; // Default
-      }
-    });
+    function showEmptyState() {
+      document.getElementById('emptyState').classList.remove('hidden');
+      document.getElementById('ordersList').innerHTML = '';
+      document.getElementById('errorState').classList.add('hidden');
+    }
+
+    function showError(message) {
+      const errorElement = document.getElementById('errorState');
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+    }
+
+    function showMessage(message) {
+      console.log(message);
+    }
+
+    function getStatusClass(status) {
+      status = (status || '').toLowerCase();
+      if (status.includes('processing')) return 'status-processing';
+      if (status.includes('confirmed')) return 'status-confirmed';
+      if (status.includes('delivered')) return 'status-delivered';
+      if (status.includes('pending')) return 'status-pending';
+      if (status.includes('cancelled')) return 'status-cancelled';
+      if (status.includes('shipped')) return 'status-shipped';
+      return 'status-processing';
+    }
+
+    function displayDebugInfo() {
+      const debugOutput = document.getElementById('debugOutput');
+      const auth = getAuth();
+      
+      debugOutput.innerHTML = `
+        <h3>Debug Information</h3>
+        <p><strong>Firebase Connected:</strong> ${app ? 'Yes' : 'No'}</p>
+        <p><strong>User Authenticated:</strong> ${auth.currentUser ? 'Yes (' + auth.currentUser.uid + ')' : 'No'}</p>
+        <p><strong>LocalStorage Orders:</strong> ${JSON.parse(localStorage.getItem('orders'))?.length || 0} orders</p>
+        <button onclick="testFirebaseConnection()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; margin-top: 10px;">Test Firebase Connection</button>
+      `;
+    }
+
+    window.testFirebaseConnection = function() {
+      const testRef = ref(db, '.info/connected');
+      onValue(testRef, (snapshot) => {
+        alert(snapshot.val() ? "Connected to Firebase successfully!" : "Not connected to Firebase");
+      });
+    };
   </script>
 </body>
 </html>
