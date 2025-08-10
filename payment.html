@@ -40,9 +40,7 @@
 
     @keyframes gradientBG {
       0% { background-position: 0% 50%; }
-      25% { background-position: 50% 75%; }
       50% { background-position: 100% 50%; }
-      75% { background-position: 50% 25%; }
       100% { background-position: 0% 50%; }
     }
 
@@ -266,26 +264,40 @@
       transform: translateY(-2px);
     }
 
+    /* Payment method icons */
     .method-tab i {
       margin-right: 6px;
       font-size: 16px;
     }
 
+    /* Error message */
+    .error-message {
+      color: var(--danger);
+      background: rgba(239, 35, 60, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 16px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
     /* Loading spinner */
-    .spinner {
-      display: none;
-      width: 24px;
-      height: 24px;
-      border: 3px solid rgba(255,255,255,0.3);
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
       border-radius: 50%;
       border-top-color: white;
       animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
+    /* Responsive adjustments */
     @media (max-width: 400px) {
       .payment-methods {
         flex-direction: column;
@@ -300,44 +312,7 @@
         gap: 0;
       }
     }
-
-    /* Error message styling */
-    .error-message {
-      color: var(--danger);
-      font-size: 14px;
-      margin-top: 5px;
-      display: none;
-    }
-
-    .has-error .form-control {
-      border-color: var(--danger);
-    }
-
-    .has-error .error-message {
-      display: block;
-    }
   </style>
-  
-  <!-- Firebase SDK Imports -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
-  <script>
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
-      authDomain: "grocera-nithin.firebaseapp.com",
-      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
-      projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.appspot.com",
-      messagingSenderId: "824896008507",
-      appId: "1:824896008507:web:136d071d696f9ff190071e"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-  </script>
 </head>
 <body>
 
@@ -347,6 +322,8 @@
   </div>
 
   <div class="payment-container">
+    <div id="errorMessage" class="error-message hidden"></div>
+    
     <div class="payment-header">
       <h2>Complete Your Payment</h2>
       <div class="total-amount">₹<span id="payAmount">0.00</span></div>
@@ -369,28 +346,23 @@
       <div class="form-group">
         <label for="cardName">Cardholder Name</label>
         <input type="text" id="cardName" class="form-control" placeholder="John Doe">
-        <div class="error-message" id="cardNameError">Please enter cardholder name</div>
       </div>
       <div class="form-group">
         <label for="cardNumber">Card Number</label>
         <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="16">
-        <div class="error-message" id="cardNumberError">Please enter a valid 16-digit card number</div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label for="expiry">Expiry Date</label>
           <input type="text" id="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
-          <div class="error-message" id="expiryError">Please enter expiry date in MM/YY format</div>
         </div>
         <div class="form-group">
           <label for="cvv">CVV</label>
           <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="3">
-          <div class="error-message" id="cvvError">Please enter a valid 3-digit CVV</div>
         </div>
       </div>
-      <button class="btn-pay" onclick="processPayment('card')" id="cardPayBtn">
-        <i class="fas fa-lock"></i> <span>Pay Now</span>
-        <div class="spinner" id="cardSpinner"></div>
+      <button class="btn-pay" onclick="processPayment('card')">
+        <i class="fas fa-lock"></i> Pay Now
       </button>
     </div>
 
@@ -399,20 +371,17 @@
       <div class="form-group">
         <label for="upiId">UPI ID</label>
         <input type="text" id="upiId" class="form-control" placeholder="name@bank">
-        <div class="error-message" id="upiIdError">Please enter a valid UPI ID (e.g. name@bank)</div>
       </div>
-      <button class="btn-pay" onclick="processPayment('upi')" id="upiPayBtn">
-        <i class="fas fa-lock"></i> <span>Pay Now</span>
-        <div class="spinner" id="upiSpinner"></div>
+      <button class="btn-pay" onclick="processPayment('upi')">
+        <i class="fas fa-lock"></i> Pay Now
       </button>
     </div>
 
     <!-- Cash on Delivery -->
     <div id="codForm" class="payment-form hidden">
       <p class="cod-notice">Pay cash when your order is delivered</p>
-      <button class="btn-pay" onclick="processPayment('cod')" id="codPayBtn">
-        <i class="fas fa-check-circle"></i> <span>Confirm Order</span>
-        <div class="spinner" id="codSpinner"></div>
+      <button class="btn-pay" onclick="processPayment('cod')">
+        <i class="fas fa-check-circle"></i> Confirm Order
       </button>
     </div>
   </div>
@@ -445,74 +414,123 @@
     </a>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+
   <script>
-    // Get Firebase services
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+      authDomain: "grocera-nithin.firebaseapp.com",
+      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
+      projectId: "grocera-nithin",
+      storageBucket: "grocera-nithin.firebasestorage.app",
+      messagingSenderId: "824896008507",
+      appId: "1:824896008507:web:136d071d696f9ff190071e"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const auth = firebase.auth();
 
-    // Initialize cart and total amount
-    let cart = [];
-    let total = 0;
-    let isProcessingPayment = false;
+    // Global variables
+    let currentUser = null;
+    let cartItems = [];
+    let totalAmount = 0;
+    let deliveryAddress = null;
 
     // When page loads
     window.onload = function() {
-      loadCartData();
-      updatePaymentDisplay();
-      showPaymentForm('card');
-      setupInputValidation();
+      // Initialize authentication state
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          currentUser = user;
+          loadCartData();
+        } else {
+          showError("Please sign in to complete payment. Redirecting...");
+          setTimeout(() => {
+            window.location.href = "about.html";
+          }, 2000);
+        }
+      });
     };
 
-    // Load cart data from localStorage
+    // Load cart data from Firebase
     function loadCartData() {
-      try {
-        const cartItemsString = localStorage.getItem("cartItems");
-        if (!cartItemsString) {
-          redirectToCart("Your cart is empty. Please add items before payment.");
-          return;
-        }
+      if (!currentUser) return;
 
-        cart = JSON.parse(cartItemsString);
-        if (!Array.isArray(cart) || cart.length === 0) {
-          redirectToCart("Your cart is empty. Please add items before payment.");
+      const cartRef = database.ref(`users/${currentUser.uid}/cart`);
+      
+      cartRef.once('value').then((snapshot) => {
+        const data = snapshot.val();
+        
+        if (!data || Object.keys(data).length === 0) {
+          showError("Your cart is empty. Please add items before payment.");
+          setTimeout(() => {
+            window.location.href = "cart.html";
+          }, 2000);
           return;
         }
-      } catch (e) {
-        console.error("Error loading cart:", e);
-        redirectToCart("There was an issue with your cart. Please try again.");
-      }
+        
+        // Convert cart object to array
+        cartItems = Object.values(data);
+        
+        // Load delivery address
+        loadDeliveryAddress();
+        
+        // Calculate total
+        calculateTotal();
+      }).catch((error) => {
+        showError("Failed to load cart data. Please try again.");
+        console.error("Error loading cart:", error);
+      });
     }
 
-    function redirectToCart(message) {
-      alert(message);
-      window.location.href = "cart.html";
+    // Load delivery address from Firebase
+    function loadDeliveryAddress() {
+      if (!currentUser) return;
+
+      const addressRef = database.ref(`users/${currentUser.uid}/address`);
+      
+      addressRef.once('value').then((snapshot) => {
+        const address = snapshot.val();
+        
+        if (!address) {
+          showError("Please set your delivery address first. Redirecting...");
+          setTimeout(() => {
+            window.location.href = "cart.html";
+          }, 2000);
+          return;
+        }
+        
+        deliveryAddress = address;
+        updatePaymentDisplay();
+      }).catch((error) => {
+        showError("Failed to load address. Please try again.");
+        console.error("Error loading address:", error);
+      });
+    }
+
+    // Calculate total amount from cart
+    function calculateTotal() {
+      totalAmount = cartItems.reduce((sum, item) => {
+        return sum + (item.price * item.quantity);
+      }, 0);
+      
+      // Apply delivery charge if total < 1000
+      if (totalAmount < 1000) {
+        totalAmount += 50;
+      }
+      
+      updatePaymentDisplay();
     }
 
     // Update payment amount display
     function updatePaymentDisplay() {
-      total = calculateCartTotal();
-      
-      if (total <= 0) {
-        redirectToCart("Your cart total is ₹0. Please add items before payment.");
-        return;
-      }
-
-      document.getElementById("payAmount").textContent = total.toFixed(2);
-    }
-
-    function calculateCartTotal() {
-      let calculatedTotal = 0;
-      cart.forEach(item => {
-        calculatedTotal += (item.price || 0) * (item.quantity || 1);
-      });
-
-      // Check for stored order total (optional override)
-      const storedOrderTotal = parseFloat(localStorage.getItem("orderTotal"));
-      if (!isNaN(storedOrderTotal) && storedOrderTotal > 0) {
-        return storedOrderTotal;
-      }
-      
-      return calculatedTotal;
+      document.getElementById("payAmount").textContent = totalAmount.toFixed(2);
     }
 
     // Show selected payment form
@@ -528,100 +546,35 @@
       document.getElementById("codTab").classList.remove("active");
       
       // Show selected form and activate tab
-      document.getElementById(method + "Form").classList.remove("hidden");
-      document.getElementById(method + "Tab").classList.add("active");
+      document.getElementById(`${method}Form`).classList.remove("hidden");
+      document.getElementById(`${method}Tab`).classList.add("active");
     }
 
-    // Setup input validation
-    function setupInputValidation() {
-      // Card validation
-      document.getElementById('cardName').addEventListener('input', function() {
-        validateField(this, this.value.trim() !== '', 'cardNameError');
-      });
-      
-      document.getElementById('cardNumber').addEventListener('input', function() {
-        const value = this.value.trim();
-        validateField(this, value.length === 16 && /^\d+$/.test(value), 'cardNumberError');
-      });
-      
-      document.getElementById('expiry').addEventListener('input', function() {
-        const value = this.value.trim();
-        validateField(this, /^\d{2}\/\d{2}$/.test(value), 'expiryError');
-      });
-      
-      document.getElementById('cvv').addEventListener('input', function() {
-        const value = this.value.trim();
-        validateField(this, value.length === 3 && /^\d+$/.test(value), 'cvvError');
-      });
-      
-      // UPI validation
-      document.getElementById('upiId').addEventListener('input', function() {
-        const value = this.value.trim();
-        validateField(this, /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/.test(value), 'upiIdError');
-      });
+    // Show error message
+    function showError(message) {
+      const errorEl = document.getElementById("errorMessage");
+      errorEl.textContent = message;
+      errorEl.classList.remove("hidden");
     }
 
-    // Validate individual field
-    function validateField(field, isValid, errorId) {
-      const formGroup = field.parentElement;
-      const errorElement = document.getElementById(errorId);
-      
-      if (isValid) {
-        formGroup.classList.remove('has-error');
-        errorElement.style.display = 'none';
-      } else {
-        formGroup.classList.add('has-error');
-        errorElement.style.display = 'block';
-      }
+    // Hide error message
+    function hideError() {
+      document.getElementById("errorMessage").classList.add("hidden");
     }
 
     // Process payment
-    async function processPayment(method) {
-      if (isProcessingPayment) return;
-      
-      try {
-        // Validate payment details
-        if (!validatePaymentMethod(method)) {
-          return;
-        }
-        
-        // Show loading spinner
-        showLoading(method, true);
-        isProcessingPayment = true;
-        
-        // Create and save order
-        const order = createOrder(method);
-        await saveOrder(order);
-        
-      } catch (error) {
-        console.error("Payment error:", error);
-        alert("An error occurred during payment processing. Please try again.");
-        showLoading(method, false);
-        isProcessingPayment = false;
+    function processPayment(method) {
+      // Validate payment details
+      if (!validatePaymentMethod(method)) {
+        return;
       }
-    }
-
-    // Show/hide loading spinner
-    function showLoading(method, isLoading) {
-      const btn = document.getElementById(`${method}PayBtn`);
-      const spinner = document.getElementById(`${method}Spinner`);
-      const textSpan = btn.querySelector('span');
       
-      if (isLoading) {
-        btn.disabled = true;
-        spinner.style.display = 'block';
-        textSpan.textContent = method === 'cod' ? 'Placing Order...' : 'Processing...';
-      } else {
-        btn.disabled = false;
-        spinner.style.display = 'none';
-        textSpan.textContent = method === 'cod' ? 'Confirm Order' : 'Pay Now';
-      }
+      // Create order
+      createOrder(method);
     }
 
     // Validate payment method details
     function validatePaymentMethod(method) {
-      let isValid = true;
-      
       switch(method) {
         case 'card':
           const name = document.getElementById('cardName').value.trim();
@@ -629,108 +582,103 @@
           const expiry = document.getElementById('expiry').value.trim();
           const cvv = document.getElementById('cvv').value.trim();
           
-          validateField(document.getElementById('cardName'), name !== '', 'cardNameError');
-          validateField(document.getElementById('cardNumber'), number.length === 16 && /^\d+$/.test(number), 'cardNumberError');
-          validateField(document.getElementById('expiry'), /^\d{2}\/\d{2}$/.test(expiry), 'expiryError');
-          validateField(document.getElementById('cvv'), cvv.length === 3 && /^\d+$/.test(cvv), 'cvvError');
-
-          isValid = !document.querySelector('#cardForm .has-error');
-          break;
+          if (!name) {
+            showError("Please enter cardholder name");
+            return false;
+          }
+          if (number.length !== 16 || !/^\d+$/.test(number)) {
+            showError("Please enter a valid 16-digit card number");
+            return false;
+          }
+          if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+            showError("Please enter expiry date in MM/YY format");
+            return false;
+          }
+          if (cvv.length !== 3 || !/^\d+$/.test(cvv)) {
+            showError("Please enter a valid 3-digit CVV");
+            return false;
+          }
+          hideError();
+          return true;
           
         case 'upi':
           const upiId = document.getElementById('upiId').value.trim();
-          validateField(document.getElementById('upiId'), /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/.test(upiId), 'upiIdError');
-          isValid = !document.querySelector('#upiForm .has-error');
-          break;
+          if (!upiId.includes("@") || upiId.length < 6) {
+            showError("Please enter a valid UPI ID (e.g. name@bank)");
+            return false;
+          }
+          hideError();
+          return true;
           
         case 'cod':
-          isValid = confirm("Are you sure you want to proceed with Cash on Delivery?");
-          break;
+          hideError();
+          return confirm("Are you sure you want to proceed with Cash on Delivery?");
           
         default:
-          isValid = false;
+          showError("Invalid payment method");
+          return false;
       }
-      
-      return isValid;
     }
 
-    // Create order object
+    // Create order in Firebase
     function createOrder(method) {
-      const now = new Date();
-      const dateStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+      if (!currentUser) return;
       
-      return {
-        orderId: `GROC-${dateStr}-${Math.floor(1000 + Math.random() * 9000)}`,
-        items: cart.map(item => ({
-          id: item.id || '',
-          name: item.name || 'Unknown Item',
-          quantity: item.quantity || 1,
-          price: item.price || 0,
-          image: item.image || '',
-          total: (item.quantity || 1) * (item.price || 0)
-        })),
-        totalAmount: total.toFixed(2),
+      const orderRef = database.ref('orders').push();
+      const now = new Date();
+      
+      const orderData = {
+        userId: currentUser.uid,
+        orderId: orderRef.key,
+        items: cartItems,
+        totalAmount: totalAmount.toFixed(2),
         paymentMethod: method === 'card' ? 'Credit/Debit Card' : 
                       method === 'upi' ? 'UPI' : 'Cash on Delivery',
         status: method === 'cod' ? 'Pending Payment' : 'Paid',
         orderDate: now.toISOString(),
-        deliveryDate: '',
-        deliveryAddress: JSON.parse(localStorage.getItem("deliveryAddress")) || {
-          address: "Address not specified",
-          contact: ""
-        },
-        userId: auth.currentUser?.uid || 'guest',
-        userEmail: auth.currentUser?.email || 'guest@example.com'
+        deliveryAddress: formatAddress(deliveryAddress)
       };
-    }
-
-    // Save order to Realtime Database
-    async function saveOrder(order) {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          throw new Error("User not authenticated");
-        }
-
-        // Add timestamp
-        order.timestamp = firebase.database.ServerValue.TIMESTAMP;
-        
-        // Save to both user's orders and global orders
-        const db = database.ref();
-        const updates = {};
-        updates[`users/${user.uid}/orders/${order.orderId}`] = order;
-        updates[`orders/${order.orderId}`] = order;
-        
-        await db.update(updates);
-        
-        console.log("Order saved successfully:", order);
-        clearCart();
-        showPaymentSuccess(order.paymentMethod, order.orderId);
-        
-      } catch (error) {
-        console.error("Order save failed:", error);
-        throw error;
-      }
-    }
-
-    // Clear cart data from localStorage
-    function clearCart() {
-      localStorage.removeItem("cartItems");
-      localStorage.removeItem("orderTotal");
-      console.log("Cart cleared from localStorage.");
-    }
-
-    // Show payment success message and redirect
-    function showPaymentSuccess(method, orderId) {
-      const paymentMethod = method === 'Credit/Debit Card' ? 'Card' : 
-                          method === 'UPI' ? 'UPI' : 'Cash on Delivery';
       
-      const message = method === 'Cash on Delivery' ? 
-        `Order #${orderId} placed successfully! You will pay ₹${total.toFixed(2)} on delivery.` : 
-        `Payment of ₹${total.toFixed(2)} via ${paymentMethod} for order #${orderId} was successful!`;
+      // Show loading state on button
+      const payBtn = document.querySelector(`#${method}Form .btn-pay`);
+      const originalText = payBtn.innerHTML;
+      payBtn.innerHTML = `<span class="loading-spinner"></span> Processing...`;
+      payBtn.disabled = true;
+      
+      // Save order to Firebase
+      orderRef.set(orderData)
+        .then(() => {
+          // Clear cart after successful order
+          return database.ref(`users/${currentUser.uid}/cart`).remove();
+        })
+        .then(() => {
+          // Show success message
+          showPaymentSuccess(method);
+        })
+        .catch((error) => {
+          showError("Payment failed. Please try again.");
+          console.error("Error creating order:", error);
+          payBtn.innerHTML = originalText;
+          payBtn.disabled = false;
+        });
+    }
+
+    // Format address for display
+    function formatAddress(address) {
+      if (!address) return "Address not specified";
+      return `${address.doorNo}, ${address.street}, ${address.area}, ${address.city}, ${address.state} - ${address.pincode}`;
+    }
+
+    // Show payment success and redirect
+    function showPaymentSuccess(method) {
+      const paymentMethod = method === 'card' ? 'Card' : 
+                          method === 'upi' ? 'UPI' : 'Cash on Delivery';
+      const message = method === 'cod' ? 
+        'Order placed successfully! You will pay ₹' + totalAmount.toFixed(2) + ' when your order is delivered.' : 
+        'Payment of ₹' + totalAmount.toFixed(2) + ' via ' + paymentMethod + ' was successful!';
       
       alert(message);
-      window.location.href = `orders.html?order_id=${orderId}`;
+      window.location.href = "orders.html";
     }
   </script>
 </body>
