@@ -432,17 +432,23 @@
 
     // Load cart data from localStorage
     function loadCartData() {
-      // Try to load cart items
-      const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-      
-      // If cart is empty, redirect to cart page
-      if (cartItems.length === 0) {
-        alert("Your cart is empty. Please add items before payment.");
+      try {
+        // Try to load cart items
+        const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+        
+        // If cart is empty, redirect to cart page
+        if (cartItems.length === 0) {
+          alert("Your cart is empty. Please add items before payment.");
+          window.location.href = "cart.html";
+          return;
+        }
+        
+        cart = cartItems;
+      } catch (e) {
+        console.error("Error loading cart data:", e);
+        alert("Error loading your cart. Please try again.");
         window.location.href = "cart.html";
-        return;
       }
-      
-      cart = cartItems;
     }
 
     // Calculate total amount from cart
@@ -451,7 +457,9 @@
       
       // Calculate from cart items
       cart.forEach(item => {
-        total += (item.price || 0) * (item.quantity || 1);
+        const price = parseFloat(item.price) || 0;
+        const quantity = parseInt(item.quantity) || 1;
+        total += price * quantity;
       });
       
       // Check for orderTotal in localStorage
@@ -515,18 +523,20 @@
       // UPI validation
       document.getElementById('upiId').addEventListener('input', function() {
         const value = this.value.trim();
-        validateField(this, value.includes("@") && value.length >= 6, 'upiIdError');
+        validateField(this, /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/.test(value), 'upiIdError');
       });
     }
 
     // Validate individual field
     function validateField(field, isValid, errorId) {
+      const formGroup = field.parentElement;
       const errorElement = document.getElementById(errorId);
+      
       if (isValid) {
-        field.classList.remove('has-error');
+        formGroup.classList.remove('has-error');
         errorElement.style.display = 'none';
       } else {
-        field.classList.add('has-error');
+        formGroup.classList.add('has-error');
         errorElement.style.display = 'block';
       }
     }
@@ -544,6 +554,12 @@
           return;
         }
         
+        // Show processing indicator
+        const payButton = document.querySelector(`#${method}Form .btn-pay`);
+        const originalText = payButton.innerHTML;
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        payButton.disabled = true;
+        
         // Simulate payment processing
         setTimeout(() => {
           // Create order
@@ -558,11 +574,16 @@
           // Show success message and redirect
           showPaymentSuccess(method);
           isProcessingPayment = false;
-        }, 1000);
+        }, 2000);
       } catch (error) {
         console.error("Payment error:", error);
         alert("An error occurred during payment processing. Please try again.");
         isProcessingPayment = false;
+        
+        // Reset pay button
+        const payButton = document.querySelector(`#${method}Form .btn-pay`);
+        payButton.innerHTML = originalText;
+        payButton.disabled = false;
       }
     }
 
@@ -578,22 +599,22 @@
           const cvv = document.getElementById('cvv').value.trim();
           
           if (!name) {
-            document.getElementById('cardName').classList.add('has-error');
+            document.getElementById('cardName').parentElement.classList.add('has-error');
             document.getElementById('cardNameError').style.display = 'block';
             isValid = false;
           }
           if (number.length !== 16 || !/^\d+$/.test(number)) {
-            document.getElementById('cardNumber').classList.add('has-error');
+            document.getElementById('cardNumber').parentElement.classList.add('has-error');
             document.getElementById('cardNumberError').style.display = 'block';
             isValid = false;
           }
           if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-            document.getElementById('expiry').classList.add('has-error');
+            document.getElementById('expiry').parentElement.classList.add('has-error');
             document.getElementById('expiryError').style.display = 'block';
             isValid = false;
           }
           if (cvv.length !== 3 || !/^\d+$/.test(cvv)) {
-            document.getElementById('cvv').classList.add('has-error');
+            document.getElementById('cvv').parentElement.classList.add('has-error');
             document.getElementById('cvvError').style.display = 'block';
             isValid = false;
           }
@@ -601,8 +622,8 @@
           
         case 'upi':
           const upiId = document.getElementById('upiId').value.trim();
-          if (!upiId.includes("@") || upiId.length < 6) {
-            document.getElementById('upiId').classList.add('has-error');
+          if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/.test(upiId)) {
+            document.getElementById('upiId').parentElement.classList.add('has-error');
             document.getElementById('upiIdError').style.display = 'block';
             return false;
           }
@@ -622,10 +643,11 @@
       return {
         orderId: 'GROC' + now.getTime().toString().slice(-8),
         items: cart.map(item => ({
-          name: item.name,
-          quantity: item.quantity || 1,
-          price: item.price || 0,
-          total: (item.quantity || 1) * (item.price || 0)
+          id: item.id || Date.now().toString(),
+          name: item.name || 'Unknown Item',
+          quantity: parseInt(item.quantity) || 1,
+          price: parseFloat(item.price) || 0,
+          total: (parseInt(item.quantity) || 1) * (parseFloat(item.price) || 0).toFixed(2)
         })),
         totalAmount: total.toFixed(2),
         paymentMethod: method === 'card' ? 'Credit/Debit Card' : 
@@ -638,15 +660,24 @@
 
     // Save order to localStorage
     function saveOrder(order) {
-      let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-      orders.unshift(order); // Add new order at beginning of array
-      localStorage.setItem("orders", JSON.stringify(orders));
+      try {
+        let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+        orders.unshift(order); // Add new order at beginning of array
+        localStorage.setItem("orders", JSON.stringify(orders));
+      } catch (e) {
+        console.error("Error saving order:", e);
+        throw new Error("Failed to save order");
+      }
     }
 
     // Clear cart data
     function clearCart() {
-      localStorage.removeItem("cartItems");
-      localStorage.removeItem("orderTotal");
+      try {
+        localStorage.removeItem("cartItems");
+        localStorage.removeItem("orderTotal");
+      } catch (e) {
+        console.error("Error clearing cart:", e);
+      }
     }
 
     // Show payment success and redirect
