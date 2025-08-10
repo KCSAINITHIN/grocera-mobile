@@ -310,8 +310,15 @@
       display: none;
     }
 
-    #debugBtn, #addSampleOrderBtn {
+    /* Styles for the new form buttons */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
+    }
+
+    .action-buttons button {
+      flex: 1;
       padding: 10px 16px;
       color: white;
       border: none;
@@ -319,11 +326,12 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3); /* Default for debug */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     #debugBtn {
       background: linear-gradient(to right, var(--secondary), #FF8A9D);
+      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
     }
 
     #debugBtn:hover {
@@ -331,25 +339,91 @@
       box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
     }
 
-    #addSampleOrderBtn {
-      background: linear-gradient(to right, var(--success), #76FF76); /* Green for 'add' */
-      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
-      margin-left: 10px; /* Space out the buttons */
+    #toggleNewOrderFormBtn {
+      background: linear-gradient(to right, var(--primary), var(--primary-light));
+      box-shadow: 0 4px 8px rgba(108, 99, 255, 0.3);
     }
 
-    #addSampleOrderBtn:hover {
+    #toggleNewOrderFormBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(108, 99, 255, 0.4);
+    }
+
+    /* Styles for the new order form */
+    #newOrderForm {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--accent);
+    }
+
+    #newOrderForm h3 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--dark);
+      border-bottom: 1px solid var(--gray);
+      padding-bottom: 10px;
+    }
+
+    #newOrderForm .form-group {
+      margin-bottom: 15px;
+    }
+
+    #newOrderForm label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--dark);
+    }
+
+    #newOrderForm input[type="text"],
+    #newOrderForm input[type="number"],
+    #newOrderForm input[type="date"],
+    #newOrderForm select,
+    #newOrderForm textarea {
+      width: calc(100% - 20px); /* Adjust for padding */
+      padding: 10px;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      font-size: 16px;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #newOrderForm input:focus,
+    #newOrderForm select:focus,
+    #newOrderForm textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+      outline: none;
+    }
+
+    #newOrderForm textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    #submitNewOrderBtn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, var(--success), #76FF76);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+      margin-top: 20px;
+    }
+
+    #submitNewOrderBtn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
-    }
-
-    #debugOutput {
-      margin-top: 20px;
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
-      border: 1px dashed var(--gray);
-      display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .items-count {
@@ -387,16 +461,53 @@
   <div class="orders-container">
     <h2 class="page-title">Order History</h2>
     
-    <button id="debugBtn">
-      Debug Orders Data
-    </button>
-    
-    <!-- NEW BUTTON TO ADD A SAMPLE ORDER -->
-    <button id="addSampleOrderBtn">
-      Add Sample Order
-    </button>
-    <!-- END NEW BUTTON -->
+    <div class="action-buttons">
+      <button id="debugBtn">
+        Debug Orders Data
+      </button>
+      <button id="toggleNewOrderFormBtn">
+        Add New Order
+      </button>
+    </div>
 
+    <!-- NEW ORDER FORM -->
+    <div id="newOrderForm" class="hidden">
+      <h3>Enter New Order Details</h3>
+      <div class="form-group">
+        <label for="orderIdInput">Order ID (Optional):</label>
+        <input type="text" id="orderIdInput" placeholder="e.g., GR123456">
+      </div>
+      <div class="form-group">
+        <label for="orderDateInput">Order Date:</label>
+        <input type="date" id="orderDateInput" value=""> <!-- Will be set by JS -->
+      </div>
+      <div class="form-group">
+        <label for="statusInput">Status:</label>
+        <select id="statusInput">
+          <option value="Processing">Processing</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="totalAmountInput">Total Amount (₹):</label>
+        <input type="number" id="totalAmountInput" step="0.01" min="0" placeholder="e.g., 55.75">
+      </div>
+      <div class="form-group">
+        <label for="paymentMethodInput">Payment Method:</label>
+        <input type="text" id="paymentMethodInput" placeholder="e.g., Credit Card, UPI">
+      </div>
+      <div class="form-group">
+        <label for="itemsJsonInput">Items (JSON Array):</label>
+        <textarea id="itemsJsonInput" placeholder='e.g., [{"itemName": "Milk", "quantity": 1, "itemPrice": 3.00}, {"itemName": "Bread", "quantity": 1, "itemPrice": 2.50}]'></textarea>
+      </div>
+      <button id="submitNewOrderBtn">Submit New Order</button>
+    </div>
+    <!-- END NEW ORDER FORM -->
+    
     <div id="ordersList"></div>
 
     <div id="emptyState" class="empty-orders hidden">
@@ -443,10 +554,9 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    // IMPORTANT: Added 'push' and 'set' to the import list
     import { getDatabase, ref, onValue, off, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Your Firebase configuration (leave this as is)
+    // Your Firebase configuration (keep this as is)
     const firebaseConfig = {
       apiKey: "AIzaSyC0m7Q5g8U3g4v0vY5Xx1H5x5x5x5x5x5x",
       authDomain: "grocera-nithin.firebaseapp.com",
@@ -464,49 +574,123 @@
     document.addEventListener('DOMContentLoaded', function() {
       const debugBtn = document.getElementById('debugBtn');
       const debugOutput = document.getElementById('debugOutput');
-      // Get the new button for adding orders
-      const addSampleOrderBtn = document.getElementById('addSampleOrderBtn');
+      const toggleNewOrderFormBtn = document.getElementById('toggleNewOrderFormBtn');
+      const newOrderForm = document.getElementById('newOrderForm');
+      const submitNewOrderBtn = document.getElementById('submitNewOrderBtn');
+
+      // Form input elements
+      const orderIdInput = document.getElementById('orderIdInput');
+      const orderDateInput = document.getElementById('orderDateInput');
+      const statusInput = document.getElementById('statusInput');
+      const totalAmountInput = document.getElementById('totalAmountInput');
+      const paymentMethodInput = document.getElementById('paymentMethodInput');
+      const itemsJsonInput = document.getElementById('itemsJsonInput');
+
+      // Set default date to today
+      orderDateInput.valueAsDate = new Date();
 
       debugBtn.addEventListener('click', function() {
         debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
         displayDebugInfo();
       });
 
-      // Event listener for the new "Add Sample Order" button
-      addSampleOrderBtn.addEventListener('click', function() {
-        const sampleOrder = {
-          orderId: "GR" + Date.now().toString().slice(-6), // Simple unique ID
-          orderDate: new Date().toISOString(),
-          status: "Processing",
-          totalAmount: parseFloat((Math.random() * (100 - 20) + 20).toFixed(2)), // Random amount between 20-100
-          paymentMethod: "Google Pay", // Or any other method
-          items: [
-            { itemName: "Organic Apples", quantity: 2, itemPrice: 2.50 },
-            { itemName: "Fresh Milk", quantity: 1, itemPrice: 4.25 },
-            { itemName: "Whole Wheat Bread", quantity: 1, itemPrice: 3.00 }
-          ]
+      toggleNewOrderFormBtn.addEventListener('click', function() {
+        newOrderForm.classList.toggle('hidden');
+        if (!newOrderForm.classList.contains('hidden')) {
+          toggleNewOrderFormBtn.textContent = 'Hide Order Form';
+          // Pre-fill date to today if showing the form
+          orderDateInput.valueAsDate = new Date();
+        } else {
+          toggleNewOrderFormBtn.textContent = 'Add New Order';
+        }
+      });
+
+      submitNewOrderBtn.addEventListener('click', async function() {
+        let orderId = orderIdInput.value.trim();
+        const orderDate = orderDateInput.value;
+        const status = statusInput.value;
+        const totalAmount = parseFloat(totalAmountInput.value);
+        const paymentMethod = paymentMethodInput.value.trim();
+        let items = [];
+
+        // Basic validation
+        if (!orderDate || !status || isNaN(totalAmount) || totalAmount < 0 || !paymentMethod) {
+          alert('Please fill in all required fields (Date, Status, Total Amount, Payment Method) with valid data.');
+          return;
+        }
+
+        try {
+          // Attempt to parse items JSON
+          const itemsJsonString = itemsJsonInput.value.trim();
+          if (itemsJsonString) {
+            items = JSON.parse(itemsJsonString);
+            if (!Array.isArray(items)) {
+              throw new Error('Items must be a valid JSON array.');
+            }
+            // Basic validation for item structure
+            items.forEach((item, index) => {
+              if (!item.itemName || typeof item.quantity === 'undefined' || typeof item.itemPrice === 'undefined') {
+                throw new Error(`Item at index ${index} is missing 'itemName', 'quantity', or 'itemPrice'.`);
+              }
+            });
+          }
+        } catch (e) {
+          alert('Invalid JSON for items. Please ensure it\'s a valid array of objects. Example: [{"itemName": "Milk", "quantity": 1, "itemPrice": 3.00}]\nError: ' + e.message);
+          return;
+        }
+
+        const newOrderData = {
+          orderId: orderId || undefined, // Use Firebase push key if empty
+          orderDate: new Date(orderDate).toISOString(),
+          status: status,
+          totalAmount: totalAmount,
+          paymentMethod: paymentMethod,
+          items: items // This will be saved as an array in Firebase
         };
-        addNewOrder(sampleOrder);
+
+        // Call the function to add the order to Firebase
+        await addNewOrder(newOrderData);
+
+        // Clear the form after submission
+        orderIdInput.value = '';
+        orderDateInput.valueAsDate = new Date(); // Reset to today
+        statusInput.value = 'Processing';
+        totalAmountInput.value = '';
+        paymentMethodInput.value = '';
+        itemsJsonInput.value = '';
+        newOrderForm.classList.add('hidden'); // Hide form after submission
+        toggleNewOrderFormBtn.textContent = 'Add New Order'; // Reset button text
       });
 
       // Load orders from Firebase
       loadOrdersFromFirebase();
 
-      // --- NEW FUNCTION TO ADD ORDER TO FIREBASE ---
+      // --- FUNCTION TO ADD ORDER TO FIREBASE ---
       async function addNewOrder(orderData) {
         try {
           const ordersRef = ref(db, 'orders');
-          const newOrderRef = push(ordersRef); // Generates a unique key for the new order
-          await set(newOrderRef, orderData);   // Sets the order data at that key
-          console.log("New order added successfully with ID:", newOrderRef.key);
-          // Your 'onValue' listener in 'loadOrdersFromFirebase' will automatically
-          // detect this new data and update the UI in real-time!
+          let finalRef;
+
+          // If a custom order ID is provided, use it (careful: this overwrites existing data if ID conflicts)
+          if (orderData.orderId) {
+            finalRef = ref(db, `orders/${orderData.orderId}`);
+            // You might want to add logic here to check if orderId exists before setting
+          } else {
+            // Otherwise, use push() to generate a unique key
+            finalRef = push(ordersRef);
+            orderData.orderId = finalRef.key; // Store the generated key in the data itself
+          }
+          
+          await set(finalRef, orderData);
+          console.log("New order added successfully.");
+          debugOutput.innerHTML += `<p style="color:var(--success)">Order added successfully with ID: ${orderData.orderId || finalRef.key}</p>`;
+
         } catch (error) {
           console.error("Error adding new order:", error);
           debugOutput.innerHTML += `<p style="color:var(--danger)">Error adding order: ${error.message}</p>`;
         }
       }
-      // --- END NEW FUNCTION ---
+      // --- END FUNCTION ---
 
       function loadOrdersFromFirebase() {
         const ordersRef = ref(db, 'orders');
@@ -524,7 +708,7 @@
             return;
           }
 
-          // Convert Firebase object to array
+          // Convert Firebase object (key-value pairs) to array of orders
           const orders = [];
           Object.keys(data).forEach(key => {
             const order = data[key];
@@ -540,7 +724,7 @@
         }, (error) => {
           console.error("Error loading orders:", error);
           debugOutput.innerHTML += `<p style="color:var(--danger)">Firebase Error: ${error.message}</p>`;
-          // Fallback to localStorage if Firebase fails
+          // Fallback to localStorage if Firebase fails (though Firebase is the primary source now)
           loadAndDisplayLocalOrders();
         });
       }
@@ -621,28 +805,28 @@
         if (order.items && Array.isArray(order.items)) {
           totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
           totalAmount = order.items.reduce((sum, item) => {
-            return sum + ((item.price || 0) * (item.quantity || 1));
+            return sum + ((item.price || item.itemPrice || 0) * (item.quantity || 1));
           }, 0);
         } else if (order.items && typeof order.items === 'object') {
-          // Firebase object structure (values are the items)
+          // Firebase object structure: iterate over values (if stored as object instead of array)
           totalItems = Object.values(order.items).reduce((sum, item) => sum + (item.quantity || 1), 0);
           totalAmount = Object.values(order.items).reduce((sum, item) => {
             return sum + ((item.itemPrice || 0) * (item.quantity || 1));
           }, 0);
         }
 
-        // Use provided totalAmount if available (and it's a number)
+        // Use provided totalAmount if available (and it's a valid number)
         if (typeof order.totalAmount === 'number' && !isNaN(order.totalAmount)) {
           totalAmount = order.totalAmount;
         }
 
-        // Generate order ID if not provided, or use Firebase ID if available
-        const orderId = order.orderId || order.firebaseId || 'GR' + Math.floor(Math.random() * 1000000);
+        // Use the orderId from the data, or firebaseId if orderId isn't explicitly set
+        const displayOrderId = order.orderId || order.firebaseId || 'N/A';
 
         orderElement.innerHTML = `
           <div class="order-header">
             <div>
-              <span class="order-id">Order #${orderId}</span>
+              <span class="order-id">Order #${displayOrderId}</span>
               <div class="order-date">${formattedDate}</div>
             </div>
             <span class="order-status ${statusClass}">${status}</span>
@@ -657,7 +841,7 @@
               <span class="total-amount">₹${parseFloat(totalAmount).toFixed(2)}</span>
             </div>
             ${order.paymentMethod ? `<div class="payment-method">Paid via <span>${order.paymentMethod}</span></div>` : ''}
-            <a href="order-details.html?orderId=${orderId}" class="btn-track">
+            <a href="order-details.html?orderId=${displayOrderId}" class="btn-track">
               ${status === 'Delivered' ? 'View Details' : 'Track Order'}
             </a>
           </div>
@@ -676,7 +860,7 @@
               <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
             </div>`).join('');
         } else if (typeof order.items === 'object') {
-          // Firebase object structure: iterate over values
+          // Firebase object structure: iterate over values (if stored as object instead of array)
           return Object.values(order.items).map(item => `
             <div class="order-item">
               <span class="item-name">${item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
