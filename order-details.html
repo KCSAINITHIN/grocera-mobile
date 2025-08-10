@@ -83,7 +83,6 @@
       max-width: 100%;
     }
 
-    /* Enhanced Card Styling */
     .card {
       background: white;
       border-radius: var(--card-radius);
@@ -264,7 +263,6 @@
       fill: var(--primary);
     }
 
-    /* Tracking Progress */
     .tracking-card {
       position: relative;
       overflow: hidden;
@@ -371,7 +369,6 @@
       font-weight: 500;
     }
 
-    /* Delivery Info */
     .info-card {
       background: white;
       border-radius: var(--card-radius);
@@ -416,7 +413,6 @@
       line-height: 1.4;
     }
 
-    /* Delivery Person */
     .delivery-person {
       background: white;
       border-radius: var(--card-radius);
@@ -486,7 +482,6 @@
       fill: white;
     }
 
-    /* Action Buttons */
     .action-buttons {
       display: flex;
       gap: 12px;
@@ -570,7 +565,6 @@
       fill: currentColor;
     }
 
-    /* Order Actions */
     .order-actions {
       background: white;
       border-radius: var(--card-radius);
@@ -587,7 +581,6 @@
       margin-bottom: 16px;
     }
 
-    /* Support Section */
     .support-card {
       background: white;
       border-radius: var(--card-radius);
@@ -658,7 +651,6 @@
       margin-left: 8px;
     }
 
-    /* Bottom Navigation */
     .bottom-nav {
       display: flex;
       justify-content: space-around;
@@ -706,7 +698,6 @@
       filter: drop-shadow(0 2px 4px rgba(108, 99, 255, 0.2));
     }
 
-    /* Modal */
     .modal {
       position: fixed;
       top: 0;
@@ -782,7 +773,6 @@
       gap: 12px;
     }
 
-    /* Form Elements */
     .form-group {
       margin-bottom: 16px;
     }
@@ -824,7 +814,6 @@
       accent-color: var(--primary);
     }
 
-    /* Animation */
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -844,7 +833,6 @@
       animation: fadeIn 0.5s ease-out;
     }
 
-    /* Utility Classes */
     .hidden {
       display: none;
     }
@@ -861,7 +849,6 @@
       margin-bottom: 16px;
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 400px) {
       .progress-steps {
         flex-wrap: wrap;
@@ -892,6 +879,11 @@
       }
     }
   </style>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1098,6 +1090,21 @@
   </div>
 
   <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+      authDomain: "grocera-nithin.firebaseapp.com",
+      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
+      projectId: "grocera-nithin",
+      storageBucket: "grocera-nithin.appspot.com",
+      messagingSenderId: "824896008507",
+      appId: "1:824896008507:web:136d071d696f9ff190071e"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
     document.addEventListener('DOMContentLoaded', function() {
       // Get order ID from URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -1109,28 +1116,49 @@
         return;
       }
       
-      // Load order details from localStorage
-      const orders = JSON.parse(localStorage.getItem('orders')) || [];
-      const order = orders.find(o => o.orderId === orderId);
-      
-      if (!order) {
-        alert('Order not found');
-        window.location.href = 'orders.html';
-        return;
-      }
-      
-      // Display order details
-      displayOrderDetails(order);
-      
-      // Setup progress tracking based on order status
-      setupProgressTracking(order.status);
-      
-      // Setup delivery information
-      setupDeliveryInfo(order);
-      
-      // Setup event listeners
-      setupEventListeners(order);
+      // Check if user is authenticated
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          alert('Please sign in to view your orders');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Load order details from Firebase
+        loadOrderDetails(user.uid, orderId);
+      });
     });
+    
+    function loadOrderDetails(userId, orderId) {
+      const orderRef = database.ref(`users/${userId}/orders/${orderId}`);
+      
+      orderRef.once('value')
+        .then(snapshot => {
+          const order = snapshot.val();
+          
+          if (!order) {
+            alert('Order not found');
+            window.location.href = 'orders.html';
+            return;
+          }
+          
+          // Display order details
+          displayOrderDetails(order);
+          
+          // Setup progress tracking based on order status
+          setupProgressTracking(order.status);
+          
+          // Setup delivery information
+          setupDeliveryInfo(order);
+          
+          // Setup event listeners
+          setupEventListeners(order, userId);
+        })
+        .catch(error => {
+          console.error('Error loading order:', error);
+          alert('Error loading order details');
+        });
+    }
     
     function displayOrderDetails(order) {
       const orderElement = document.getElementById('orderCard');
@@ -1316,7 +1344,7 @@
         order.deliveryTime || times[Math.floor(Math.random() * times.length)];
     }
     
-    function setupEventListeners(order) {
+    function setupEventListeners(order, userId) {
       // Cancel order button
       document.getElementById('cancelBtn').addEventListener('click', function() {
         if (order.status.toLowerCase() === 'shipped' || order.status.toLowerCase() === 'delivered') {
@@ -1353,63 +1381,108 @@
         return;
       }
       
-      // Update order status in localStorage
-      const orders = JSON.parse(localStorage.getItem('orders')) || [];
-      const orderId = getOrderIdFromUrl();
-      const orderIndex = orders.findIndex(o => o.orderId === orderId);
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
       
-      if (orderIndex !== -1) {
-        // Update the order status to cancelled
-        orders[orderIndex].status = 'Cancelled';
-        localStorage.setItem('orders', JSON.stringify(orders));
-        
-        // Show success message
-        alert(`Order #${orderId} has been cancelled. ${requestRefund ? 'Your refund will be processed within 3-5 business days.' : ''}`);
-        
-        // Close modal and redirect to orders page
-        closeModal();
-        setTimeout(() => {
-          window.location.href = 'orders.html';
-        }, 500);
-      } else {
-        alert('Error: Order not found');
-        closeModal();
+      if (!orderId) {
+        alert('Order ID not found');
+        return;
       }
+      
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          alert('Please sign in to cancel orders');
+          return;
+        }
+        
+        // Update order status in Firebase
+        const updates = {};
+        updates[`users/${user.uid}/orders/${orderId}/status`] = 'Cancelled';
+        updates[`users/${user.uid}/orders/${orderId}/cancellationReason`] = reason;
+        updates[`users/${user.uid}/orders/${orderId}/refundRequested`] = requestRefund;
+        
+        database.ref().update(updates)
+          .then(() => {
+            alert(`Order #${orderId} has been cancelled. ${requestRefund ? 'Your refund will be processed within 3-5 business days.' : ''}`);
+            closeModal();
+            setTimeout(() => {
+              window.location.href = 'orders.html';
+            }, 500);
+          })
+          .catch(error => {
+            console.error('Error cancelling order:', error);
+            alert('Error cancelling order. Please try again.');
+          });
+      });
     }
     
     function confirmReorder() {
       const replaceCart = document.getElementById('replaceCart').checked;
-      const orderId = getOrderIdFromUrl();
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
       
-      // Get the order details
-      const orders = JSON.parse(localStorage.getItem('orders')) || [];
-      const order = orders.find(o => o.orderId === orderId);
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          alert('Please sign in to reorder items');
+          return;
+        }
+        
+        // Get the order details from Firebase
+        database.ref(`users/${user.uid}/orders/${orderId}`).once('value')
+          .then(snapshot => {
+            const order = snapshot.val();
+            
+            if (!order) {
+              alert('Error: Order not found');
+              closeModal();
+              return;
+            }
+            
+            // Get or create cart in Firebase
+            const cartRef = database.ref(`users/${user.uid}/cart`);
+            
+            if (replaceCart) {
+              // Clear current cart
+              cartRef.remove()
+                .then(() => {
+                  // Add new items to cart
+                  return addItemsToCart(user.uid, order.items);
+                })
+                .then(() => {
+                  showReorderSuccess(order.items.length);
+                });
+            } else {
+              // Get current cart first
+              cartRef.once('value')
+                .then(snapshot => {
+                  const currentCart = snapshot.val() || [];
+                  return addItemsToCart(user.uid, order.items, currentCart);
+                })
+                .then(() => {
+                  showReorderSuccess(order.items.length);
+                });
+            }
+          })
+          .catch(error => {
+            console.error('Error reordering:', error);
+            alert('Error adding items to cart. Please try again.');
+          });
+      });
+    }
+    
+    function addItemsToCart(userId, orderItems, existingCart = []) {
+      // Merge existing cart with new items
+      const updatedCart = [...existingCart];
       
-      if (!order) {
-        alert('Error: Order not found');
-        closeModal();
-        return;
-      }
-      
-      // Get or create cart in localStorage
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      
-      // If replaceCart is checked, clear the current cart
-      if (replaceCart) {
-        cart = [];
-      }
-      
-      // Add order items to cart
-      order.items.forEach(item => {
-        // Check if item already exists in cart
-        const existingItemIndex = cart.findIndex(cartItem => cartItem.name === item.name);
+      orderItems.forEach(item => {
+        const existingItemIndex = updatedCart.findIndex(cartItem => cartItem.name === item.name);
         
         if (existingItemIndex !== -1) {
           // Update quantity if item exists
-          cart[existingItemIndex].quantity += item.quantity || 1;
+          updatedCart[existingItemIndex].quantity += item.quantity || 1;
         } else {
           // Add new item to cart
-          cart.push({
+          updatedCart.push({
             name: item.name,
             price: item.price,
             quantity: item.quantity || 1,
@@ -1418,13 +1491,12 @@
         }
       });
       
-      // Save updated cart to localStorage
-      localStorage.setItem('cart', JSON.stringify(cart));
-      
-      // Show success message
-      alert(`${order.items.length} items added to your cart!`);
-      
-      // Close modal and redirect to cart page
+      // Save updated cart to Firebase
+      return database.ref(`users/${userId}/cart`).set(updatedCart);
+    }
+    
+    function showReorderSuccess(itemCount) {
+      alert(`${itemCount} items added to your cart!`);
       closeModal();
       setTimeout(() => {
         window.location.href = 'cart.html';
@@ -1438,11 +1510,6 @@
         email: 'Email support ticket created. You will receive a response within 24 hours.'
       };
       alert(supportTypes[type] || 'Support option selected.');
-    }
-    
-    function getOrderIdFromUrl() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('orderId');
     }
     
     function getStatusClass(status) {
