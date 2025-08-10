@@ -399,15 +399,11 @@
   </div>
 
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" type="module"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js" type="module"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+  <script>
     // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
@@ -420,9 +416,9 @@
     };
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth();
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.getDatabase(app);
+    const auth = firebase.getAuth();
 
     // Global variables
     let currentUser = null;
@@ -437,7 +433,7 @@
       });
 
       // Check auth state
-      onAuthStateChanged(auth, (user) => {
+      auth.onAuthStateChanged((user) => {
         if (user) {
           currentUser = user;
           console.log("User authenticated:", user.uid);
@@ -451,40 +447,42 @@
       });
     });
 
-    // Function to create a new order (call this from your payment page)
-    window.createNewOrder = function(orderData) {
-      if (!orderData.id) {
-        orderData.id = 'order_' + Date.now();
-      }
-      if (!orderData.date) {
-        orderData.date = new Date().toISOString();
-      }
-      if (!orderData.status) {
-        orderData.status = "Processing";
+    // Function to create a new order from cart data
+    window.createOrderFromCart = function(cartItems, paymentMethod, totalAmount) {
+      if (!currentUser) {
+        console.error("User not logged in");
+        return false;
       }
 
-      if (currentUser) {
-        // Save to Firebase
-        const orderRef = ref(db, `users/${currentUser.uid}/orders/${orderData.id}`);
-        set(orderRef, orderData)
-          .then(() => {
-            console.log("Order saved to Firebase:", orderData.id);
-            // Also save to localStorage for redundancy
-            saveOrderToLocalStorage(orderData);
-            // Reload orders
-            loadOrdersFromFirebase(currentUser.uid);
-          })
-          .catch(error => {
-            console.error("Error saving to Firebase:", error);
-            // Fallback to localStorage
-            saveOrderToLocalStorage(orderData);
-            showError("Order saved locally. Will sync to server when online.");
-          });
-      } else {
-        // No user logged in - save to localStorage only
-        saveOrderToLocalStorage(orderData);
-        showError("Order saved locally. Sign in to sync with your account.");
-      }
+      // Create order object with cart data
+      const orderData = {
+        id: 'order_' + Date.now(),
+        date: new Date().toISOString(),
+        status: "Processing",
+        items: cartItems,
+        payment: {
+          method: paymentMethod,
+          transactionId: 'txn_' + Math.floor(Math.random() * 1000000)
+        },
+        totalAmount: totalAmount
+      };
+
+      // Save to Firebase
+      const orderRef = firebase.ref(db, `users/${currentUser.uid}/orders/${orderData.id}`);
+      return firebase.set(orderRef, orderData)
+        .then(() => {
+          console.log("Order saved to Firebase:", orderData.id);
+          // Also save to localStorage for redundancy
+          saveOrderToLocalStorage(orderData);
+          return true;
+        })
+        .catch(error => {
+          console.error("Error saving to Firebase:", error);
+          // Fallback to localStorage
+          saveOrderToLocalStorage(orderData);
+          showError("Order saved locally. Will sync to server when online.");
+          return false;
+        });
     };
 
     // Check for local orders that need to be migrated to Firebase
@@ -494,8 +492,8 @@
         console.log("Migrating local orders to Firebase:", localOrders.length);
         
         localOrders.forEach(order => {
-          const orderRef = ref(db, `users/${userId}/orders/${order.id}`);
-          set(orderRef, order)
+          const orderRef = firebase.ref(db, `users/${userId}/orders/${order.id}`);
+          firebase.set(orderRef, order)
             .then(() => {
               console.log("Order migrated:", order.id);
             })
@@ -522,9 +520,9 @@
     // Load orders from Firebase
     function loadOrdersFromFirebase(userId) {
       showLoadingState();
-      const ordersRef = ref(db, `users/${userId}/orders`);
+      const ordersRef = firebase.ref(db, `users/${userId}/orders`);
       
-      onValue(ordersRef, (snapshot) => {
+      firebase.onValue(ordersRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
           orders = Object.keys(data).map(key => ({
@@ -596,24 +594,21 @@
 
       const statusClass = getStatusClass(order.status || 'Pending');
 
-      // Calculate totals
+      // Calculate totals if not provided
       let totalItems = 0;
-      let totalAmount = 0;
+      let totalAmount = order.totalAmount || 0;
       
       if (order.items && Array.isArray(order.items)) {
         totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        totalAmount = order.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
-      }
-
-      // Use provided total if available
-      if (order.totalAmount) {
-        totalAmount = order.totalAmount;
+        if (!order.totalAmount) {
+          totalAmount = order.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+        }
       }
 
       orderElement.innerHTML = `
         <div class="order-header">
           <div>
-            <span class="order-id">Order #${order.id}</span>
+            <span class="order-id">Order #${order.id.substring(0, 8)}</span>
             <div class="order-date">${formattedDate}</div>
           </div>
           <span class="order-status ${statusClass}">${order.status || 'Processing'}</span>
@@ -641,8 +636,8 @@
       
       return order.items.map(item => `
         <div class="order-item">
-          <span class="item-name">${item.name || 'Unknown Item'} × ${item.quantity || 1}</span>
-          <span class="item-price">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+          <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
+          <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
         </div>
       `).join('');
     }
@@ -690,41 +685,27 @@
         <button onclick="testFirebaseConnection()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; margin-top: 10px;">
           Test Firebase Connection
         </button>
-        <button onclick="addTestOrder()" style="padding: 8px 16px; background: var(--success); color: white; border: none; border-radius: 6px; margin-top: 10px; margin-left: 10px;">
-          Add Test Order
-        </button>
       `;
     }
 
     window.testFirebaseConnection = function() {
-      const connectedRef = ref(db, '.info/connected');
-      onValue(connectedRef, (snap) => {
+      const connectedRef = firebase.ref(db, '.info/connected');
+      firebase.onValue(connectedRef, (snap) => {
         alert(snap.val() ? "Connected to Firebase!" : "Not connected to Firebase");
       });
     };
 
-    window.addTestOrder = function() {
-      if (!currentUser) {
-        alert("Please sign in first");
-        return;
-      }
-
-      const testOrder = {
-        id: 'test_' + Date.now(),
-        date: new Date().toISOString(),
-        status: "Processing",
-        items: [
-          { name: "Test Product 1", price: 12.99, quantity: 2 },
-          { name: "Test Product 2", price: 5.49, quantity: 3 }
-        ],
-        payment: {
-          method: "Test Payment",
-          transactionId: "test_" + Math.floor(Math.random() * 1000000)
-        },
-        totalAmount: 37.95
-      };
-
-      createNewOrder(testOrder);
+    // Test function - call this from your payment page after checkout
+    window.testOrderCreation = function() {
+      const testCartItems = [
+        { name: "Test Product 1", price: 12.99, quantity: 2 },
+        { name: "Test Product 2", price: 5.49, quantity: 3 }
+      ];
+      
+      createOrderFromCart(testCartItems, "Credit Card", 37.95)
+        .then(success => {
+          alert(success ? "Test order created!" : "Failed to create test order");
+        });
     };
   </script>
 </body>
