@@ -264,13 +264,11 @@
       transform: translateY(-2px);
     }
 
-    /* Payment method icons */
     .method-tab i {
       margin-right: 6px;
       font-size: 16px;
     }
 
-    /* Error message */
     .error-message {
       color: var(--danger);
       background: rgba(239, 35, 60, 0.1);
@@ -281,7 +279,6 @@
       font-size: 14px;
     }
 
-    /* Loading spinner */
     .loading-spinner {
       display: inline-block;
       width: 20px;
@@ -297,7 +294,26 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Responsive adjustments */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      flex-direction: column;
+    }
+
+    .loading-text {
+      margin-top: 15px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
     @media (max-width: 400px) {
       .payment-methods {
         flex-direction: column;
@@ -414,6 +430,12 @@
     </a>
   </div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading your payment details...</div>
+  </div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -444,6 +466,8 @@
 
     // When page loads
     window.onload = function() {
+      showLoading(true);
+      
       // Initialize authentication state
       auth.onAuthStateChanged((user) => {
         if (user) {
@@ -458,35 +482,63 @@
       });
     };
 
+    // Show/hide loading overlay
+    function showLoading(show) {
+      const overlay = document.getElementById("loadingOverlay");
+      if (show) {
+        overlay.classList.remove("hidden");
+      } else {
+        overlay.classList.add("hidden");
+      }
+    }
+
+    // Show error message
+    function showError(message) {
+      showLoading(false);
+      const errorEl = document.getElementById("errorMessage");
+      errorEl.textContent = message;
+      errorEl.classList.remove("hidden");
+    }
+
+    // Hide error message
+    function hideError() {
+      document.getElementById("errorMessage").classList.add("hidden");
+    }
+
     // Load cart data from Firebase
     function loadCartData() {
-      if (!currentUser) return;
+      if (!currentUser) {
+        showError("User not authenticated");
+        return;
+      }
 
       const cartRef = database.ref(`users/${currentUser.uid}/cart`);
       
-      cartRef.once('value').then((snapshot) => {
-        const data = snapshot.val();
-        
-        if (!data || Object.keys(data).length === 0) {
-          showError("Your cart is empty. Please add items before payment.");
-          setTimeout(() => {
-            window.location.href = "cart.html";
-          }, 2000);
-          return;
-        }
-        
-        // Convert cart object to array
-        cartItems = Object.values(data);
-        
-        // Load delivery address
-        loadDeliveryAddress();
-        
-        // Calculate total
-        calculateTotal();
-      }).catch((error) => {
-        showError("Failed to load cart data. Please try again.");
-        console.error("Error loading cart:", error);
-      });
+      cartRef.once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          
+          if (!data || Object.keys(data).length === 0) {
+            showError("Your cart is empty. Redirecting to cart...");
+            setTimeout(() => {
+              window.location.href = "cart.html";
+            }, 2000);
+            return;
+          }
+          
+          // Convert cart object to array
+          cartItems = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key]
+          }));
+          
+          // Load delivery address
+          loadDeliveryAddress();
+        })
+        .catch((error) => {
+          console.error("Error loading cart:", error);
+          showError("Failed to load cart data. Please refresh the page.");
+        });
     }
 
     // Load delivery address from Firebase
@@ -495,30 +547,36 @@
 
       const addressRef = database.ref(`users/${currentUser.uid}/address`);
       
-      addressRef.once('value').then((snapshot) => {
-        const address = snapshot.val();
-        
-        if (!address) {
-          showError("Please set your delivery address first. Redirecting...");
-          setTimeout(() => {
-            window.location.href = "cart.html";
-          }, 2000);
-          return;
-        }
-        
-        deliveryAddress = address;
-        updatePaymentDisplay();
-      }).catch((error) => {
-        showError("Failed to load address. Please try again.");
-        console.error("Error loading address:", error);
-      });
+      addressRef.once('value')
+        .then((snapshot) => {
+          const address = snapshot.val();
+          
+          if (!address) {
+            showError("Please set your delivery address first. Redirecting...");
+            setTimeout(() => {
+              window.location.href = "cart.html";
+            }, 2000);
+            return;
+          }
+          
+          deliveryAddress = address;
+          calculateTotal();
+          showLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error loading address:", error);
+          showError("Failed to load address. Please try again.");
+        });
     }
 
     // Calculate total amount from cart
     function calculateTotal() {
-      totalAmount = cartItems.reduce((sum, item) => {
-        return sum + (item.price * item.quantity);
-      }, 0);
+      totalAmount = 0;
+      
+      // Calculate from cart items
+      cartItems.forEach(item => {
+        totalAmount += (item.price || 0) * (item.quantity || 1);
+      });
       
       // Apply delivery charge if total < 1000
       if (totalAmount < 1000) {
@@ -548,29 +606,6 @@
       // Show selected form and activate tab
       document.getElementById(`${method}Form`).classList.remove("hidden");
       document.getElementById(`${method}Tab`).classList.add("active");
-    }
-
-    // Show error message
-    function showError(message) {
-      const errorEl = document.getElementById("errorMessage");
-      errorEl.textContent = message;
-      errorEl.classList.remove("hidden");
-    }
-
-    // Hide error message
-    function hideError() {
-      document.getElementById("errorMessage").classList.add("hidden");
-    }
-
-    // Process payment
-    function processPayment(method) {
-      // Validate payment details
-      if (!validatePaymentMethod(method)) {
-        return;
-      }
-      
-      // Create order
-      createOrder(method);
     }
 
     // Validate payment method details
@@ -620,10 +655,25 @@
       }
     }
 
+    // Process payment
+    function processPayment(method) {
+      // Validate payment details
+      if (!validatePaymentMethod(method)) {
+        return;
+      }
+      
+      // Create order
+      createOrder(method);
+    }
+
     // Create order in Firebase
     function createOrder(method) {
-      if (!currentUser) return;
+      if (!currentUser) {
+        showError("User not authenticated");
+        return;
+      }
       
+      showLoading(true);
       const orderRef = database.ref('orders').push();
       const now = new Date();
       
@@ -639,12 +689,6 @@
         deliveryAddress: formatAddress(deliveryAddress)
       };
       
-      // Show loading state on button
-      const payBtn = document.querySelector(`#${method}Form .btn-pay`);
-      const originalText = payBtn.innerHTML;
-      payBtn.innerHTML = `<span class="loading-spinner"></span> Processing...`;
-      payBtn.disabled = true;
-      
       // Save order to Firebase
       orderRef.set(orderData)
         .then(() => {
@@ -656,10 +700,11 @@
           showPaymentSuccess(method);
         })
         .catch((error) => {
-          showError("Payment failed. Please try again.");
           console.error("Error creating order:", error);
-          payBtn.innerHTML = originalText;
-          payBtn.disabled = false;
+          showError("Payment failed. Please try again.");
+        })
+        .finally(() => {
+          showLoading(false);
         });
     }
 
