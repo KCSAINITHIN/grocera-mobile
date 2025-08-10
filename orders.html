@@ -310,22 +310,36 @@
       display: none;
     }
 
-    #debugBtn {
+    #debugBtn, #addSampleOrderBtn {
       margin-bottom: 20px;
       padding: 10px 16px;
-      background: linear-gradient(to right, var(--secondary), #FF8A9D);
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
+      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3); /* Default for debug */
+    }
+
+    #debugBtn {
+      background: linear-gradient(to right, var(--secondary), #FF8A9D);
     }
 
     #debugBtn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
+    }
+
+    #addSampleOrderBtn {
+      background: linear-gradient(to right, var(--success), #76FF76); /* Green for 'add' */
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+      margin-left: 10px; /* Space out the buttons */
+    }
+
+    #addSampleOrderBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
     }
 
     #debugOutput {
@@ -373,10 +387,16 @@
   <div class="orders-container">
     <h2 class="page-title">Order History</h2>
     
-    <button id="debugBtn" style="margin-bottom: 20px;">
+    <button id="debugBtn">
       Debug Orders Data
     </button>
     
+    <!-- NEW BUTTON TO ADD A SAMPLE ORDER -->
+    <button id="addSampleOrderBtn">
+      Add Sample Order
+    </button>
+    <!-- END NEW BUTTON -->
+
     <div id="ordersList"></div>
 
     <div id="emptyState" class="empty-orders hidden">
@@ -423,9 +443,10 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    // IMPORTANT: Added 'push' and 'set' to the import list
+    import { getDatabase, ref, onValue, off, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Your Firebase configuration
+    // Your Firebase configuration (leave this as is)
     const firebaseConfig = {
       apiKey: "AIzaSyC0m7Q5g8U3g4v0vY5Xx1H5x5x5x5x5x5x",
       authDomain: "grocera-nithin.firebaseapp.com",
@@ -443,14 +464,49 @@
     document.addEventListener('DOMContentLoaded', function() {
       const debugBtn = document.getElementById('debugBtn');
       const debugOutput = document.getElementById('debugOutput');
+      // Get the new button for adding orders
+      const addSampleOrderBtn = document.getElementById('addSampleOrderBtn');
 
       debugBtn.addEventListener('click', function() {
         debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
         displayDebugInfo();
       });
 
+      // Event listener for the new "Add Sample Order" button
+      addSampleOrderBtn.addEventListener('click', function() {
+        const sampleOrder = {
+          orderId: "GR" + Date.now().toString().slice(-6), // Simple unique ID
+          orderDate: new Date().toISOString(),
+          status: "Processing",
+          totalAmount: parseFloat((Math.random() * (100 - 20) + 20).toFixed(2)), // Random amount between 20-100
+          paymentMethod: "Google Pay", // Or any other method
+          items: [
+            { itemName: "Organic Apples", quantity: 2, itemPrice: 2.50 },
+            { itemName: "Fresh Milk", quantity: 1, itemPrice: 4.25 },
+            { itemName: "Whole Wheat Bread", quantity: 1, itemPrice: 3.00 }
+          ]
+        };
+        addNewOrder(sampleOrder);
+      });
+
       // Load orders from Firebase
       loadOrdersFromFirebase();
+
+      // --- NEW FUNCTION TO ADD ORDER TO FIREBASE ---
+      async function addNewOrder(orderData) {
+        try {
+          const ordersRef = ref(db, 'orders');
+          const newOrderRef = push(ordersRef); // Generates a unique key for the new order
+          await set(newOrderRef, orderData);   // Sets the order data at that key
+          console.log("New order added successfully with ID:", newOrderRef.key);
+          // Your 'onValue' listener in 'loadOrdersFromFirebase' will automatically
+          // detect this new data and update the UI in real-time!
+        } catch (error) {
+          console.error("Error adding new order:", error);
+          debugOutput.innerHTML += `<p style="color:var(--danger)">Error adding order: ${error.message}</p>`;
+        }
+      }
+      // --- END NEW FUNCTION ---
 
       function loadOrdersFromFirebase() {
         const ordersRef = ref(db, 'orders');
@@ -568,19 +624,19 @@
             return sum + ((item.price || 0) * (item.quantity || 1));
           }, 0);
         } else if (order.items && typeof order.items === 'object') {
-          // Firebase object structure
-          totalItems = Object.keys(order.items).length;
+          // Firebase object structure (values are the items)
+          totalItems = Object.values(order.items).reduce((sum, item) => sum + (item.quantity || 1), 0);
           totalAmount = Object.values(order.items).reduce((sum, item) => {
             return sum + ((item.itemPrice || 0) * (item.quantity || 1));
           }, 0);
         }
 
-        // Use provided totalAmount if available
-        if (order.totalAmount) {
+        // Use provided totalAmount if available (and it's a number)
+        if (typeof order.totalAmount === 'number' && !isNaN(order.totalAmount)) {
           totalAmount = order.totalAmount;
         }
 
-        // Generate order ID if not provided
+        // Generate order ID if not provided, or use Firebase ID if available
         const orderId = order.orderId || order.firebaseId || 'GR' + Math.floor(Math.random() * 1000000);
 
         orderElement.innerHTML = `
@@ -620,7 +676,7 @@
               <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
             </div>`).join('');
         } else if (typeof order.items === 'object') {
-          // Firebase object structure
+          // Firebase object structure: iterate over values
           return Object.values(order.items).map(item => `
             <div class="order-item">
               <span class="item-name">${item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
@@ -643,7 +699,7 @@
         if (status.includes('pending')) return 'status-pending';
         if (status.includes('cancelled')) return 'status-cancelled';
         if (status.includes('shipped')) return 'status-shipped';
-        return 'status-processing';
+        return 'status-processing'; // Default
       }
     });
   </script>
