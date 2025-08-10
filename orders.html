@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <title>My Orders - GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Add Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
     :root {
-      --primary: #6C63FF;
+      --primary: #6C63FF;  /* Vibrant purple */
       --primary-light: #A5A2FF;
-      --secondary: #FF6584;
-      --accent: #42C6FF;
-      --success: #4CAF50;
-      --warning: #FFC107;
-      --danger: #F44336;
+      --secondary: #FF6584; /* Pink */
+      --accent: #42C6FF;   /* Bright blue */
+      --success: #4CAF50;  /* Green */
+      --warning: #FFC107;  /* Amber */
+      --danger: #F44336;   /* Red */
       --dark: #2D3748;
       --light: #F7FAFC;
       --gray: #E2E8F0;
@@ -32,9 +35,15 @@
     }
 
     @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     .topbar {
@@ -120,12 +129,35 @@
       text-transform: capitalize;
     }
 
-    .status-processing { background-color: rgba(255, 198, 7, 0.2); color: #B78103; }
-    .status-confirmed { background-color: rgba(76, 175, 80, 0.2); color: var(--success); }
-    .status-delivered { background-color: rgba(66, 198, 255, 0.2); color: #0288D1; }
-    .status-pending { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
-    .status-cancelled { background-color: rgba(244, 67, 54, 0.2); color: var(--danger); }
-    .status-shipped { background-color: rgba(108, 99, 255, 0.2); color: var(--primary); }
+    .status-processing {
+      background-color: rgba(255, 198, 7, 0.2);
+      color: #B78103;
+    }
+
+    .status-confirmed {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
+    .status-delivered {
+      background-color: rgba(66, 198, 255, 0.2);
+      color: #0288D1;
+    }
+
+    .status-pending {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .status-cancelled {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: var(--danger);
+    }
+
+    .status-shipped {
+      background-color: rgba(108, 99, 255, 0.2);
+      color: var(--primary);
+    }
 
     .order-details {
       margin-top: 12px;
@@ -281,6 +313,34 @@
       display: none;
     }
 
+    #debugBtn {
+      margin-bottom: 20px;
+      padding: 10px 16px;
+      background: linear-gradient(to right, var(--secondary), #FF8A9D);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(255, 101, 132, 0.3);
+    }
+
+    #debugBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 101, 132, 0.4);
+    }
+
+    #debugOutput {
+      margin-top: 20px;
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      border: 1px dashed var(--gray);
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
     .items-count {
       background-color: var(--primary-light);
       color: white;
@@ -296,22 +356,13 @@
       height: 20px;
       border: 3px solid rgba(255,255,255,.3);
       border-radius: 50%;
-      border-top-color: white;
+      border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
       margin-right: 8px;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
-    }
-
-    .error-message {
-      color: var(--danger);
-      background: rgba(244, 67, 54, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 16px 0;
-      text-align: center;
     }
   </style>
 </head>
@@ -325,6 +376,10 @@
   <div class="orders-container">
     <h2 class="page-title">Order History</h2>
     
+    <button id="debugBtn" style="margin-bottom: 20px;">
+      Debug Orders Data
+    </button>
+    
     <div id="ordersList"></div>
 
     <div id="emptyState" class="empty-orders hidden">
@@ -334,10 +389,10 @@
       <a href="dashboard.html" class="btn-track">Start Shopping</a>
     </div>
 
-    <div id="errorState" class="error-message hidden"></div>
+    <div id="debugOutput"></div>
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation with SVG Icons -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
@@ -365,209 +420,198 @@
     </a>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-
   <script>
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
-      authDomain: "grocera-nithin.firebaseapp.com",
-      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
-      projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.firebasestorage.app",
-      messagingSenderId: "824896008507",
-      appId: "1:824896008507:web:136d071d696f9ff190071e"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.getDatabase(app);
-    const auth = firebase.getAuth();
-
-    // Global variables
-    let currentUser = null;
-    let orders = [];
-
     document.addEventListener('DOMContentLoaded', function() {
-      // Check auth state
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          currentUser = user;
-          console.log("User authenticated:", user.uid);
-          loadOrdersFromFirebase(user.uid);
-        } else {
-          currentUser = null;
-          console.log("No user signed in");
-          document.getElementById('emptyState').classList.remove('hidden');
-        }
-      });
-    });
-
-    // Function to create a new order from cart data
-    window.createOrderFromCart = function(cartItems, paymentMethod, totalAmount) {
-      if (!currentUser) {
-        console.error("User not logged in");
-        return Promise.resolve(false);
-      }
-
-      // Create order object with cart data
-      const orderData = {
-        id: 'order_' + Date.now(),
-        date: new Date().toISOString(),
-        status: "Processing",
-        items: cartItems,
-        payment: {
-          method: paymentMethod,
-          transactionId: 'txn_' + Math.floor(Math.random() * 1000000)
-        },
-        totalAmount: totalAmount
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
+        authDomain: "grocera-nithin.firebaseapp.com",
+        databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
+        projectId: "grocera-nithin",
+        storageBucket: "grocera-nithin.firebasestorage.app",
+        messagingSenderId: "824896008507",
+        appId: "1:824896008507:web:136d071d696f9ff190071e"
       };
 
-      // Save to Firebase
-      const orderRef = firebase.ref(db, `users/${currentUser.uid}/orders/${orderData.id}`);
-      return firebase.set(orderRef, orderData)
-        .then(() => {
-          console.log("Order saved to Firebase:", orderData.id);
-          return true;
-        })
-        .catch(error => {
-          console.error("Error saving to Firebase:", error);
-          return false;
-        });
-    };
-
-    // Load orders from Firebase
-    function loadOrdersFromFirebase(userId) {
-      showLoadingState();
-      const ordersRef = firebase.ref(db, `users/${userId}/orders`);
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
       
-      firebase.onValue(ordersRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          orders = Object.keys(data).map(key => ({
-            id: key,
-            ...data[key]
-          }));
-          console.log("Loaded orders from Firebase:", orders);
-          displayOrders(orders);
-        } else {
-          console.log("No orders in Firebase");
-          document.getElementById('emptyState').classList.remove('hidden');
-        }
-      }, (error) => {
-        console.error("Firebase error:", error);
-        showError("Failed to load orders. Please try again later.");
-      });
-    }
-
-    // Display orders in the UI
-    function displayOrders(orders) {
+      const debugBtn = document.getElementById('debugBtn');
+      const debugOutput = document.getElementById('debugOutput');
       const ordersList = document.getElementById('ordersList');
-      ordersList.innerHTML = '';
+      const emptyState = document.getElementById('emptyState');
 
-      if (!orders || orders.length === 0) {
-        document.getElementById('emptyState').classList.remove('hidden');
-        return;
+      // Get the current user ID (you would replace this with your actual auth logic)
+      let userId = getCurrentUserId();
+      
+      debugBtn.addEventListener('click', function() {
+        debugOutput.style.display = debugOutput.style.display === 'none' ? 'block' : 'none';
+        displayDebugInfo();
+      });
+
+      // Load and display orders from Firebase
+      loadOrdersFromFirebase();
+
+      function getCurrentUserId() {
+        // In a real app, you would get this from your authentication system
+        // For demo purposes, we'll use a hardcoded user ID or get from localStorage
+        return localStorage.getItem('currentUserId') || 'demo_user_1';
       }
 
-      // Sort by date (newest first)
-      orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+      function loadOrdersFromFirebase() {
+        showLoadingState();
+        
+        const ordersRef = database.ref('orders').orderByChild('userId').equalTo(userId);
+        
+        ordersRef.on('value', (snapshot) => {
+          const ordersData = snapshot.val();
+          const orders = [];
+          
+          if (ordersData) {
+            Object.keys(ordersData).forEach(key => {
+              orders.push({
+                id: key,
+                ...ordersData[key]
+              });
+            });
+          }
+          
+          if (orders.length > 0) {
+            displayOrders(orders);
+          } else {
+            showEmptyState();
+          }
+        }, (error) => {
+          console.error("Error loading orders:", error);
+          debugOutput.innerHTML += `<p style="color:var(--danger)">Error loading orders: ${error.message}</p>`;
+          showEmptyState();
+        });
+      }
 
-      orders.forEach(order => {
-        const orderElement = createOrderElement(order);
-        ordersList.appendChild(orderElement);
-      });
+      function displayDebugInfo() {
+        debugOutput.innerHTML = `
+          <h4 style="color:var(--primary)">Debug Information</h4>
+          <p><strong>Current User ID:</strong> ${userId}</p>
+          <p><strong>Firebase initialized:</strong> ${app ? 'Yes' : 'No'}</p>
+          <button onclick="clearAllOrders()" style="
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+          ">Clear All Orders (Debug)</button>
+        `;
+      }
 
-      document.getElementById('emptyState').classList.add('hidden');
-      document.getElementById('errorState').classList.add('hidden');
-    }
-
-    function createOrderElement(order) {
-      const orderElement = document.createElement('div');
-      orderElement.className = 'order-card';
-
-      const formattedDate = new Date(order.date).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-
-      const statusClass = getStatusClass(order.status || 'Pending');
-
-      // Calculate totals
-      let totalItems = 0;
-      let totalAmount = order.totalAmount || 0;
-      
-      if (order.items && Array.isArray(order.items)) {
-        totalItems = order.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        if (!order.totalAmount) {
-          totalAmount = order.items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+      function clearAllOrders() {
+        if (confirm("Are you sure you want to delete ALL orders? This is for debugging only!")) {
+          database.ref('orders').remove()
+            .then(() => {
+              alert("All orders cleared!");
+              location.reload();
+            })
+            .catch(error => {
+              alert("Error clearing orders: " + error.message);
+            });
         }
       }
 
-      orderElement.innerHTML = `
-        <div class="order-header">
-          <div>
-            <span class="order-id">Order #${order.id.substring(0, 8)}</span>
-            <div class="order-date">${formattedDate}</div>
+      function displayOrders(orders) {
+        ordersList.innerHTML = '';
+        
+        // Sort orders by date (newest first)
+        orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        
+        orders.forEach(order => {
+          const orderElement = createOrderElement(order);
+          ordersList.appendChild(orderElement);
+        });
+
+        emptyState.classList.add('hidden');
+      }
+
+      function createOrderElement(order) {
+        const orderElement = document.createElement('div');
+        orderElement.className = 'order-card';
+
+        const formattedDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const status = order.status || 'Processing';
+        const statusClass = getStatusClass(status);
+
+        const totalItems = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 1), 0) : 0;
+
+        // Build items HTML
+        let itemsHTML = '';
+        if (order.items && order.items.length > 0) {
+          itemsHTML = order.items.map(item => `
+            <div class="order-item">
+              <span class="item-name">${item.name || 'Unknown Item'} × ${item.quantity || 1}</span>
+              <span class="item-price">₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+            </div>
+          `).join('');
+        } else {
+          itemsHTML = '<div class="order-item">No items found</div>';
+        }
+
+        orderElement.innerHTML = `
+          <div class="order-header">
+            <div>
+              <span class="order-id">Order #${order.id || 'N/A'}</span>
+              <div class="order-date">${formattedDate}</div>
+            </div>
+            <span class="order-status ${statusClass}">${status}</span>
           </div>
-          <span class="order-status ${statusClass}">${order.status || 'Processing'}</span>
-        </div>
-        <div class="order-details">
-          <div style="margin-bottom: 8px; font-size: 14px;">
-            <span class="items-count">${totalItems} ${totalItems === 1 ? 'item' : 'items'}</span>
+          <div class="order-details">
+            <div style="margin-bottom: 8px; font-size: 14px;">
+              <span class="items-count">${totalItems} ${totalItems !== 1 ? 'items' : 'item'}</span>
+            </div>
+            ${itemsHTML}
+            <div class="order-total">
+              <span class="total-label">Total Amount</span>
+              <span class="total-amount">₹${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+            </div>
+            <div class="payment-method">Paid via <span>${order.paymentMethod || 'Unknown Method'}</span></div>
+            <a href="order-details.html?orderId=${order.id}" class="btn-track">
+              ${status === 'Delivered' ? 'View Details' : 'Track Order'}
+            </a>
           </div>
-          ${renderOrderItems(order)}
-          <div class="order-total">
-            <span class="total-label">Total Amount</span>
-            <span class="total-amount">₹${parseFloat(totalAmount).toFixed(2)}</span>
+        `;
+        return orderElement;
+      }
+
+      function showEmptyState() {
+        emptyState.classList.remove('hidden');
+        ordersList.innerHTML = '';
+      }
+
+      function showLoadingState() {
+        ordersList.innerHTML = `
+          <div style="text-align: center; padding: 40px 20px;">
+            <div class="loading-spinner"></div>
+            <p>Loading your orders...</p>
           </div>
-          ${order.payment?.method ? `<div class="payment-method">Paid via <span>${order.payment.method}</span></div>` : ''}
-          <a href="order-details.html?orderId=${order.id}" class="btn-track">
-            ${order.status === 'Delivered' ? 'View Details' : 'Track Order'}
-          </a>
-        </div>
-      `;
-      return orderElement;
-    }
+        `;
+      }
 
-    function renderOrderItems(order) {
-      if (!order.items || !Array.isArray(order.items)) return '';
-      
-      return order.items.map(item => `
-        <div class="order-item">
-          <span class="item-name">${item.name || item.itemName || 'Unknown Item'} × ${item.quantity || 1}</span>
-          <span class="item-price">₹${((item.price || item.itemPrice || 0) * (item.quantity || 1)).toFixed(2)}</span>
-        </div>
-      `).join('');
-    }
+      function getStatusClass(status) {
+        status = (status || '').toLowerCase();
+        if (status.includes('processing')) return 'status-processing';
+        if (status.includes('confirmed')) return 'status-confirmed';
+        if (status.includes('delivered')) return 'status-delivered';
+        if (status.includes('pending')) return 'status-pending';
+        if (status.includes('cancelled')) return 'status-cancelled';
+        if (status.includes('shipped')) return 'status-shipped';
+        return 'status-processing';
+      }
 
-    function showLoadingState() {
-      document.getElementById('ordersList').innerHTML = `
-        <div style="text-align: center; padding: 20px;">
-          <div class="loading-spinner"></div>
-          <p>Loading your orders...</p>
-        </div>
-      `;
-    }
-
-    function showError(message) {
-      const errorElement = document.getElementById('errorState');
-      errorElement.textContent = message;
-      errorElement.classList.remove('hidden');
-    }
-
-    function getStatusClass(status) {
-      status = (status || '').toLowerCase();
-      if (status.includes('processing')) return 'status-processing';
-      if (status.includes('confirmed')) return 'status-confirmed';
-      if (status.includes('delivered')) return 'status-delivered';
-      if (status.includes('pending')) return 'status-pending';
-      if (status.includes('cancelled')) return 'status-cancelled';
-      if (status.includes('shipped')) return 'status-shipped';
-      return 'status-processing';
-    }
+      // Make clearAllOrders available globally for the debug button
+      window.clearAllOrders = clearAllOrders;
+    });
   </script>
 </body>
 </html>
