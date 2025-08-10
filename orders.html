@@ -405,16 +405,16 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     // Firebase Config - REPLACE WITH YOUR ACTUAL CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSy...YOUR_API_KEY",
-      authDomain: "grocera-nithin.firebaseapp.com",
-      databaseURL: "https://grocera-nithin-default-rtdb.firebaseio.com",
-      projectId: "grocera-nithin",
-      storageBucket: "grocera-nithin.appspot.com",
+      authDomain: "your-project.firebaseapp.com",
+      databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+      projectId: "your-project",
+      storageBucket: "your-project.appspot.com",
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
@@ -437,6 +437,8 @@
       onAuthStateChanged(auth, (user) => {
         if (user) {
           console.log("User is signed in:", user.uid);
+          // Check if we have any local orders to migrate to Firebase
+          checkAndMigrateLocalOrders(user.uid);
           loadOrdersFromFirebase(user.uid);
         } else {
           console.log("No user signed in, loading from localStorage");
@@ -444,6 +446,37 @@
         }
       });
     });
+
+    function checkAndMigrateLocalOrders(userId) {
+      const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      if (localOrders.length > 0) {
+        console.log("Found local orders to migrate to Firebase");
+        
+        const ordersRef = ref(db, `users/${userId}/orders`);
+        
+        // Migrate each order to Firebase
+        localOrders.forEach(order => {
+          if (!order.id) {
+            order.id = 'order_' + Date.now();
+          }
+          
+          // Create a new reference with push() to get a unique key
+          const newOrderRef = push(ref(db, `users/${userId}/orders`));
+          
+          // Set the order data at the new location
+          set(newOrderRef, order)
+            .then(() => {
+              console.log("Order migrated to Firebase:", order.id);
+            })
+            .catch(error => {
+              console.error("Error migrating order:", error);
+            });
+        });
+        
+        // Clear local orders after migration
+        localStorage.removeItem('orders');
+      }
+    }
 
     function loadOrdersFromFirebase(userId) {
       const ordersRef = ref(db, `users/${userId}/orders`);
@@ -459,6 +492,8 @@
             ...data[key]
           }));
           displayOrders(orders);
+          // Also save a copy to localStorage for offline access
+          localStorage.setItem('orders', JSON.stringify(orders));
         } else {
           showMessage("No orders found in Firebase. Checking localStorage...");
           loadOrdersFromLocalStorage();
@@ -643,6 +678,41 @@
       onValue(testRef, (snapshot) => {
         alert(snapshot.val() ? "Connected to Firebase successfully!" : "Not connected to Firebase");
       });
+    };
+
+    // Function to add a sample order (for testing)
+    window.addSampleOrder = function() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (!user) {
+        alert("Please sign in to add test orders");
+        return;
+      }
+      
+      const sampleOrder = {
+        id: 'test_' + Date.now(),
+        date: new Date().toISOString(),
+        status: "Processing",
+        items: [
+          { name: "Organic Apples", price: 2.99, quantity: 3 },
+          { name: "Whole Wheat Bread", price: 3.49, quantity: 2 }
+        ],
+        payment: {
+          method: "Credit Card",
+          transactionId: "txn_" + Math.floor(Math.random() * 1000000)
+        },
+        totalAmount: 15.95
+      };
+      
+      const newOrderRef = push(ref(db, `users/${user.uid}/orders`));
+      set(newOrderRef, sampleOrder)
+        .then(() => {
+          alert("Sample order added successfully!");
+        })
+        .catch(error => {
+          alert("Error adding sample order: " + error.message);
+        });
     };
   </script>
 </body>
