@@ -591,6 +591,51 @@
       box-shadow: var(--shadow-lg);
     }
 
+    .payment-success {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .payment-success i {
+      font-size: 80px;
+      color: var(--success);
+      margin-bottom: 20px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .payment-success h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--success);
+    }
+
+    .payment-success p {
+      color: var(--gray-600);
+      margin-bottom: 24px;
+      font-size: 16px;
+    }
+
+    .order-details {
+      background: var(--gray-50);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .order-detail-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .order-detail-item:last-child {
+      margin-bottom: 0;
+      font-weight: 600;
+      color: var(--success);
+    }
+
     @media (max-width: 480px) {
       .payment-container {
         padding: 16px;
@@ -678,19 +723,23 @@
           <div class="form-group">
             <label for="cardName">Cardholder Name</label>
             <input type="text" id="cardName" class="form-control" placeholder="Enter full name as on card">
+            <div id="cardNameError" class="field-error hidden"><i class="fas fa-exclamation-circle"></i> Please enter a valid name</div>
           </div>
           <div class="form-group">
             <label for="cardNumber">Card Number</label>
             <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+            <div id="cardNumberError" class="field-error hidden"><i class="fas fa-exclamation-circle"></i> Please enter a valid card number</div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="expiry">Expiry Date</label>
               <input type="text" id="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
+              <div id="expiryError" class="field-error hidden"><i class="fas fa-exclamation-circle"></i> Invalid expiry date</div>
             </div>
             <div class="form-group">
               <label for="cvv">CVV</label>
               <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="4">
+              <div id="cvvError" class="field-error hidden"><i class="fas fa-exclamation-circle"></i> Invalid CVV</div>
             </div>
           </div>
           <div class="security-badge">
@@ -707,6 +756,7 @@
           <div class="form-group">
             <label for="upiId">UPI ID</label>
             <input type="text" id="upiId" class="form-control" placeholder="yourname@paytm">
+            <div id="upiIdError" class="field-error hidden"><i class="fas fa-exclamation-circle"></i> Please enter a valid UPI ID</div>
           </div>
           <div class="security-badge">
             <i class="fas fa-shield-alt"></i>
@@ -729,6 +779,33 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Payment Success Screen -->
+    <div id="paymentSuccess" class="card payment-success hidden">
+      <i class="fas fa-check-circle"></i>
+      <h2>Payment Successful!</h2>
+      <p>Your order has been placed successfully. We'll notify you when it's on its way.</p>
+      
+      <div class="order-details">
+        <div class="order-detail-item">
+          <span>Order ID:</span>
+          <span id="orderId">#GROC123456</span>
+        </div>
+        <div class="order-detail-item">
+          <span>Payment Method:</span>
+          <span id="paymentMethod">Credit Card</span>
+        </div>
+        <div class="order-detail-item">
+          <span>Amount Paid:</span>
+          <span id="amountPaid">₹0.00</span>
+        </div>
+      </div>
+      
+      <a href="orders.html" class="btn-secondary">
+        <i class="fas fa-box"></i>
+        View Your Orders
+      </a>
     </div>
   </div>
 
@@ -772,7 +849,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
   <script>
-    // Firebase configuration (In production, move this to environment variables)
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
       authDomain: "grocera-nithin.firebaseapp.com",
@@ -826,7 +903,7 @@
           if (formattedValue !== e.target.value) {
             e.target.value = formattedValue;
           }
-          validateField('cardNumber', value);
+          validateCardNumber(value);
         });
       }
 
@@ -839,7 +916,7 @@
             value = value.substring(0, 2) + '/' + value.substring(2, 4);
           }
           e.target.value = value;
-          validateField('expiry', value);
+          validateExpiryDate(value);
         });
       }
 
@@ -848,7 +925,7 @@
       if (cvv) {
         cvv.addEventListener('input', function(e) {
           e.target.value = e.target.value.replace(/\D/g, '');
-          validateField('cvv', e.target.value);
+          validateCVV(e.target.value);
         });
       }
 
@@ -856,7 +933,7 @@
       const cardName = document.getElementById('cardName');
       if (cardName) {
         cardName.addEventListener('input', function(e) {
-          validateField('cardName', e.target.value);
+          validateCardName(e.target.value);
         });
       }
 
@@ -864,18 +941,279 @@
       const upiId = document.getElementById('upiId');
       if (upiId) {
         upiId.addEventListener('input', function(e) {
-          validateField('upiId', e.target.value);
+          validateUPI(e.target.value);
         });
       }
     }
 
-    // Real-time field validation
-    function validateField(fieldId, value) {
-      const field = document.getElementById(fieldId);
-      let isValid = false;
-      let message = '';
+    // Field validation functions
+    function validateCardName(value) {
+      const isValid = value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+      toggleError('cardName', !isValid);
+      return isValid;
+    }
 
-      switch(fieldId) {
-        case 'cardName':
-          isValid = value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
-          message = isValid ? 'Valid name' : 'Please enter
+    function validateCardNumber(value) {
+      const isValid = /^\d{16}$/.test(value.replace(/\s/g, ''));
+      toggleError('cardNumber', !isValid);
+      return isValid;
+    }
+
+    function validateExpiryDate(value) {
+      const parts = value.split('/');
+      if (parts.length !== 2 || parts[0].length !== 2 || parts[1].length !== 2) {
+        toggleError('expiry', true);
+        return false;
+      }
+      
+      const month = parseInt(parts[0]);
+      const year = parseInt(parts[1]);
+      const currentYear = new Date().getFullYear() % 100;
+      const currentMonth = new Date().getMonth() + 1;
+      
+      const isValid = (month >= 1 && month <= 12) && 
+                     (year > currentYear || (year === currentYear && month >= currentMonth));
+      
+      toggleError('expiry', !isValid);
+      return isValid;
+    }
+
+    function validateCVV(value) {
+      const isValid = /^\d{3,4}$/.test(value);
+      toggleError('cvv', !isValid);
+      return isValid;
+    }
+
+    function validateUPI(value) {
+      const isValid = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/.test(value);
+      toggleError('upiId', !isValid);
+      return isValid;
+    }
+
+    function toggleError(fieldId, showError) {
+      const field = document.getElementById(fieldId);
+      const errorElement = document.getElementById(`${fieldId}Error`);
+      
+      if (showError) {
+        field.classList.add('error');
+        errorElement.classList.remove('hidden');
+      } else {
+        field.classList.remove('error');
+        errorElement.classList.add('hidden');
+      }
+    }
+
+    // Load cart data from Firebase
+    function loadCartData() {
+      const userId = currentUser.uid;
+      database.ref(`users/${userId}/cart`).once('value')
+        .then((snapshot) => {
+          const cartData = snapshot.val();
+          if (cartData && Object.keys(cartData).length > 0) {
+            cartItems = Object.values(cartData);
+            totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Load delivery address
+            database.ref(`users/${userId}/address`).once('value')
+              .then((addressSnapshot) => {
+                deliveryAddress = addressSnapshot.val();
+                renderCartSummary();
+                showPaymentContent();
+              })
+              .catch((error) => {
+                showError("Failed to load delivery address. Please try again.");
+                console.error("Address load error:", error);
+              });
+          } else {
+            showEmptyCart();
+          }
+        })
+        .catch((error) => {
+          showError("Failed to load cart data. Please try again.");
+          console.error("Cart load error:", error);
+        })
+        .finally(() => {
+          showLoading(false);
+        });
+    }
+
+    // Render cart summary
+    function renderCartSummary() {
+      const cartSummary = document.getElementById('cartSummary');
+      const payAmount = document.getElementById('payAmount');
+      const codAmount = document.getElementById('codAmount');
+      
+      // Clear previous items
+      cartSummary.innerHTML = '';
+      
+      // Add cart items
+      cartItems.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+          <span>${item.name} × ${item.quantity}</span>
+          <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+        `;
+        cartSummary.appendChild(itemElement);
+      });
+      
+      // Add total
+      const totalElement = document.createElement('div');
+      totalElement.className = 'cart-item';
+      totalElement.innerHTML = `
+        <span>Total Amount</span>
+        <span>₹${totalAmount.toFixed(2)}</span>
+      `;
+      cartSummary.appendChild(totalElement);
+      
+      // Update amount displays
+      payAmount.textContent = totalAmount.toFixed(2);
+      codAmount.textContent = totalAmount.toFixed(2);
+    }
+
+    // Show payment content
+    function showPaymentContent() {
+      document.getElementById('emptyCartMessage').classList.add('hidden');
+      document.getElementById('paymentContent').classList.remove('hidden');
+    }
+
+    // Show empty cart message
+    function showEmptyCart() {
+      document.getElementById('emptyCartMessage').classList.remove('hidden');
+      document.getElementById('paymentContent').classList.add('hidden');
+    }
+
+    // Show payment form based on selected method
+    function showPaymentForm(method) {
+      // Update active tab
+      document.getElementById('cardTab').classList.remove('active');
+      document.getElementById('upiTab').classList.remove('active');
+      document.getElementById('codTab').classList.remove('active');
+      document.getElementById(`${method}Tab`).classList.add('active');
+      
+      // Hide all forms
+      document.getElementById('cardForm').classList.add('hidden');
+      document.getElementById('upiForm').classList.add('hidden');
+      document.getElementById('codForm').classList.add('hidden');
+      
+      // Show selected form
+      document.getElementById(`${method}Form`).classList.remove('hidden');
+    }
+
+    // Process payment
+    function processPayment(method) {
+      // Validate form based on payment method
+      let isValid = false;
+      
+      switch(method) {
+        case 'card':
+          isValid = validateCardName(document.getElementById('cardName').value) &&
+                   validateCardNumber(document.getElementById('cardNumber').value) &&
+                   validateExpiryDate(document.getElementById('expiry').value) &&
+                   validateCVV(document.getElementById('cvv').value);
+          break;
+        case 'upi':
+          isValid = validateUPI(document.getElementById('upiId').value);
+          break;
+        case 'cod':
+          isValid = true; // No validation needed for COD
+          break;
+      }
+      
+      if (!isValid) {
+        showError("Please fix the errors in the form before proceeding.");
+        return;
+      }
+      
+      showLoading(true);
+      
+      // Simulate payment processing
+      setTimeout(() => {
+        completePayment(method);
+      }, 2000);
+    }
+
+    // Complete payment and create order
+    function completePayment(method) {
+      const userId = currentUser.uid;
+      const orderId = 'GROC' + Math.floor(Math.random() * 1000000);
+      const timestamp = new Date().toISOString();
+      
+      // Create order object
+      const order = {
+        orderId: orderId,
+        items: cartItems,
+        totalAmount: totalAmount,
+        paymentMethod: method,
+        status: method === 'cod' ? 'pending' : 'paid',
+        deliveryAddress: deliveryAddress,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      };
+      
+      // Save order to database
+      database.ref(`users/${userId}/orders/${orderId}`).set(order)
+        .then(() => {
+          // Clear cart after successful order
+          return database.ref(`users/${userId}/cart`).remove();
+        })
+        .then(() => {
+          // Show success message
+          showPaymentSuccess(orderId, method);
+        })
+        .catch((error) => {
+          showError("Failed to complete payment. Please try again.");
+          console.error("Payment error:", error);
+        })
+        .finally(() => {
+          showLoading(false);
+        });
+    }
+
+    // Show payment success screen
+    function showPaymentSuccess(orderId, method) {
+      document.getElementById('paymentContent').classList.add('hidden');
+      
+      // Update success details
+      document.getElementById('orderId').textContent = `#${orderId}`;
+      document.getElementById('paymentMethod').textContent = 
+        method === 'card' ? 'Credit/Debit Card' : 
+        method === 'upi' ? 'UPI Payment' : 'Cash on Delivery';
+      document.getElementById('amountPaid').textContent = `₹${totalAmount.toFixed(2)}`;
+      
+      document.getElementById('paymentSuccess').classList.remove('hidden');
+    }
+
+    // Show loading overlay
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+    }
+
+    // Show error message
+    function showError(message, isCritical = false) {
+      const errorElement = document.getElementById('errorMessage');
+      errorElement.querySelector('span').textContent = message;
+      errorElement.classList.remove('hidden');
+      
+      if (isCritical) {
+        showLoading(false);
+      } else {
+        setTimeout(() => {
+          errorElement.classList.add('hidden');
+        }, 5000);
+      }
+    }
+
+    // Show success message
+    function showSuccess(message) {
+      const successElement = document.getElementById('successMessage');
+      successElement.querySelector('span').textContent = message;
+      successElement.classList.remove('hidden');
+      
+      setTimeout(() => {
+        successElement.classList.add('hidden');
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
