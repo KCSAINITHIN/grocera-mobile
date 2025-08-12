@@ -5,21 +5,35 @@
   <title>Payment - GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4361ee;
-      --primary-light: #4895ef;
-      --secondary: #3f37c9;
-      --accent: #f72585;
-      --success: #4cc9f0;
-      --warning: #f8961e;
-      --danger: #ef233c;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --light-gray: #e9ecef;
-      --success-green: #28a745;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #a5b4fc;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --white: #ffffff;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
 
     * {
@@ -29,212 +43,406 @@
     }
 
     body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       color: var(--dark);
+      overflow-x: hidden;
       padding-bottom: 80px;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .background-animation::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3), transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3), transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3), transparent 50%);
+      animation: backgroundFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes backgroundFloat {
+      0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+      50% { opacity: 0.8; transform: scale(1.1) rotate(180deg); }
     }
 
     .topbar {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       display: flex;
       align-items: center;
-      padding: 12px 20px;
+      padding: 16px 20px;
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-lg);
     }
 
-    .topbar img {
-      width: 36px;
-      height: 36px;
+    .topbar .logo {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-success);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-right: 12px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.3);
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      box-shadow: var(--shadow-md);
     }
 
     .topbar h1 {
-      font-size: 20px;
-      margin: 0;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .back-btn {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
     }
 
     .payment-container {
-      padding: 15px;
       max-width: 500px;
       margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .payment-header {
       text-align: center;
-      margin-bottom: 20px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border-top: 4px solid var(--primary);
+      margin-bottom: 24px;
     }
 
     .payment-header h2 {
-      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 700;
       color: var(--dark);
-      font-weight: 600;
-      font-size: 18px;
+      margin-bottom: 8px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .total-amount {
-      font-size: 28px;
-      color: var(--success-green);
-      font-weight: 700;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--success);
+      text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .cart-summary {
+      background: var(--gray-50);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+      font-weight: 600;
+      color: var(--success);
     }
 
     .payment-methods {
       display: flex;
-      margin-bottom: 20px;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      gap: 8px;
+      margin-bottom: 24px;
+      background: var(--gray-100);
+      padding: 6px;
+      border-radius: 16px;
     }
 
     .method-tab {
       flex: 1;
-      padding: 14px;
+      padding: 12px 16px;
       text-align: center;
       border: none;
-      background: white;
-      color: var(--primary);
+      background: transparent;
+      color: var(--gray-600);
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-size: 14px;
-      border-bottom: 3px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .method-tab::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      transition: left 0.3s;
+      z-index: -1;
+    }
+
+    .method-tab:hover::before {
+      left: 0;
     }
 
     .method-tab:hover {
-      background: rgba(67, 97, 238, 0.1);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
 
     .method-tab.active {
-      background: var(--primary);
+      background: var(--gradient);
       color: white;
-      border-bottom: 3px solid var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
 
-    .payment-form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      border-top: 4px solid var(--primary-light);
+    .method-tab.active::before {
+      left: 0;
+    }
+
+    .method-tab i {
+      margin-right: 8px;
+      font-size: 16px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+      position: relative;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--dark);
+      font-weight: 600;
+      color: var(--gray-700);
       font-size: 14px;
+      transition: all 0.3s;
     }
 
     .form-control {
       width: 100%;
-      padding: 14px;
-      border: 1px solid var(--light-gray);
-      border-radius: 8px;
-      font-size: 15px;
-      box-sizing: border-box;
-      background: var(--light);
-      transition: all 0.3s;
+      padding: 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 16px;
+      background: var(--white);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
     .form-control:focus {
       border-color: var(--primary);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-      background: white;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .form-control.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
     }
 
     .form-row {
-      display: flex;
-      gap: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
-    .form-row .form-group {
-      flex: 1;
+    .field-error {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .btn-pay {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--success-green), #218838);
+      padding: 18px;
+      background: var(--gradient-success);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-      margin-top: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 12px;
     }
 
-    .btn-pay i {
-      font-size: 16px;
+    .btn-pay::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-pay:hover::before {
+      left: 100%;
     }
 
     .btn-pay:hover {
-      background: linear-gradient(135deg, #218838, var(--success-green));
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .btn-pay:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-pay i {
+      font-size: 18px;
     }
 
     .cod-notice {
       text-align: center;
-      color: var(--gray);
-      margin: 20px 0;
-      font-size: 15px;
-      padding: 12px;
-      background: var(--light);
-      border-radius: 8px;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 2px dashed var(--gray-300);
     }
 
     .hidden {
       display: none;
     }
 
+    .error-message, .success-message {
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .success-message {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .bottom-nav {
       display: flex;
       justify-content: space-around;
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
       position: fixed;
       bottom: 0;
       width: 100%;
       padding: 12px 0;
-      box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
       z-index: 100;
-      border-top: 1px solid var(--light-gray);
+      border-top: 1px solid var(--gray-200);
     }
 
     .nav-item {
@@ -242,21 +450,28 @@
       flex-direction: column;
       align-items: center;
       text-decoration: none;
-      color: var(--gray);
-      font-size: 11px;
-      transition: all 0.2s;
-      padding: 4px 8px;
-      border-radius: 8px;
+      color: var(--gray-500);
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 8px 12px;
+      border-radius: 12px;
+      position: relative;
     }
 
     .nav-item i {
-      font-size: 18px;
+      font-size: 20px;
       margin-bottom: 4px;
+      transition: all 0.3s;
     }
 
     .nav-item.active {
       color: var(--primary);
-      background: rgba(67, 97, 238, 0.1);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .nav-item.active i {
+      transform: translateY(-2px);
     }
 
     .nav-item:hover {
@@ -264,141 +479,206 @@
       transform: translateY(-2px);
     }
 
-    .method-tab i {
-      margin-right: 6px;
-      font-size: 16px;
-    }
-
-    .error-message {
-      color: var(--danger);
-      background: rgba(239, 35, 60, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 16px 0;
+    .empty-cart-message {
       text-align: center;
-      font-size: 14px;
+      padding: 60px 20px;
     }
 
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
-      margin-right: 8px;
+    .empty-cart-message i {
+      font-size: 80px;
+      color: var(--gray-300);
+      margin-bottom: 20px;
+      animation: bounce 2s ease-in-out infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255,255,255,0.8);
-      display: flex;
-      justify-content: center;
+    .empty-cart-message h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 12px;
+    }
+
+    .empty-cart-message p {
+      color: var(--gray-500);
+      margin-bottom: 24px;
+    }
+
+    .btn-secondary {
+      background: var(--gradient);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
       align-items: center;
-      z-index: 2000;
-      flex-direction: column;
+      gap: 8px;
+      transition: all 0.3s;
     }
 
-    .loading-text {
-      margin-top: 15px;
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      color: var(--success);
+      font-size: 14px;
       font-weight: 500;
-      color: var(--dark);
     }
 
-    @media (max-width: 400px) {
-      .payment-methods {
-        flex-direction: column;
+    @media (max-width: 480px) {
+      .payment-container {
+        padding: 16px;
       }
       
-      .method-tab {
-        padding: 12px;
+      .card {
+        padding: 20px;
       }
       
       .form-row {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 0;
+      }
+      
+      .payment-methods {
+        flex-direction: column;
+        gap: 4px;
+      }
+      
+      .method-tab {
+        padding: 16px;
       }
     }
   </style>
 </head>
 <body>
+  <div class="background-animation"></div>
 
   <div class="topbar">
-    <img src="logo.png" alt="GROCERA">
+    <div class="logo">G</div>
     <h1>GROCERA</h1>
+    <a href="cart.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Cart
+    </a>
   </div>
 
   <div class="payment-container">
-    <div id="errorMessage" class="error-message hidden"></div>
+    <div id="errorMessage" class="error-message hidden">
+      <i class="fas fa-exclamation-circle"></i>
+      <span></span>
+    </div>
     
-    <div class="payment-header">
-      <h2>Complete Your Payment</h2>
-      <div class="total-amount">₹<span id="payAmount">0.00</span></div>
+    <div id="successMessage" class="success-message hidden">
+      <i class="fas fa-check-circle"></i>
+      <span></span>
     </div>
 
-    <div class="payment-methods">
-      <button id="cardTab" class="method-tab active" onclick="showPaymentForm('card')">
-        <i class="far fa-credit-card"></i> Card
-      </button>
-      <button id="upiTab" class="method-tab" onclick="showPaymentForm('upi')">
-        <i class="fas fa-mobile-alt"></i> UPI
-      </button>
-      <button id="codTab" class="method-tab" onclick="showPaymentForm('cod')">
-        <i class="fas fa-money-bill-wave"></i> Cash
-      </button>
+    <!-- Empty Cart Message -->
+    <div id="emptyCartMessage" class="card empty-cart-message hidden">
+      <i class="fas fa-shopping-cart"></i>
+      <h3>Your Cart is Empty</h3>
+      <p>Add some items to your cart before proceeding to payment.</p>
+      <a href="dashboard.html" class="btn-secondary">
+        <i class="fas fa-home"></i>
+        Continue Shopping
+      </a>
     </div>
 
-    <!-- Card Payment Form -->
-    <div id="cardForm" class="payment-form">
-      <div class="form-group">
-        <label for="cardName">Cardholder Name</label>
-        <input type="text" id="cardName" class="form-control" placeholder="John Doe">
-      </div>
-      <div class="form-group">
-        <label for="cardNumber">Card Number</label>
-        <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="16">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="expiry">Expiry Date</label>
-          <input type="text" id="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
-        </div>
-        <div class="form-group">
-          <label for="cvv">CVV</label>
-          <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="3">
+    <!-- Payment Content -->
+    <div id="paymentContent" class="hidden">
+      <div class="card payment-header">
+        <h2>Complete Your Payment</h2>
+        <div class="total-amount">₹<span id="payAmount">0.00</span></div>
+        
+        <div class="cart-summary" id="cartSummary">
+          <!-- Cart items will be populated here -->
         </div>
       </div>
-      <button class="btn-pay" onclick="processPayment('card')">
-        <i class="fas fa-lock"></i> Pay Now
-      </button>
-    </div>
 
-    <!-- UPI Payment Form -->
-    <div id="upiForm" class="payment-form hidden">
-      <div class="form-group">
-        <label for="upiId">UPI ID</label>
-        <input type="text" id="upiId" class="form-control" placeholder="name@bank">
+      <div class="card">
+        <div class="payment-methods">
+          <button id="cardTab" class="method-tab active" onclick="showPaymentForm('card')">
+            <i class="far fa-credit-card"></i> Card
+          </button>
+          <button id="upiTab" class="method-tab" onclick="showPaymentForm('upi')">
+            <i class="fab fa-google-pay"></i> UPI
+          </button>
+          <button id="codTab" class="method-tab" onclick="showPaymentForm('cod')">
+            <i class="fas fa-money-bill-wave"></i> Cash
+          </button>
+        </div>
+
+        <!-- Card Payment Form -->
+        <div id="cardForm" class="payment-form">
+          <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input type="text" id="cardName" class="form-control" placeholder="Enter full name as on card">
+          </div>
+          <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expiry">Expiry Date</label>
+              <input type="text" id="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="4">
+            </div>
+          </div>
+          <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            Your payment information is secured with 256-bit SSL encryption
+          </div>
+          <button class="btn-pay" onclick="processPayment('card')">
+            <i class="fas fa-lock"></i> Pay Securely
+          </button>
+        </div>
+
+        <!-- UPI Payment Form -->
+        <div id="upiForm" class="payment-form hidden">
+          <div class="form-group">
+            <label for="upiId">UPI ID</label>
+            <input type="text" id="upiId" class="form-control" placeholder="yourname@paytm">
+          </div>
+          <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            UPI payments are processed securely through your bank
+          </div>
+          <button class="btn-pay" onclick="processPayment('upi')">
+            <i class="fab fa-google-pay"></i> Pay with UPI
+          </button>
+        </div>
+
+        <!-- Cash on Delivery -->
+        <div id="codForm" class="payment-form hidden">
+          <div class="cod-notice">
+            <i class="fas fa-truck" style="font-size: 24px; margin-bottom: 12px; color: var(--primary);"></i>
+            <p><strong>Cash on Delivery</strong></p>
+            <p>Pay ₹<span id="codAmount">0.00</span> when your order is delivered to your doorstep.</p>
+          </div>
+          <button class="btn-pay" onclick="processPayment('cod')">
+            <i class="fas fa-check-circle"></i> Confirm Order
+          </button>
+        </div>
       </div>
-      <button class="btn-pay" onclick="processPayment('upi')">
-        <i class="fas fa-lock"></i> Pay Now
-      </button>
-    </div>
-
-    <!-- Cash on Delivery -->
-    <div id="codForm" class="payment-form hidden">
-      <p class="cod-notice">Pay cash when your order is delivered</p>
-      <button class="btn-pay" onclick="processPayment('cod')">
-        <i class="fas fa-check-circle"></i> Confirm Order
-      </button>
     </div>
   </div>
 
@@ -430,12 +710,6 @@
     </a>
   </div>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="loading-overlay hidden">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Loading your payment details...</div>
-  </div>
-
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -462,55 +736,29 @@
     let currentUser = null;
     let cartItems = [];
     let totalAmount = 0;
-    let deliveryAddress = null;
 
     // When page loads
     window.onload = function() {
-      showLoading(true);
-      
-      // Initialize authentication state
+      // Check authentication
       auth.onAuthStateChanged((user) => {
         if (user) {
           currentUser = user;
-          loadCartData();
+          checkCartAndLoadPayment();
         } else {
-          showError("Please sign in to complete payment. Redirecting...");
+          showError("Please sign in to access payment page");
           setTimeout(() => {
             window.location.href = "about.html";
           }, 2000);
         }
       });
+
+      // Setup input formatters
+      setupInputFormatters();
     };
 
-    // Show/hide loading overlay
-    function showLoading(show) {
-      const overlay = document.getElementById("loadingOverlay");
-      if (show) {
-        overlay.classList.remove("hidden");
-      } else {
-        overlay.classList.add("hidden");
-      }
-    }
-
-    // Show error message
-    function showError(message) {
-      showLoading(false);
-      const errorEl = document.getElementById("errorMessage");
-      errorEl.textContent = message;
-      errorEl.classList.remove("hidden");
-    }
-
-    // Hide error message
-    function hideError() {
-      document.getElementById("errorMessage").classList.add("hidden");
-    }
-
-    // Load cart data from Firebase
-    function loadCartData() {
-      if (!currentUser) {
-        showError("User not authenticated");
-        return;
-      }
+    // Check if cart has items and load payment
+    function checkCartAndLoadPayment() {
+      if (!currentUser) return;
 
       const cartRef = database.ref(`users/${currentUser.uid}/cart`);
       
@@ -519,10 +767,8 @@
           const data = snapshot.val();
           
           if (!data || Object.keys(data).length === 0) {
-            showError("Your cart is empty. Redirecting to cart...");
-            setTimeout(() => {
-              window.location.href = "cart.html";
-            }, 2000);
+            // Show empty cart message
+            showEmptyCart();
             return;
           }
           
@@ -532,55 +778,39 @@
             ...data[key]
           }));
           
-          // Load delivery address
-          loadDeliveryAddress();
+          calculateTotal();
+          displayCartSummary();
+          showPaymentContent();
         })
         .catch((error) => {
           console.error("Error loading cart:", error);
-          showError("Failed to load cart data. Please refresh the page.");
+          showError("Failed to load cart data. Please try again.");
         });
     }
 
-    // Load delivery address from Firebase
-    function loadDeliveryAddress() {
-      if (!currentUser) return;
-
-      const addressRef = database.ref(`users/${currentUser.uid}/address`);
-      
-      addressRef.once('value')
-        .then((snapshot) => {
-          const address = snapshot.val();
-          
-          if (!address) {
-            showError("Please set your delivery address first. Redirecting...");
-            setTimeout(() => {
-              window.location.href = "cart.html";
-            }, 2000);
-            return;
-          }
-          
-          deliveryAddress = address;
-          calculateTotal();
-          showLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error loading address:", error);
-          showError("Failed to load address. Please try again.");
-        });
+    // Show empty cart message
+    function showEmptyCart() {
+      document.getElementById('emptyCartMessage').classList.remove('hidden');
+      document.getElementById('paymentContent').classList.add('hidden');
     }
 
-    // Calculate total amount from cart
+    // Show payment content
+    function showPaymentContent() {
+      document.getElementById('emptyCartMessage').classList.add('hidden');
+      document.getElementById('paymentContent').classList.remove('hidden');
+    }
+
+    // Calculate total amount
     function calculateTotal() {
       totalAmount = 0;
       
-      // Calculate from cart items
       cartItems.forEach(item => {
         totalAmount += (item.price || 0) * (item.quantity || 1);
       });
       
-      // Apply delivery charge if total < 1000
-      if (totalAmount < 1000) {
-        totalAmount += 50;
+      // Add delivery charge if total < 500
+      if (totalAmount < 500) {
+        totalAmount += 40;
       }
       
       updatePaymentDisplay();
@@ -589,142 +819,72 @@
     // Update payment amount display
     function updatePaymentDisplay() {
       document.getElementById("payAmount").textContent = totalAmount.toFixed(2);
+      document.getElementById("codAmount").textContent = totalAmount.toFixed(2);
     }
 
-    // Show selected payment form
-    function showPaymentForm(method) {
-      // Hide all forms
-      document.getElementById("cardForm").classList.add("hidden");
-      document.getElementById("upiForm").classList.add("hidden");
-      document.getElementById("codForm").classList.add("hidden");
+    // Display cart summary
+    function displayCartSummary() {
+      const summaryDiv = document.getElementById('cartSummary');
+      let summaryHTML = '';
       
-      // Remove active class from all tabs
-      document.getElementById("cardTab").classList.remove("active");
-      document.getElementById("upiTab").classList.remove("active");
-      document.getElementById("codTab").classList.remove("active");
+      let subtotal = 0;
+      cartItems.forEach(item => {
+        const itemTotal = (item.price || 0) * (item.quantity || 1);
+        subtotal += itemTotal;
+        summaryHTML += `
+          <div class="cart-item">
+            <span>${item.name || 'Item'} (x${item.quantity || 1})</span>
+            <span>₹${itemTotal.toFixed(2)}</span>
+          </div>
+        `;
+      });
       
-      // Show selected form and activate tab
-      document.getElementById(`${method}Form`).classList.remove("hidden");
-      document.getElementById(`${method}Tab`).classList.add("active");
-    }
-
-    // Validate payment method details
-    function validatePaymentMethod(method) {
-      switch(method) {
-        case 'card':
-          const name = document.getElementById('cardName').value.trim();
-          const number = document.getElementById('cardNumber').value.trim();
-          const expiry = document.getElementById('expiry').value.trim();
-          const cvv = document.getElementById('cvv').value.trim();
-          
-          if (!name) {
-            showError("Please enter cardholder name");
-            return false;
-          }
-          if (number.length !== 16 || !/^\d+$/.test(number)) {
-            showError("Please enter a valid 16-digit card number");
-            return false;
-          }
-          if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-            showError("Please enter expiry date in MM/YY format");
-            return false;
-          }
-          if (cvv.length !== 3 || !/^\d+$/.test(cvv)) {
-            showError("Please enter a valid 3-digit CVV");
-            return false;
-          }
-          hideError();
-          return true;
-          
-        case 'upi':
-          const upiId = document.getElementById('upiId').value.trim();
-          if (!upiId.includes("@") || upiId.length < 6) {
-            showError("Please enter a valid UPI ID (e.g. name@bank)");
-            return false;
-          }
-          hideError();
-          return true;
-          
-        case 'cod':
-          hideError();
-          return confirm("Are you sure you want to proceed with Cash on Delivery?");
-          
-        default:
-          showError("Invalid payment method");
-          return false;
-      }
-    }
-
-    // Process payment
-    function processPayment(method) {
-      // Validate payment details
-      if (!validatePaymentMethod(method)) {
-        return;
+      // Add delivery charge
+      const deliveryFee = subtotal < 500 ? 40 : 0;
+      if (deliveryFee > 0) {
+        summaryHTML += `
+          <div class="cart-item">
+            <span>Delivery Fee</span>
+            <span>₹${deliveryFee.toFixed(2)}</span>
+          </div>
+        `;
       }
       
-      // Create order
-      createOrder(method);
+      // Add total
+      summaryHTML += `
+        <div class="cart-item">
+          <span><strong>Total Amount</strong></span>
+          <span><strong>₹${totalAmount.toFixed(2)}</strong></span>
+        </div>
+      `;
+      
+      summaryDiv.innerHTML = summaryHTML;
     }
 
-    // Create order in Firebase
-    function createOrder(method) {
-      if (!currentUser) {
-        showError("User not authenticated");
-        return;
-      }
-      
-      showLoading(true);
-      const orderRef = database.ref('orders').push();
-      const now = new Date();
-      
-      const orderData = {
-        userId: currentUser.uid,
-        orderId: orderRef.key,
-        items: cartItems,
-        totalAmount: totalAmount.toFixed(2),
-        paymentMethod: method === 'card' ? 'Credit/Debit Card' : 
-                      method === 'upi' ? 'UPI' : 'Cash on Delivery',
-        status: method === 'cod' ? 'Pending Payment' : 'Paid',
-        orderDate: now.toISOString(),
-        deliveryAddress: formatAddress(deliveryAddress)
-      };
-      
-      // Save order to Firebase
-      orderRef.set(orderData)
-        .then(() => {
-          // Clear cart after successful order
-          return database.ref(`users/${currentUser.uid}/cart`).remove();
-        })
-        .then(() => {
-          // Show success message
-          showPaymentSuccess(method);
-        })
-        .catch((error) => {
-          console.error("Error creating order:", error);
-          showError("Payment failed. Please try again.");
-        })
-        .finally(() => {
-          showLoading(false);
+    // Setup input formatters
+    function setupInputFormatters() {
+      // Card number formatting
+      const cardNumber = document.getElementById('cardNumber');
+      if (cardNumber) {
+        cardNumber.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+          if (formattedValue !== e.target.value) {
+            e.target.value = formattedValue;
+          }
         });
-    }
+      }
 
-    // Format address for display
-    function formatAddress(address) {
-      if (!address) return "Address not specified";
-      return `${address.doorNo}, ${address.street}, ${address.area}, ${address.city}, ${address.state} - ${address.pincode}`;
-    }
+      // Expiry date formatting
+      const expiry = document.getElementById('expiry');
+      if (expiry) {
+        expiry.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+          }
+          e.target.value = value;
+        });
+      }
 
-    // Show payment success and redirect
-    function showPaymentSuccess(method) {
-      const paymentMethod = method === 'card' ? 'Card' : 
-                          method === 'upi' ? 'UPI' : 'Cash on Delivery';
-      const message = method === 'cod' ? 
-        'Order placed successfully! You will pay ₹' + totalAmount.toFixed(2) + ' when your order is delivered.' : 
-        'Payment of ₹' + totalAmount.toFixed(2) + ' via ' + paymentMethod + ' was successful!';
-      
-      alert(message);
-      window.location.href = "orders.html";
-    }
-  </script>
-</body>
-</html>
+      // CVV - numbers only
