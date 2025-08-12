@@ -48,7 +48,6 @@
       min-height: 100vh;
       color: var(--dark);
       overflow-x: hidden;
-      padding-bottom: 80px;
     }
 
     .background-animation {
@@ -335,6 +334,16 @@
       gap: 4px;
     }
 
+    .field-success {
+      color: var(--success);
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .btn-pay {
       width: 100%;
       padding: 18px;
@@ -377,6 +386,12 @@
 
     .btn-pay:active {
       transform: translateY(-1px);
+    }
+
+    .btn-pay:disabled {
+      background: var(--gray-400);
+      cursor: not-allowed;
+      transform: none;
     }
 
     .btn-pay i {
@@ -431,6 +446,41 @@
       }
     }
 
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      font-weight: 600;
+      color: white;
+      font-size: 16px;
+    }
+
     .bottom-nav {
       display: flex;
       justify-content: space-around;
@@ -479,6 +529,20 @@
       transform: translateY(-2px);
     }
 
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      color: var(--success);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
     .empty-cart-message {
       text-align: center;
       padding: 60px 20px;
@@ -525,20 +589,6 @@
     .btn-secondary:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
-    }
-
-    .security-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 16px;
-      padding: 12px;
-      background: rgba(16, 185, 129, 0.1);
-      border-radius: 12px;
-      color: var(--success);
-      font-size: 14px;
-      font-weight: 500;
     }
 
     @media (max-width: 480px) {
@@ -710,13 +760,19 @@
     </a>
   </div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Processing your payment...</div>
+  </div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
   <script>
-    // Firebase configuration
+    // Firebase configuration (In production, move this to environment variables)
     const firebaseConfig = {
       apiKey: "AIzaSyCFu2tKa7JszwPRE7dTrG9FEX3Giw-pavc",
       authDomain: "grocera-nithin.firebaseapp.com",
@@ -736,132 +792,30 @@
     let currentUser = null;
     let cartItems = [];
     let totalAmount = 0;
+    let deliveryAddress = null;
 
     // When page loads
     window.onload = function() {
-      // Check authentication
+      showLoading(true);
+      
+      // Initialize authentication state
       auth.onAuthStateChanged((user) => {
         if (user) {
           currentUser = user;
-          checkCartAndLoadPayment();
+          loadCartData();
         } else {
-          showError("Please sign in to access payment page");
+          showError("Please sign in to complete payment. Redirecting...", true);
           setTimeout(() => {
             window.location.href = "about.html";
           }, 2000);
         }
       });
 
-      // Setup input formatters
+      // Add input formatters
       setupInputFormatters();
     };
 
-    // Check if cart has items and load payment
-    function checkCartAndLoadPayment() {
-      if (!currentUser) return;
-
-      const cartRef = database.ref(`users/${currentUser.uid}/cart`);
-      
-      cartRef.once('value')
-        .then((snapshot) => {
-          const data = snapshot.val();
-          
-          if (!data || Object.keys(data).length === 0) {
-            // Show empty cart message
-            showEmptyCart();
-            return;
-          }
-          
-          // Convert cart object to array
-          cartItems = Object.keys(data).map(key => ({
-            id: key,
-            ...data[key]
-          }));
-          
-          calculateTotal();
-          displayCartSummary();
-          showPaymentContent();
-        })
-        .catch((error) => {
-          console.error("Error loading cart:", error);
-          showError("Failed to load cart data. Please try again.");
-        });
-    }
-
-    // Show empty cart message
-    function showEmptyCart() {
-      document.getElementById('emptyCartMessage').classList.remove('hidden');
-      document.getElementById('paymentContent').classList.add('hidden');
-    }
-
-    // Show payment content
-    function showPaymentContent() {
-      document.getElementById('emptyCartMessage').classList.add('hidden');
-      document.getElementById('paymentContent').classList.remove('hidden');
-    }
-
-    // Calculate total amount
-    function calculateTotal() {
-      totalAmount = 0;
-      
-      cartItems.forEach(item => {
-        totalAmount += (item.price || 0) * (item.quantity || 1);
-      });
-      
-      // Add delivery charge if total < 500
-      if (totalAmount < 500) {
-        totalAmount += 40;
-      }
-      
-      updatePaymentDisplay();
-    }
-
-    // Update payment amount display
-    function updatePaymentDisplay() {
-      document.getElementById("payAmount").textContent = totalAmount.toFixed(2);
-      document.getElementById("codAmount").textContent = totalAmount.toFixed(2);
-    }
-
-    // Display cart summary
-    function displayCartSummary() {
-      const summaryDiv = document.getElementById('cartSummary');
-      let summaryHTML = '';
-      
-      let subtotal = 0;
-      cartItems.forEach(item => {
-        const itemTotal = (item.price || 0) * (item.quantity || 1);
-        subtotal += itemTotal;
-        summaryHTML += `
-          <div class="cart-item">
-            <span>${item.name || 'Item'} (x${item.quantity || 1})</span>
-            <span>₹${itemTotal.toFixed(2)}</span>
-          </div>
-        `;
-      });
-      
-      // Add delivery charge
-      const deliveryFee = subtotal < 500 ? 40 : 0;
-      if (deliveryFee > 0) {
-        summaryHTML += `
-          <div class="cart-item">
-            <span>Delivery Fee</span>
-            <span>₹${deliveryFee.toFixed(2)}</span>
-          </div>
-        `;
-      }
-      
-      // Add total
-      summaryHTML += `
-        <div class="cart-item">
-          <span><strong>Total Amount</strong></span>
-          <span><strong>₹${totalAmount.toFixed(2)}</strong></span>
-        </div>
-      `;
-      
-      summaryDiv.innerHTML = summaryHTML;
-    }
-
-    // Setup input formatters
+    // Setup input formatters and real-time validation
     function setupInputFormatters() {
       // Card number formatting
       const cardNumber = document.getElementById('cardNumber');
@@ -872,6 +826,7 @@
           if (formattedValue !== e.target.value) {
             e.target.value = formattedValue;
           }
+          validateField('cardNumber', value);
         });
       }
 
@@ -884,7 +839,43 @@
             value = value.substring(0, 2) + '/' + value.substring(2, 4);
           }
           e.target.value = value;
+          validateField('expiry', value);
         });
       }
 
-      // CVV - numbers only
+      // CVV validation
+      const cvv = document.getElementById('cvv');
+      if (cvv) {
+        cvv.addEventListener('input', function(e) {
+          e.target.value = e.target.value.replace(/\D/g, '');
+          validateField('cvv', e.target.value);
+        });
+      }
+
+      // Name validation
+      const cardName = document.getElementById('cardName');
+      if (cardName) {
+        cardName.addEventListener('input', function(e) {
+          validateField('cardName', e.target.value);
+        });
+      }
+
+      // UPI validation
+      const upiId = document.getElementById('upiId');
+      if (upiId) {
+        upiId.addEventListener('input', function(e) {
+          validateField('upiId', e.target.value);
+        });
+      }
+    }
+
+    // Real-time field validation
+    function validateField(fieldId, value) {
+      const field = document.getElementById(fieldId);
+      let isValid = false;
+      let message = '';
+
+      switch(fieldId) {
+        case 'cardName':
+          isValid = value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+          message = isValid ? 'Valid name' : 'Please enter
