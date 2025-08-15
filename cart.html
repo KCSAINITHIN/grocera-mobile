@@ -169,6 +169,49 @@
       display: none;
     }
 
+    /* Saved Address */
+    .saved-address {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-left: 4px solid var(--success);
+      position: relative;
+    }
+
+    .saved-address h3 {
+      color: var(--dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+    }
+
+    .saved-address h3 i {
+      color: var(--success);
+    }
+
+    .address-details {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .change-address-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* Cart Items */
     .cart-item {
       background: white;
@@ -446,7 +489,7 @@
 
   <div class="container">
     <!-- Address Section -->
-    <div class="address-section" id="addressSection">
+    <div class="address-section hidden" id="addressSection">
       <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
       <div class="address-form">
         <div class="form-group full-width">
@@ -489,10 +532,19 @@
         </div>
       </div>
       <button class="validate-btn" onclick="validateAddress()">
-        <i class="fas fa-check-circle"></i> Validate Address
+        <i class="fas fa-check-circle"></i> Save Address
       </button>
       <div id="addressError" class="error-message" style="text-align: center;"></div>
       <div id="addressSuccess" class="success-message"></div>
+    </div>
+
+    <!-- Saved Address Display -->
+    <div id="savedAddressSection" class="saved-address hidden">
+      <h3><i class="fas fa-check-circle"></i> Saved Delivery Address</h3>
+      <button class="change-address-btn" onclick="showAddressForm()">
+        <i class="fas fa-edit"></i> Change
+      </button>
+      <div class="address-details" id="savedAddressDetails"></div>
     </div>
 
     <div id="cartItems">
@@ -504,7 +556,7 @@
     <div id="summary" class="summary hidden"></div>
     
     <button id="checkoutBtn" class="checkout-btn hidden">
-      <i class="fas fa-lock"></i> Secure Checkout
+      <i class="fas fa-shopping-bag"></i> Place Order (Pay on Delivery)
     </button>
     
     <div id="emptyCart" class="empty-cart hidden">
@@ -529,10 +581,6 @@
     <a href="cart.html" class="nav-item active">
       <i class="fas fa-shopping-cart"></i>
       <span>Cart</span>
-    </a>
-    <a href="payment.html" class="nav-item">
-      <i class="fas fa-credit-card"></i>
-      <span>Payment</span>
     </a>
     <a href="orders.html" class="nav-item">
       <i class="fas fa-box"></i>
@@ -568,6 +616,7 @@
 
     // Global variables
     let currentUser = null;
+    let userAddress = null;
 
     // Load cart items
     function loadCart() {
@@ -632,15 +681,65 @@
       `;
 
       localStorage.setItem("orderTotal", total.toFixed(2));
+    }
+
+    // Load user address
+    async function loadUserAddress() {
+      if (!currentUser) return;
       
-      // Check if address is already validated
-      if (localStorage.getItem("addressValidated") === "true") {
-        document.getElementById("addressSection").classList.add("hidden");
+      try {
+        const snapshot = await database.ref(`users/${currentUser.uid}/address`).once('value');
+        if (snapshot.exists()) {
+          userAddress = snapshot.val();
+          displaySavedAddress();
+        } else {
+          showAddressForm();
+        }
+      } catch (error) {
+        console.error("Error loading address:", error);
+        showAddressForm();
+      }
+    }
+
+    // Display saved address
+    function displaySavedAddress() {
+      if (!userAddress) return;
+      
+      const savedAddressSection = document.getElementById("savedAddressSection");
+      const savedAddressDetails = document.getElementById("savedAddressDetails");
+      
+      savedAddressDetails.innerHTML = `
+        <p><strong>${userAddress.doorNo}, ${userAddress.street}</strong></p>
+        <p>${userAddress.area}, ${userAddress.city}</p>
+        <p>${userAddress.state} - ${userAddress.pincode}</p>
+        ${userAddress.landmark ? `<p>Landmark: ${userAddress.landmark}</p>` : ''}
+      `;
+      
+      savedAddressSection.classList.remove("hidden");
+      document.getElementById("addressSection").classList.add("hidden");
+      
+      // Store in localStorage for guest users
+      const fullAddress = `${userAddress.doorNo}, ${userAddress.street}, ${userAddress.area}, ${userAddress.city}, ${userAddress.state} - ${userAddress.pincode}`;
+      localStorage.setItem("deliveryAddress", fullAddress);
+    }
+
+    // Show address form
+    function showAddressForm() {
+      document.getElementById("savedAddressSection").classList.add("hidden");
+      document.getElementById("addressSection").classList.remove("hidden");
+      
+      // Pre-fill form if we have address data
+      if (userAddress) {
+        document.getElementById("doorNo").value = userAddress.doorNo || '';
+        document.getElementById("street").value = userAddress.street || '';
+        document.getElementById("area").value = userAddress.area || '';
+        document.getElementById("pincode").value = userAddress.pincode || '';
+        document.getElementById("landmark").value = userAddress.landmark || '';
       }
     }
 
     // Address Validation
-    function validateAddress() {
+    async function validateAddress() {
       const doorNo = document.getElementById("doorNo").value.trim();
       const street = document.getElementById("street").value.trim();
       const area = document.getElementById("area").value.trim();
@@ -677,36 +776,49 @@
         isValid = false;
       }
       
-      if (isValid) {
-        const fullAddress = `${doorNo}, ${street}, ${area}, Bangalore, Karnataka - ${pincode}`;
-        localStorage.setItem("deliveryAddress", fullAddress);
-        localStorage.setItem("addressValidated", "true");
-        
-        // Save address to Firebase if user is logged in
-        if (currentUser) {
-          database.ref(`users/${currentUser.uid}/address`).set({
-            doorNo,
-            street,
-            area,
-            city: "Bangalore",
-            state: "Karnataka",
-            pincode,
-            landmark: document.getElementById("landmark").value.trim() || ""
-          });
+      if (!isValid) return false;
+      
+      // Create address object
+      const address = {
+        doorNo,
+        street,
+        area,
+        city: "Bangalore",
+        state: "Karnataka",
+        pincode,
+        landmark: document.getElementById("landmark").value.trim() || ""
+      };
+      
+      // Save to Firebase if user is logged in
+      if (currentUser) {
+        try {
+          await database.ref(`users/${currentUser.uid}/address`).set(address);
+          userAddress = address;
+        } catch (error) {
+          console.error("Error saving address:", error);
+          errorEl.textContent = "Failed to save address. Please try again.";
+          return false;
         }
-        
-        // Show success message
-        successEl.textContent = "✓ Address validated for Bangalore delivery!";
-        successEl.style.display = "block";
-        
-        // Hide address section after delay
-        setTimeout(() => {
-          document.getElementById("addressSection").classList.add("hidden");
-        }, 1500);
-        
-        return true;
       }
-      return false;
+      
+      // Save to localStorage for all users
+      const fullAddress = `${doorNo}, ${street}, ${area}, Bangalore, Karnataka - ${pincode}`;
+      localStorage.setItem("deliveryAddress", fullAddress);
+      
+      // Show success message
+      successEl.textContent = "✓ Address saved successfully!";
+      successEl.style.display = "block";
+      
+      // Display saved address after delay
+      setTimeout(() => {
+        if (currentUser) {
+          displaySavedAddress();
+        } else {
+          document.getElementById("addressSection").classList.add("hidden");
+        }
+      }, 1500);
+      
+      return true;
     }
 
     // Cart functions
@@ -727,15 +839,22 @@
       loadCart();
     }
 
-    // Save order to Firebase
-    async function saveOrderToFirebase() {
+    // Save order to Firebase (Post-Delivery Payment)
+    async function placeOrder() {
       const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
       const total = localStorage.getItem("orderTotal");
       const address = localStorage.getItem("deliveryAddress");
       const userId = currentUser ? currentUser.uid : "guest_" + Math.random().toString(36).substr(2, 9);
       
       if (cart.length === 0) {
-        alert("Cannot save empty order");
+        alert("Cannot place empty order");
+        return false;
+      }
+
+      if (!address) {
+        alert("Please provide a delivery address first");
+        document.getElementById("addressSection").classList.remove("hidden");
+        document.getElementById("addressSection").scrollIntoView({ behavior: 'smooth' });
         return false;
       }
 
@@ -743,10 +862,13 @@
         userId: userId,
         items: cart,
         totalAmount: total,
-        paymentMethod: "Online Payment", // Will be updated after payment
-        status: "Processing",
+        payment_status: "Pending",
+        payment_mode: "Pay on Delivery",
+        order_status: "Placed",
         deliveryAddress: address,
-        orderDate: new Date().toISOString()
+        orderDate: new Date().toISOString(),
+        deliveryDate: "", // Will be updated when assigned
+        deliveryPerson: "" // Will be updated when assigned
       };
 
       try {
@@ -757,12 +879,10 @@
         // Clear cart after successful order
         localStorage.removeItem("cartItems");
         localStorage.removeItem("orderTotal");
-        localStorage.removeItem("addressValidated");
-        localStorage.removeItem("deliveryAddress");
         
         return newOrderRef.key; // Return the order ID
       } catch (error) {
-        console.error("Error saving order:", error);
+        console.error("Error placing order:", error);
         return false;
       }
     }
@@ -776,22 +896,32 @@
         return;
       }
       
-      // Check if address is validated
-      if (localStorage.getItem("addressValidated") !== "true") {
-        // Show address section if hidden
+      // Check if address is provided
+      if (!localStorage.getItem("deliveryAddress")) {
+        alert("Please provide a delivery address first");
         document.getElementById("addressSection").classList.remove("hidden");
-        // Scroll to address section
         document.getElementById("addressSection").scrollIntoView({ behavior: 'smooth' });
-        alert("Please validate your delivery address first.");
         return;
       }
       
-      // Save order to Firebase and proceed to payment
-      const orderId = await saveOrderToFirebase();
+      // Show loading state
+      const checkoutBtn = document.getElementById("checkoutBtn");
+      const originalText = checkoutBtn.innerHTML;
+      checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+      checkoutBtn.disabled = true;
+      
+      // Place order (Post-Delivery Payment)
+      const orderId = await placeOrder();
+      
+      // Reset button state
+      checkoutBtn.innerHTML = originalText;
+      checkoutBtn.disabled = false;
+      
       if (orderId) {
-        window.location.href = `payment.html?orderId=${orderId}`;
+        // Redirect to confirmation page
+        window.location.href = `confirmation.html?orderId=${orderId}`;
       } else {
-        alert("Failed to create order. Please try again.");
+        alert("Failed to place order. Please try again.");
       }
     });
 
@@ -801,16 +931,34 @@
         currentUser = user;
         console.log("User authenticated:", user.uid);
         loadCart();
+        loadUserAddress();
       } else {
         currentUser = null;
         console.log("No user signed in");
         loadCart();
+        
+        // For guest users, check if we have address in localStorage
+        if (localStorage.getItem("deliveryAddress")) {
+          document.getElementById("addressSection").classList.add("hidden");
+        } else {
+          document.getElementById("addressSection").classList.remove("hidden");
+        }
       }
     });
 
     // Load cart on page load
     document.addEventListener("DOMContentLoaded", function() {
       loadCart();
+      
+      // Initialize address section based on user state
+      if (auth.currentUser) {
+        loadUserAddress();
+      } else {
+        // For guest users, show address form if no address is saved
+        if (!localStorage.getItem("deliveryAddress")) {
+          document.getElementById("addressSection").classList.remove("hidden");
+        }
+      }
     });
   </script>
 </body>
