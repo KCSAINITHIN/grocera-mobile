@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <title>My Orders - GROCERA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #6C63FF;
@@ -170,15 +168,56 @@
       font-weight: 700;
     }
 
-    .payment-method {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--text-light);
+    .payment-info {
+      margin-top: 12px;
+      padding: 12px;
+      background-color: rgba(108, 99, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
     }
 
-    .payment-method span {
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .payment-status {
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .payment-icon {
       color: var(--primary);
-      font-weight: 500;
+    }
+
+    .payment-status-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .status-paid {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
+    .status-pending {
+      background-color: rgba(255, 198, 7, 0.2);
+      color: #B78103;
+    }
+
+    .delivery-info {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-light);
     }
 
     .empty-orders {
@@ -258,12 +297,9 @@
       border-radius: 8px;
     }
 
-    .nav-item svg {
-      width: 24px;
-      height: 24px;
+    .nav-item i {
+      font-size: 18px;
       margin-bottom: 4px;
-      fill: currentColor;
-      transition: all 0.2s;
     }
 
     .nav-item.active {
@@ -272,8 +308,7 @@
       transform: translateY(-4px);
     }
 
-    .nav-item.active svg {
-      fill: var(--primary);
+    .nav-item.active i {
       filter: drop-shadow(0 2px 4px rgba(108, 99, 255, 0.3));
     }
 
@@ -308,6 +343,16 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .delivery-person {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .delivery-person strong {
+      color: var(--dark);
+    }
   </style>
 </head>
 <body>
@@ -333,30 +378,31 @@
   <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v11a1 1 0 0 1-1 1h-6v-7H10v7H4a1 1 0 0 1-1-1V10z"/></svg>
+      <i class="fas fa-home"></i>
       <span>Home</span>
     </a>
     <a href="categories.html" class="nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h16v2H4z"/></svg>
+      <i class="fas fa-list"></i>
       <span>Categories</span>
     </a>
     <a href="cart.html" class="nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2H10.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03L23 6H6.21z"/></svg>
+      <i class="fas fa-shopping-cart"></i>
       <span>Cart</span>
     </a>
-    <a href="payment.html" class="nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 4H3a2 2 0 0 0-2 2v1h22V6a2 2 0 0 0-2-2zm0 4H1v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8z"/></svg>
-      <span>Payment</span>
-    </a>
     <a href="orders.html" class="nav-item active">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4.586l-2-2H10.586l-2 2H4v14h16V6zM12 17l-5-5h3V9h4v3h3l-5 5z"/></svg>
+      <i class="fas fa-box"></i>
       <span>Orders</span>
     </a>
     <a href="about.html" class="nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <i class="fas fa-user"></i>
       <span>Account</span>
     </a>
   </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -380,41 +426,17 @@
       const emptyState = document.getElementById('emptyState');
 
       // Initialize authentication and load orders
-      initAuthAndLoadOrders();
-
-      function initAuthAndLoadOrders() {
-        // For production, replace with your actual auth method
-        // This example uses anonymous auth for simplicity
-        auth.signInAnonymously()
-          .then(() => {
-            console.log("User authenticated");
-            loadOrdersFromFirebase();
-          })
-          .catch(error => {
-            console.error("Authentication failed:", error);
-            // Still try to load orders (remove in production)
-            loadOrdersFromFirebase();
-          });
-      }
-
-      function getCurrentUserId() {
-        const user = auth.currentUser;
-        if (!user) {
-          console.log("No authenticated user");
-          return null;
-        }
-        return user.uid;
-      }
-
-      function loadOrdersFromFirebase() {
-        showLoadingState();
-        
-        const userId = getCurrentUserId();
-        if (!userId) {
-          console.log("No user ID available");
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          loadOrdersFromFirebase(user.uid);
+        } else {
           showEmptyState();
-          return;
+          console.log("No user signed in");
         }
+      });
+
+      function loadOrdersFromFirebase(userId) {
+        showLoadingState();
         
         console.log("Loading orders for user:", userId);
         
@@ -466,10 +488,14 @@
           year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
 
-        const status = order.status || 'Processing';
+        const status = order.order_status || 'Processing';
         const statusClass = getStatusClass(status);
 
         const totalItems = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 1), 0) : 0;
+
+        // Payment status and method
+        const paymentStatus = order.payment_status || 'Pending';
+        const paymentMethod = order.payment_mode || 'Pay on Delivery';
 
         // Build items HTML
         let itemsHTML = '';
@@ -484,10 +510,20 @@
           itemsHTML = '<div class="order-item">No items found</div>';
         }
 
+        // Delivery information
+        let deliveryInfo = '';
+        if (order.deliveryPerson) {
+          deliveryInfo = `
+            <div class="delivery-person">
+              <i class="fas fa-motorcycle"></i> Delivery by: <strong>${order.deliveryPerson}</strong>
+            </div>
+          `;
+        }
+
         orderElement.innerHTML = `
           <div class="order-header">
             <div>
-              <span class="order-id">Order #${order.id || 'N/A'}</span>
+              <span class="order-id">Order #${order.id.substring(0, 8)}</span>
               <div class="order-date">${formattedDate}</div>
             </div>
             <span class="order-status ${statusClass}">${status}</span>
@@ -499,9 +535,23 @@
             ${itemsHTML}
             <div class="order-total">
               <span class="total-label">Total Amount</span>
-              <span class="total-amount">₹${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+              <span class="total-amount">₹${parseFloat(order.totalAmount || order.total || 0).toFixed(2)}</span>
             </div>
-            <div class="payment-method">Paid via <span>${order.paymentMethod || 'Unknown Method'}</span></div>
+            
+            <div class="payment-info">
+              <div class="payment-method">
+                <i class="fas fa-credit-card payment-icon"></i>
+                <span>${paymentMethod}</span>
+              </div>
+              <div class="payment-status">
+                <span class="payment-status-icon ${paymentStatus === 'Paid' ? 'status-paid' : 'status-pending'}">
+                  <i class="fas fa-${paymentStatus === 'Paid' ? 'check' : 'clock'}"></i>
+                </span>
+                <span>Payment ${paymentStatus}</span>
+              </div>
+              ${deliveryInfo}
+            </div>
+            
             <a href="order-details.html?orderId=${order.id}" class="btn-track">
               ${status === 'Delivered' ? 'View Details' : 'Track Order'}
             </a>
@@ -532,6 +582,7 @@
         if (status.includes('pending')) return 'status-pending';
         if (status.includes('cancelled')) return 'status-cancelled';
         if (status.includes('shipped')) return 'status-shipped';
+        if (status.includes('placed')) return 'status-processing';
         return 'status-processing';
       }
     });
