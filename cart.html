@@ -738,7 +738,7 @@
       }
     }
 
-    // Address Validation
+    // Address Validation - Fixed Version
     async function validateAddress() {
       const doorNo = document.getElementById("doorNo").value.trim();
       const street = document.getElementById("street").value.trim();
@@ -770,7 +770,7 @@
         isValid = false;
       }
       
-      if (!pincode.match(/^\d{6}$/) || !pincode.startsWith('56') && !pincode.startsWith('57') && !pincode.startsWith('58') && !pincode.startsWith('59') && !pincode.startsWith('60')) {
+      if (!pincode.match(/^\d{6}$/) || !(pincode.startsWith('56') || pincode.startsWith('57') || pincode.startsWith('58') || pincode.startsWith('59') || pincode.startsWith('60'))) {
         document.getElementById("pincodeError").style.display = "block";
         errorEl.textContent = "We only deliver in Bangalore (Pincodes: 56xxxx-60xxxx)";
         isValid = false;
@@ -811,6 +811,7 @@
       
       // Display saved address after delay
       setTimeout(() => {
+        successEl.style.display = "none";
         if (currentUser) {
           displaySavedAddress();
         } else {
@@ -938,7 +939,8 @@
         loadCart();
         
         // For guest users, check if we have address in localStorage
-        if (localStorage.getItem("deliveryAddress")) {
+        const savedAddress = localStorage.getItem("deliveryAddress");
+        if (savedAddress) {
           document.getElementById("addressSection").classList.add("hidden");
         } else {
           document.getElementById("addressSection").classList.remove("hidden");
