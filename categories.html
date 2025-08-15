@@ -34,27 +34,28 @@
     }
 
     body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(-45deg, #d4fc79, #96e6a1, #a1f6f9, #e0ffe6);
-  background-size: 400% 400%;
-  animation: gradientBG 12s ease infinite;
-  color: #1e1e1e;
-  overflow-x: hidden;
-  padding-bottom: 80px;
-}
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #d4fc79, #96e6a1, #a1f6f9, #e0ffe6);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+      color: #1e1e1e;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
 
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    
     .topbar {
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
@@ -284,11 +285,43 @@
       margin-bottom: 15px;
     }
 
+    .product-unit {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
     .quantity-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-top: auto;
+    }
+
+    .weight-controls {
+      display: flex;
+      flex-direction: column;
+      margin-top: auto;
+    }
+
+    .weight-input-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .weight-input {
+      width: 60px;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-align: center;
+      margin-right: 5px;
+    }
+
+    .weight-unit {
+      font-size: 12px;
+      color: #666;
     }
 
     .quantity-btn {
@@ -453,6 +486,7 @@
     .meat-banner { background-color: var(--meat); }
     .cleaning-banner { background-color: var(--cleaning); }
     .babyCare-banner { background-color: var(--babyCare); }
+    
     @media (max-width: 768px) {
       .topbar {
         flex-direction: column;
@@ -511,85 +545,82 @@
       </div>
       
       <!-- Categories Grid -->
-<div class="categories-grid">
-  
-  <div class="category-card" data-category="fruits">
-    <div class="category-badge">Popular</div>
-    <img src="fruits.jpeg" alt="Fruits" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Fresh Fruits</h3>
-      <p class="category-count">120+ items</p>
-    </div>
-  </div>
+      <div class="categories-grid">
+        <div class="category-card" data-category="fruits">
+          <div class="category-badge">Popular</div>
+          <img src="fruits.jpeg" alt="Fruits" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Fresh Fruits</h3>
+            <p class="category-count">120+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="vegetables">
-    <img src="vegetables.jpeg" alt="Vegetables" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Vegetables</h3>
-      <p class="category-count">85+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="vegetables">
+          <img src="vegetables.jpeg" alt="Vegetables" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Vegetables</h3>
+            <p class="category-count">85+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="dairy">
-    <div class="category-badge">New</div>
-    <img src="dairy.jpeg" alt="Dairy" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Dairy & Eggs</h3>
-      <p class="category-count">65+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="dairy">
+          <div class="category-badge">New</div>
+          <img src="dairy.jpeg" alt="Dairy" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Dairy & Eggs</h3>
+            <p class="category-count">65+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="bakery">
-    <img src="bakery.jpeg" alt="Bakery" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Bakery</h3>
-      <p class="category-count">45+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="bakery">
+          <img src="bakery.jpeg" alt="Bakery" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Bakery</h3>
+            <p class="category-count">45+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="beverages">
-    <img src="beverages.jpeg" alt="Beverages" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Beverages</h3>
-      <p class="category-count">110+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="beverages">
+          <img src="beverages.jpeg" alt="Beverages" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Beverages</h3>
+            <p class="category-count">110+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="snacks">
-    <div class="category-badge">Sale</div>
-    <img src="snacks.jpeg" alt="Snacks" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Snacks</h3>
-      <p class="category-count">95+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="snacks">
+          <div class="category-badge">Sale</div>
+          <img src="snacks.jpeg" alt="Snacks" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Snacks</h3>
+            <p class="category-count">95+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="meat">
-    <img src="meat.jpeg" alt="Meat" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Meat & Fish</h3>
-      <p class="category-count">55+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="meat">
+          <img src="meat.jpeg" alt="Meat" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Meat & Fish</h3>
+            <p class="category-count">55+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="cleaning">
-    <img src="cleaning.jpeg" alt="Cleaning" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Cleaning</h3>
-      <p class="category-count">75+ items</p>
-    </div>
-  </div>
+        <div class="category-card" data-category="cleaning">
+          <img src="cleaning.jpeg" alt="Cleaning" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Cleaning</h3>
+            <p class="category-count">75+ items</p>
+          </div>
+        </div>
 
-  <div class="category-card" data-category="babyCare">
-    <img src="babycare.jpeg" alt="Baby Care" class="category-image">
-    <div class="category-info">
-      <h3 class="category-name">Baby Care</h3>
-      <p class="category-count">50+ items</p>
-    </div>
-  </div>
-
-</div>
-
+        <div class="category-card" data-category="babyCare">
+          <img src="babycare.jpeg" alt="Baby Care" class="category-image">
+          <div class="category-info">
+            <h3 class="category-name">Baby Care</h3>
+            <p class="category-count">50+ items</p>
+          </div>
+        </div>
+      </div>
       
       <!-- Trending Products Section -->
       <div class="trending-section">
@@ -602,11 +633,13 @@
           <div class="product-card">
             <img src="watermelon.jpeg" alt="Watermelon" class="product-image">
             <h3 class="product-name">Fresh Watermelon</h3>
-            <p class="product-price">₹40</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
+            <p class="product-price">₹40/kg</p>
+            <p class="product-unit">(per kg)</p>
+            <div class="weight-controls">
+              <div class="weight-input-container">
+                <input type="number" min="0.1" step="0.1" value="1" class="weight-input">
+                <span class="weight-unit">kg</span>
+              </div>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
@@ -614,11 +647,13 @@
           <div class="product-card">
             <img src="apple.jpeg" alt="Apple" class="product-image">
             <h3 class="product-name">Red Apple</h3>
-            <p class="product-price">₹100</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
+            <p class="product-price">₹100/kg</p>
+            <p class="product-unit">(per kg)</p>
+            <div class="weight-controls">
+              <div class="weight-input-container">
+                <input type="number" min="0.1" step="0.1" value="1" class="weight-input">
+                <span class="weight-unit">kg</span>
+              </div>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
@@ -626,7 +661,8 @@
           <div class="product-card">
             <img src="banana.jpeg" alt="Banana" class="product-image">
             <h3 class="product-name">Banana</h3>
-            <p class="product-price">₹45</p>
+            <p class="product-price">₹45/dozen</p>
+            <p class="product-unit">(per dozen)</p>
             <div class="quantity-controls">
               <button class="quantity-btn minus-btn">-</button>
               <span class="quantity-display">0</span>
@@ -636,37 +672,41 @@
           </div>
           
           <div class="product-card">
-      <img src="maggi.jpeg" alt="Maggi" class="product-image">
-      <h3 class="product-name">Maggi Noodles</h3>
-      <p class="product-price">₹25</p>
-      <div class="quantity-controls">
-        <button class="quantity-btn minus-btn">-</button>
-        <span class="quantity-display">0</span>
-        <button class="quantity-btn plus-btn">+</button>
-      </div>
-      <button class="add-to-cart">Add to Cart</button>
-    </div>
-
-<div class="product-card">
-      <img src="chocobar.jpeg" alt="Choco Bar" class="product-image">
-      <h3 class="product-name">Choco Bar Ice Cream</h3>
-      <p class="product-price">₹25</p>
-      <div class="quantity-controls">
-        <button class="quantity-btn minus-btn">-</button>
-        <span class="quantity-display">0</span>
-        <button class="quantity-btn plus-btn">+</button>
-      </div>
-      <button class="add-to-cart">Add to Cart</button>
-    </div>
-
-           <div class="product-card">
-            <img src="tomato.jpeg" alt="Tomato" class="product-image">
-            <h3 class="product-name">Tomato-nati</h3>
-            <p class="product-price">₹20</p>
+            <img src="maggi.jpeg" alt="Maggi" class="product-image">
+            <h3 class="product-name">Maggi Noodles</h3>
+            <p class="product-price">₹25/pack</p>
+            <p class="product-unit">(per pack)</p>
             <div class="quantity-controls">
               <button class="quantity-btn minus-btn">-</button>
               <span class="quantity-display">0</span>
               <button class="quantity-btn plus-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+
+          <div class="product-card">
+            <img src="chocobar.jpeg" alt="Choco Bar" class="product-image">
+            <h3 class="product-name">Choco Bar Ice Cream</h3>
+            <p class="product-price">₹25/piece</p>
+            <p class="product-unit">(per piece)</p>
+            <div class="quantity-controls">
+              <button class="quantity-btn minus-btn">-</button>
+              <span class="quantity-display">0</span>
+              <button class="quantity-btn plus-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+
+          <div class="product-card">
+            <img src="tomato.jpeg" alt="Tomato" class="product-image">
+            <h3 class="product-name">Tomato-nati</h3>
+            <p class="product-price">₹20/kg</p>
+            <p class="product-unit">(per kg)</p>
+            <div class="weight-controls">
+              <div class="weight-input-container">
+                <input type="number" min="0.1" step="0.1" value="1" class="weight-input">
+                <span class="weight-unit">kg</span>
+              </div>
             </div>
             <button class="add-to-cart">Add to Cart</button>
           </div>
@@ -674,7 +714,22 @@
           <div class="product-card">
             <img src="milk.jpeg" alt="Milk" class="product-image">
             <h3 class="product-name">Nandini Milk</h3>
-            <p class="product-price">₹27</p>
+            <p class="product-price">₹27/liter</p>
+            <p class="product-unit">(per liter)</p>
+            <div class="weight-controls">
+              <div class="weight-input-container">
+                <input type="number" min="0.5" step="0.5" value="1" class="weight-input">
+                <span class="weight-unit">liter</span>
+              </div>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+
+          <div class="product-card">
+            <img src="garlic-bread.jpeg" alt="Garlic Bread" class="product-image">
+            <h3 class="product-name">Garlic Bread</h3>
+            <p class="product-price">₹45/pack</p>
+            <p class="product-unit">(per pack)</p>
             <div class="quantity-controls">
               <button class="quantity-btn minus-btn">-</button>
               <span class="quantity-display">0</span>
@@ -684,40 +739,30 @@
           </div>
 
           <div class="product-card">
-      <img src="garlic-bread.jpeg" alt="Garlic Bread" class="product-image">
-      <h3 class="product-name">Garlic Bread</h3>
-      <p class="product-price">₹45</p>
-      <div class="quantity-controls">
-        <button class="quantity-btn minus-btn">-</button>
-        <span class="quantity-display">0</span>
-        <button class="quantity-btn plus-btn">+</button>
-      </div>
-      <button class="add-to-cart">Add to Cart</button>
-    </div>
-
- <div class="product-card">
-      <img src="french-fries.jpeg" alt="French Fries" class="product-image">
-      <h3 class="product-name">Frozen French Fries</h3>
-      <p class="product-price">₹99</p>
-      <div class="quantity-controls">
-        <button class="quantity-btn minus-btn">-</button>
-        <span class="quantity-display">0</span>
-        <button class="quantity-btn plus-btn">+</button>
-      </div>
-      <button class="add-to-cart">Add to Cart</button>
-</div>
+            <img src="french-fries.jpeg" alt="French Fries" class="product-image">
+            <h3 class="product-name">Frozen French Fries</h3>
+            <p class="product-price">₹99/pack</p>
+            <p class="product-unit">(per 500g pack)</p>
+            <div class="quantity-controls">
+              <button class="quantity-btn minus-btn">-</button>
+              <span class="quantity-display">0</span>
+              <button class="quantity-btn plus-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
 
           <div class="product-card">
-      <img src="greek-yogurt.jpeg" alt="Greek Yogurt" class="product-image">
-      <h3 class="product-name">Greek Yogurt</h3>
-      <p class="product-price">₹60</p>
-      <div class="quantity-controls">
-        <button class="quantity-btn minus-btn">-</button>
-        <span class="quantity-display">0</span>
-        <button class="quantity-btn plus-btn">+</button>
-      </div>
-      <button class="add-to-cart">Add to Cart</button>
-    </div>
+            <img src="greek-yogurt.jpeg" alt="Greek Yogurt" class="product-image">
+            <h3 class="product-name">Greek Yogurt</h3>
+            <p class="product-price">₹60/pack</p>
+            <p class="product-unit">(per 200g pack)</p>
+            <div class="quantity-controls">
+              <button class="quantity-btn minus-btn">-</button>
+              <span class="quantity-display">0</span>
+              <button class="quantity-btn plus-btn">+</button>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
         </div>
       </div>
     </div>
@@ -809,22 +854,22 @@
         </div>
       </div>
       
-<div class="category-banner babycare-banner" id="babyCareBanner" style="display:none;">
-  <div class="banner-icon">
-    <i class="fas fa-baby"></i>
-  </div>
-  <div class="banner-text">
-    <h2 class="banner-title">Baby Care</h2>
-    <p>Gentle care for your little one! Discover trusted baby products including diapers, baby lotion, shampoo, and baby food – everything your baby needs for comfort and health.</p>
-  </div>
-</div>
+      <div class="category-banner babycare-banner" id="babyCareBanner" style="display:none;">
+        <div class="banner-icon">
+          <i class="fas fa-baby"></i>
+        </div>
+        <div class="banner-text">
+          <h2 class="banner-title">Baby Care</h2>
+          <p>Gentle care for your little one! Discover trusted baby products including diapers, baby lotion, shampoo, and baby food – everything your baby needs for comfort and health.</p>
+        </div>
+      </div>
 
       <!-- Category Products Container -->
       <div class="category-products" id="categoryProducts"></div>
     </div>
   </div>
   
-   <!-- Bottom Navigation -->
+  <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
       <i class="fas fa-home"></i>
@@ -839,7 +884,7 @@
       <span>Cart</span>
     </a>
 
-     <a href="payment.html" class="nav-item">
+    <a href="payment.html" class="nav-item">
       <i class="fas fa-credit-card"></i>
       <span>Payment</span>
     </a>
@@ -856,10 +901,6 @@
   </div>
 
   <script>
-
-
-
-
     // Cart functionality
     let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
     
@@ -887,6 +928,14 @@
       
       // Initialize quantity controls and cart buttons
       attachEventListeners();
+      
+      // Initialize search functionality
+      const searchInput = document.querySelector('.search-bar input');
+      const searchIcon = document.querySelector('.search-bar i');
+      const categoryCards = document.querySelectorAll('.category-card');
+      
+      searchInput.addEventListener('input', filterCategories);
+      searchIcon.addEventListener('click', filterCategories);
     });
     
     function showCategory(category) {
@@ -929,126 +978,147 @@
       // Sample products data - in real app you would fetch this from backend
       const productsData = {
         fruits: [
-          { name: 'Apple', price: 100, image: 'apple.jpeg' },
-          { name: 'Banana', price: 45, image: 'banana.jpeg' },
-          { name: 'Watermelon', price: 40, image: 'watermelon.jpeg' },
-          { name: 'Orange', price: 60, image: 'orange.jpeg' },
-          { name: 'Grapes', price: 80, image: 'grapes.jpeg' },
-          { name: 'Mango', price: 120, image: 'mango.jpeg' },
-          { name: 'Pineapple', price: 50, image: 'pineapple.jpeg' },
-          { name: 'Pomegranate', price: 90, image: 'pomegranate.jpeg' }
+          { name: 'Apple', price: 100, image: 'apple.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Banana', price: 45, image: 'banana.jpeg', type: 'count', unit: 'dozen' },
+          { name: 'Watermelon', price: 40, image: 'watermelon.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Orange', price: 60, image: 'orange.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Grapes', price: 80, image: 'grapes.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Mango', price: 120, image: 'mango.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Pineapple', price: 50, image: 'pineapple.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Pomegranate', price: 90, image: 'pomegranate.jpeg', type: 'weight', unit: 'kg' }
         ],
         vegetables: [
-          { name: 'Tomato-nati', price: 20, image: 'tomato.jpeg' },
-          { name: 'Potato', price: 30, image: 'potato.jpeg' },
-          { name: 'Onion', price: 25, image: 'onion.jpeg' },
-          { name: 'Carrot', price: 35, image: 'carrot.jpeg' },
-          { name: 'Cabbage', price: 40, image: 'cabbage.jpeg' },
-          { name: 'Cauliflower', price: 45, image: 'cauliflower.jpeg' },
-          { name: 'Brinjal', price: 30, image: 'brinjal.jpeg' },
-          { name: 'Cucumber', price: 25, image: 'cucumber.jpeg' }
+          { name: 'Tomato-nati', price: 20, image: 'tomato.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Potato', price: 30, image: 'potato.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Onion', price: 25, image: 'onion.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Carrot', price: 35, image: 'carrot.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Cabbage', price: 40, image: 'cabbage.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Cauliflower', price: 45, image: 'cauliflower.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Brinjal', price: 30, image: 'brinjal.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Cucumber', price: 25, image: 'cucumber.jpeg', type: 'count', unit: 'piece' }
         ],
         dairy: [
-          { name: 'Milk', price: 27, image: 'milk.jpeg' },
-          { name: 'Cheese', price: 60, image: 'cheese.jpeg' },
-          { name: 'Amul butter', price: 110, image: 'butter.jpeg' },
-          { name: 'Yogurt', price: 40, image: 'greek-yogurt.jpeg' },
-          { name: 'Paneer', price: 80, image: 'paneer.jpeg' },
-          { name: 'Nati-eggs (Dozen)', price: 100, image: 'eggs.jpeg' },
-          { name: 'Veeba-mayonnaise', price: 70, image: 'mayonnaise.jpeg' },
-          { name: 'Ghee', price: 320, image: 'ghee.jpeg' }
+          { name: 'Milk', price: 27, image: 'milk.jpeg', type: 'weight', unit: 'liter' },
+          { name: 'Cheese', price: 60, image: 'cheese.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Amul butter', price: 110, image: 'butter.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Yogurt', price: 40, image: 'greek-yogurt.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Paneer', price: 80, image: 'paneer.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Nati-eggs (Dozen)', price: 100, image: 'eggs.jpeg', type: 'count', unit: 'dozen' },
+          { name: 'Veeba-mayonnaise', price: 70, image: 'mayonnaise.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Ghee', price: 320, image: 'ghee.jpeg', type: 'count', unit: 'bottle' }
         ],
         bakery: [
-          { name: 'White Bread', price: 35, image: 'bread.jpeg' },
-          { name: 'Brown Bread', price: 40, image: 'brown-bread.jpeg' },
-          { name: 'Croissant', price: 25, image: 'croissant.jpeg' },
-          { name: 'Donut', price: 30, image: 'donut.jpeg' },
-          { name: 'Cake Slice', price: 50, image: 'cake.jpeg' },
-          { name: 'Cookies', price: 60, image: 'cookies.jpeg' },
-          { name: 'Buns', price: 60, image: 'buns.jpeg' },
-          { name: 'Garlic Bread', price: 45, image: 'garlic-bread.jpeg' }
+          { name: 'White Bread', price: 35, image: 'bread.jpeg', type: 'count', unit: 'loaf' },
+          { name: 'Brown Bread', price: 40, image: 'brown-bread.jpeg', type: 'count', unit: 'loaf' },
+          { name: 'Croissant', price: 25, image: 'croissant.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Donut', price: 30, image: 'donut.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Cake Slice', price: 50, image: 'cake.jpeg', type: 'count', unit: 'slice' },
+          { name: 'Cookies', price: 60, image: 'cookies.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Buns', price: 60, image: 'buns.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Garlic Bread', price: 45, image: 'garlic-bread.jpeg', type: 'count', unit: 'pack' }
         ],
         beverages: [
-          { name: 'Mineral Water', price: 20, image: 'water.jpeg' },
-          { name: 'Orange Juice', price: 60, image: 'orange-juice.jpeg' },
-          { name: 'Frooti', price: 85, image: 'frooti.jpeg' },
-          { name: 'Soda', price: 40, image: 'soda.jpeg' },
-          { name: 'Green Tea', price: 80, image: 'green-tea.jpeg' },
-          { name: 'Nescafe Coffee', price: 45, image: 'coffee.jpeg' },
-          { name: 'Red Bull', price: 70, image: 'red-bull.jpeg' },
-          { name: 'sprite', price: 40, image: 'sprite.jpeg' },
-          { name: 'Thums Up', price: 40, image: 'thumsup.jpeg' },
-          { name: 'Bindu', price: 40, image: 'bindu.jpeg' },
-          { name: 'Coca-cola', price: 40, image: 'coca-cola.jpeg' }
+          { name: 'Mineral Water', price: 20, image: 'water.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Orange Juice', price: 60, image: 'orange-juice.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Frooti', price: 85, image: 'frooti.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Soda', price: 40, image: 'soda.jpeg', type: 'count', unit: 'can' },
+          { name: 'Green Tea', price: 80, image: 'green-tea.jpeg', type: 'count', unit: 'box' },
+          { name: 'Nescafe Coffee', price: 45, image: 'coffee.jpeg', type: 'count', unit: 'jar' },
+          { name: 'Red Bull', price: 70, image: 'red-bull.jpeg', type: 'count', unit: 'can' },
+          { name: 'Sprite', price: 40, image: 'sprite.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Thums Up', price: 40, image: 'thumsup.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Bindu', price: 40, image: 'bindu.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Coca-cola', price: 40, image: 'coca-cola.jpeg', type: 'count', unit: 'bottle' }
         ],
         snacks: [
-          { name: 'Lays pack', price: 40, image: 'chips.jpeg' },
-          { name: 'Dairy milk', price: 350, image: 'choclate.jpeg' },
-          { name: 'Biscuits', price: 165, image: 'orio-buiscuits.jpeg' },
-         { name: 'KurKure pack', price: 35, image: 'kurkure.jpeg' },
-          { name: 'ACT Ⅱ popcorn', price: 100, image: 'popcorn.jpeg' },
-          { name: 'Nuts Mix', price: 290, image: 'mixed-nuts.jpeg' },
-          { name: 'Indian snacks', price: 35, image: 'ind-snacks.jpeg' },
-           { name: 'Maggi pack', price: 50, image: 'maggi-pack.jpeg' },
-          { name: 'Choclate pack ', price: 400, image: 'candy.jpeg' },
-          { name: 'Pringles pack', price: 20, image: 'pringles.jpeg' },
-          { name: 'Dried Fruits', price: 1810, image: 'dried-fruits.jpeg' }
+          { name: 'Lays pack', price: 40, image: 'chips.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Dairy milk', price: 350, image: 'choclate.jpeg', type: 'count', unit: 'bar' },
+          { name: 'Biscuits', price: 165, image: 'orio-buiscuits.jpeg', type: 'count', unit: 'pack' },
+          { name: 'KurKure pack', price: 35, image: 'kurkure.jpeg', type: 'count', unit: 'pack' },
+          { name: 'ACT Ⅱ popcorn', price: 100, image: 'popcorn.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Nuts Mix', price: 290, image: 'mixed-nuts.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Indian snacks', price: 35, image: 'ind-snacks.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Maggi pack', price: 50, image: 'maggi-pack.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Choclate pack', price: 400, image: 'candy.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Pringles pack', price: 20, image: 'pringles.jpeg', type: 'count', unit: 'can' },
+          { name: 'Dried Fruits', price: 1810, image: 'dried-fruits.jpeg', type: 'weight', unit: 'kg' }
         ],
         meat: [
-          { name: 'Chicken Breast', price: 150, image: 'chicken.jpeg' },
-          { name: 'Mutton', price: 250, image: 'mutton.jpeg' },
-          { name: 'Fish Fillet', price: 180, image: 'fish.jpeg' },
-          { name: 'Prawns', price: 220, image: 'prawns.jpeg' },
-          { name: 'Eggs (Dozen)', price: 70, image: 'eggs.jpeg' },
-          { name: 'Sausages', price: 120, image: 'sausages.jpeg' },
-          { name: 'Chicken', price: 200, image: 'tandoori.jpeg' },
-          { name: 'Chicken Wings', price: 130, image: 'wings.jpeg' }
+          { name: 'Chicken Breast', price: 150, image: 'chicken.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Mutton', price: 250, image: 'mutton.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Fish Fillet', price: 180, image: 'fish.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Prawns', price: 220, image: 'prawns.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Eggs (Dozen)', price: 70, image: 'eggs.jpeg', type: 'count', unit: 'dozen' },
+          { name: 'Sausages', price: 120, image: 'sausages.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Chicken', price: 200, image: 'tandoori.jpeg', type: 'weight', unit: 'kg' },
+          { name: 'Chicken Wings', price: 130, image: 'wings.jpeg', type: 'weight', unit: 'kg' }
         ],
         cleaning: [
-          { name: 'Dish Soap', price: 45, image: 'dish-soap.jpeg' },
-          { name: 'Laundry Detergent', price: 90, image: 'detergent.jpeg' },
-          { name: 'Floor Cleaner', price: 270, image: 'floor-cleaner.jpeg' },
-          { name: 'Glass Cleaner', price: 60, image: 'glass-cleaner.jpeg' },
-          { name: 'Disinfectant', price: 80, image: 'disinfectant.jpeg' },
-          { name: 'Broom', price: 120, image: 'broom.jpeg' },
-          { name: 'Mop', price: 1990, image: 'mop.jpeg' },
-          { name: 'Bucket-mug', price: 109, image: 'bucket.jpeg' },
-          { name: 'Harpic', price: 200, image: 'harpic.jpeg' },
-          { name: 'Bathroom-brush', price: 129, image: 'bathroom-brush.jpeg' },
-          { name: 'Soap', price: 150, image: 'soap.jpeg' },
-          { name: 'Rin', price: 20, image: 'Rin.jpeg' },
-          { name: 'Colour-dye', price: 150, image: 'color-dye.jpeg' },
-          { name: 'Dish washing brush', price: 50, image: 'dish-washer.jpeg' },
-          { name: 'Trash Bags', price: 40, image: 'trash-bags.jpeg' }
+          { name: 'Dish Soap', price: 45, image: 'dish-soap.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Laundry Detergent', price: 90, image: 'detergent.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Floor Cleaner', price: 270, image: 'floor-cleaner.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Glass Cleaner', price: 60, image: 'glass-cleaner.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Disinfectant', price: 80, image: 'disinfectant.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Broom', price: 120, image: 'broom.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Mop', price: 1990, image: 'mop.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Bucket-mug', price: 109, image: 'bucket.jpeg', type: 'count', unit: 'set' },
+          { name: 'Harpic', price: 200, image: 'harpic.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Bathroom-brush', price: 129, image: 'bathroom-brush.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Soap', price: 150, image: 'soap.jpeg', type: 'count', unit: 'bar' },
+          { name: 'Rin', price: 20, image: 'Rin.jpeg', type: 'count', unit: 'bar' },
+          { name: 'Colour-dye', price: 150, image: 'color-dye.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Dish washing brush', price: 50, image: 'dish-washer.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Trash Bags', price: 40, image: 'trash-bags.jpeg', type: 'count', unit: 'pack' }
         ],
         babyCare: [
-           { name: 'Pampers Diapers - Small Pack', price: 299, image: 'pampers-small.jpeg' },
-           { name: 'Huggies Baby Wipes (72 pcs)', price: 175, image: 'huggies-wipes.jpeg' },
-           { name: 'Johnson\'s Baby Lotion 200ml', price: 165, image: 'johnsons-lotion.jpeg' },
-           { name: 'Himalaya Baby Powder 100g', price: 80, image: 'himalaya-powder.jpeg' },
-           { name: 'Nestle Cerelac Wheat 300g', price: 210, image: 'cerelac.jpeg' },
-          { name: 'Johnson\'s Baby Soap 100g', price: 55, image: 'baby-soap.jpeg' },
-           { name: 'Mee Mee Feeding Bottle 250ml', price: 199, image: 'mee-bottle.jpeg' },
-           { name: 'Baby Oil (Johnson\'s) 100ml', price: 95, image: 'baby-oil.jpeg' },
-           { name: 'Chicco Baby Shampoo 200ml', price: 180, image: 'chicco-shampoo.jpeg' }
-]
-};
+          { name: 'Pampers Diapers - Small Pack', price: 299, image: 'pampers-small.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Huggies Baby Wipes (72 pcs)', price: 175, image: 'huggies-wipes.jpeg', type: 'count', unit: 'pack' },
+          { name: 'Johnson\'s Baby Lotion 200ml', price: 165, image: 'johnsons-lotion.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Himalaya Baby Powder 100g', price: 80, image: 'himalaya-powder.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Nestle Cerelac Wheat 300g', price: 210, image: 'cerelac.jpeg', type: 'count', unit: 'box' },
+          { name: 'Johnson\'s Baby Soap 100g', price: 55, image: 'baby-soap.jpeg', type: 'count', unit: 'bar' },
+          { name: 'Mee Mee Feeding Bottle 250ml', price: 199, image: 'mee-bottle.jpeg', type: 'count', unit: 'piece' },
+          { name: 'Baby Oil (Johnson\'s) 100ml', price: 95, image: 'baby-oil.jpeg', type: 'count', unit: 'bottle' },
+          { name: 'Chicco Baby Shampoo 200ml', price: 180, image: 'chicco-shampoo.jpeg', type: 'count', unit: 'bottle' }
+        ]
+      };
       
       if (productsData[category]) {
         productsData[category].forEach(product => {
           const productCard = document.createElement('div');
           productCard.className = 'product-card';
-          productCard.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="product-image">
-            <h3 class="product-name">${product.name}</h3>
-            <p class="product-price">₹${product.price}</p>
-            <div class="quantity-controls">
-              <button class="quantity-btn minus-btn">-</button>
-              <span class="quantity-display">0</span>
-              <button class="quantity-btn plus-btn">+</button>
-            </div>
-            <button class="add-to-cart">Add to Cart</button>
-          `;
+          
+          if (product.type === 'weight') {
+            // Weight-based product (per kg, per liter, etc.)
+            productCard.innerHTML = `
+              <img src="${product.image}" alt="${product.name}" class="product-image">
+              <h3 class="product-name">${product.name}</h3>
+              <p class="product-price">₹${product.price}/${product.unit}</p>
+              <p class="product-unit">(per ${product.unit})</p>
+              <div class="weight-controls">
+                <div class="weight-input-container">
+                  <input type="number" min="0.1" step="0.1" value="1" class="weight-input">
+                  <span class="weight-unit">${product.unit}</span>
+                </div>
+              </div>
+              <button class="add-to-cart">Add to Cart</button>
+            `;
+          } else {
+            // Count-based product (per piece, per pack, etc.)
+            productCard.innerHTML = `
+              <img src="${product.image}" alt="${product.name}" class="product-image">
+              <h3 class="product-name">${product.name}</h3>
+              <p class="product-price">₹${product.price}/${product.unit}</p>
+              <p class="product-unit">(per ${product.unit})</p>
+              <div class="quantity-controls">
+                <button class="quantity-btn minus-btn">-</button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn plus-btn">+</button>
+              </div>
+              <button class="add-to-cart">Add to Cart</button>
+            `;
+          }
+          
           productsContainer.appendChild(productCard);
         });
         
@@ -1058,7 +1128,7 @@
     }
     
     function attachEventListeners() {
-      // Quantity controls
+      // Quantity controls for count-based products
       document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', function() {
           const productCard = this.closest('.product-card');
@@ -1075,15 +1145,30 @@
         });
       });
       
-      // Add to cart functionality
+      // Add to cart functionality for all products
       document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', function() {
           const productCard = this.closest('.product-card');
           const productName = productCard.querySelector('.product-name').textContent;
-          const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace('₹', ''));
-          const quantity = parseInt(productCard.querySelector('.quantity-display').textContent);
+          const priceText = productCard.querySelector('.product-price').textContent;
+          const basePrice = parseFloat(priceText.replace(/[^0-9.]/g, ''));
           
-          if (quantity === 0) {
+          let quantity, unit, totalPrice;
+          
+          // Check if it's a weight-based product
+          const weightInput = productCard.querySelector('.weight-input');
+          if (weightInput) {
+            quantity = parseFloat(weightInput.value);
+            unit = productCard.querySelector('.weight-unit').textContent;
+            totalPrice = basePrice * quantity;
+          } else {
+            // It's a count-based product
+            quantity = parseInt(productCard.querySelector('.quantity-display').textContent);
+            unit = productCard.querySelector('.product-unit').textContent.replace('(per ', '').replace(')', '');
+            totalPrice = basePrice * quantity;
+          }
+          
+          if (quantity === 0 || isNaN(quantity)) {
             showToast('Please select quantity', 'var(--warning)');
             return;
           }
@@ -1092,11 +1177,14 @@
           const existingItem = cart.find(item => item.name === productName);
           if (existingItem) {
             existingItem.quantity += quantity;
+            existingItem.totalPrice += totalPrice;
           } else {
             cart.push({
               name: productName,
-              price: productPrice,
+              price: basePrice,
               quantity: quantity,
+              totalPrice: totalPrice,
+              unit: unit,
               image: productCard.querySelector('.product-image').src
             });
           }
@@ -1105,9 +1193,13 @@
           localStorage.setItem('cartItems', JSON.stringify(cart));
           
           // Reset quantity
-          productCard.querySelector('.quantity-display').textContent = '0';
+          if (weightInput) {
+            weightInput.value = weightInput.min || '1';
+          } else {
+            productCard.querySelector('.quantity-display').textContent = '0';
+          }
           
-          showToast(`${productName} (${quantity}) added to cart`, 'var(--success)');
+          showToast(`${productName} (${quantity} ${unit}) added to cart`, 'var(--success)');
         });
       });
     }
@@ -1134,31 +1226,22 @@
       }, 3000);
     }
 
-    const searchInput = document.querySelector('.search-bar input');
-const searchIcon = document.querySelector('.search-bar i');
-const categoryCards = document.querySelectorAll('.category-card');
-
-// 2. Add event listeners for both keyboard and click search
-searchInput.addEventListener('input', filterCategories);
-searchIcon.addEventListener('click', filterCategories);
-
-// 3. Search filtering function
-function filterCategories() {
-  const searchTerm = searchInput.value.toLowerCase();
-  
-  categoryCards.forEach(card => {
-    const categoryName = card.querySelector('.category-name').textContent.toLowerCase();
-    const categoryCount = card.querySelector('.category-count').textContent.toLowerCase();
-    
-    // Check if search term matches name or count
-    if (categoryName.includes(searchTerm) || categoryCount.includes(searchTerm)) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
+    // Search filtering function
+    function filterCategories() {
+      const searchTerm = searchInput.value.toLowerCase();
+      
+      categoryCards.forEach(card => {
+        const categoryName = card.querySelector('.category-name').textContent.toLowerCase();
+        const categoryCount = card.querySelector('.category-count').textContent.toLowerCase();
+        
+        // Check if search term matches name or count
+        if (categoryName.includes(searchTerm) || categoryCount.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
-  });
-}
-
   </script>
 </body>
 </html>
