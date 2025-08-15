@@ -29,28 +29,28 @@
       padding: 0;
     }
 
-   body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(-45deg, #e0ffe6, #ccf5ff, #fef6ff, #b2f7ef);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
-  color: #222;
-  overflow-x: hidden;
-  padding-bottom: 80px;
-}
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #e0ffe6, #ccf5ff, #fef6ff, #b2f7ef);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #222;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
 
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 
     .topbar {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -553,7 +553,7 @@
       padding: 10px 15px;
     }
 
- .scroll-container {
+    .scroll-container {
       display: flex;
       overflow-x: auto;
       gap: 1rem;
@@ -1110,8 +1110,9 @@
     <a href="cart.html" class="nav-item">
       <i class="fas fa-shopping-cart"></i>
       <span>Cart</span>
+      <span id="cartCount" class="cart-count">0</span>
     </a>
-    <a href="payment.html" class="nav-item ">
+    <a href="payment.html" class="nav-item">
       <i class="fas fa-credit-card"></i>
       <span>Payment</span>
     </a>
@@ -1185,14 +1186,15 @@
       const existingItem = cart.find(item => item.name === name);
       if (existingItem) {
         existingItem.quantity += 1;
+        showToast(`Added another ${name} (Total: ${existingItem.quantity})`, "success");
       } else {
         cart.push({ name, price, quantity: 1, image });
+        showToast(`Added ${name} to cart`, "success");
       }
 
       localStorage.setItem("cartItems", JSON.stringify(cart));
       updateCounterForProduct(name);
       updateCartCount();
-      showToast(`Added ${name} to cart`, "success");
     }
 
     function removeFromCart(button) {
@@ -1208,7 +1210,7 @@
           cart.splice(itemIndex, 1);
           showToast(`Removed ${name} from cart`, "error");
         } else {
-          showToast(`Reduced quantity of ${name}`, "warning");
+          showToast(`Reduced quantity of ${name} (Remaining: ${cart[itemIndex].quantity})`, "warning");
         }
         localStorage.setItem("cartItems", JSON.stringify(cart));
         updateCounterForProduct(name);
@@ -1234,15 +1236,16 @@
         const name = card.dataset.name;
         const item = cart.find(p => p.name === name);
         const counter = card.querySelector(".cart-buttons span");
-        counter.textContent = item ? item.quantity : 0;
+        if (counter) {
+          counter.textContent = item ? item.quantity : 0;
+        }
       });
       updateCartCount();
     }
 
-function redirectToCategory(category) {
-  window.location.href = "categories.html?category=" + category;
-}
-
+    function redirectToCategory(category) {
+      window.location.href = "categories.html?category=" + category;
+    }
 
     // Initialize on load
     window.onload = function() {
