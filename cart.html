@@ -480,6 +480,97 @@
     .hidden {
       display: none;
     }
+
+    /* Confirmation Modal */
+    .confirmation-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .confirmation-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .confirmation-modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-icon {
+      font-size: 50px;
+      color: var(--success);
+      margin-bottom: 15px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .modal-message {
+      margin-bottom: 20px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .modal-btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    .modal-btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .modal-btn-secondary:hover {
+      background: var(--light);
+    }
   </style>
 </head>
 <body>
@@ -497,6 +588,18 @@
     <div class="address-section hidden" id="addressFormSection">
       <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
       <div class="address-form">
+        <div class="form-group full-width">
+          <label for="name">Full Name*</label>
+          <input type="text" id="name" placeholder="Enter your full name" required>
+          <div id="nameError" class="error-message">Please enter your name</div>
+        </div>
+        
+        <div class="form-group full-width">
+          <label for="phone">Phone Number*</label>
+          <input type="tel" id="phone" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
+          <div id="phoneError" class="error-message">Please enter valid 10-digit phone number</div>
+        </div>
+        
         <div class="form-group full-width">
           <label for="doorNo">Door/Building No.*</label>
           <input type="text" id="doorNo" placeholder="e.g., 12, ABC Apartments" required>
@@ -573,6 +676,25 @@
     </div>
   </div>
 
+  <!-- Confirmation Modal -->
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 class="modal-title">Order Placed Successfully!</h3>
+      <p class="modal-message" id="modalOrderDetails"></p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-primary" id="viewOrderBtn">
+          <i class="fas fa-box"></i> View Order
+        </button>
+        <button class="modal-btn modal-btn-secondary" id="continueShoppingBtn">
+          <i class="fas fa-shopping-bag"></i> Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Bottom Navigation -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-item">
@@ -622,6 +744,7 @@
     // Global variables
     let currentUser = null;
     let userAddress = null;
+    let currentOrderId = null;
 
     // Load cart items
     function loadCart() {
@@ -728,6 +851,8 @@
     function displaySavedAddress(address) {
       const savedAddressDetails = document.getElementById("savedAddressDetails");
       const fullAddress = `
+        <strong>${address.name}</strong><br>
+        <small>${address.phone}</small><br><br>
         ${address.doorNo}, ${address.street}<br>
         ${address.area}, ${address.city}<br>
         ${address.state} - ${address.pincode}<br>
@@ -738,6 +863,15 @@
       // Store the full address for order placement
       localStorage.setItem("deliveryAddress", fullAddress.replace(/<br>/g, ', '));
       localStorage.setItem("addressValidated", "true");
+      
+      // Pre-fill form fields if user wants to change address
+      if (address.name) document.getElementById("name").value = address.name;
+      if (address.phone) document.getElementById("phone").value = address.phone;
+      if (address.doorNo) document.getElementById("doorNo").value = address.doorNo;
+      if (address.street) document.getElementById("street").value = address.street;
+      if (address.area) document.getElementById("area").value = address.area;
+      if (address.pincode) document.getElementById("pincode").value = address.pincode;
+      if (address.landmark) document.getElementById("landmark").value = address.landmark;
     }
 
     // Show address form
@@ -751,6 +885,8 @@
 
     // Address Validation
     async function validateAddress() {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
       const doorNo = document.getElementById("doorNo").value.trim();
       const street = document.getElementById("street").value.trim();
       const area = document.getElementById("area").value.trim();
@@ -766,6 +902,16 @@
       
       // Validate fields
       let isValid = true;
+      
+      if (!name) {
+        document.getElementById("nameError").style.display = "block";
+        isValid = false;
+      }
+      
+      if (!phone.match(/^\d{10}$/)) {
+        document.getElementById("phoneError").style.display = "block";
+        isValid = false;
+      }
       
       if (!doorNo) {
         document.getElementById("doorNoError").style.display = "block";
@@ -790,6 +936,8 @@
       
       if (isValid) {
         const addressData = {
+          name,
+          phone,
           doorNo,
           street,
           area,
@@ -900,14 +1048,17 @@
         const newOrderRef = database.ref('orders').push();
         await newOrderRef.set(orderData);
         
+        // Store order ID for confirmation modal
+        currentOrderId = newOrderRef.key;
+        
         // Clear cart after successful order
         localStorage.removeItem("cartItems");
         localStorage.removeItem("orderTotal");
         
-        // Redirect to order confirmation
-        window.location.href = `orders.html?orderId=${newOrderRef.key}`;
+        // Show confirmation modal
+        showOrderConfirmation(newOrderRef.key, total);
         
-        return newOrderRef.key; // Return the order ID
+        return newOrderRef.key;
       } catch (error) {
         console.error("Error placing order:", error);
         alert("Failed to place order. Please try again.");
@@ -918,6 +1069,31 @@
         
         return false;
       }
+    }
+
+    // Show order confirmation modal
+    function showOrderConfirmation(orderId, total) {
+      const modal = document.getElementById("confirmationModal");
+      const modalDetails = document.getElementById("modalOrderDetails");
+      
+      // Set order details in modal
+      modalDetails.innerHTML = `
+        Your order #${orderId} has been placed successfully!<br>
+        Total Amount: ₹${parseFloat(total).toFixed(2)}<br><br>
+        You can track your order in the "Orders" section.
+      `;
+      
+      // Show modal
+      modal.classList.add("active");
+      
+      // Set up modal button handlers
+      document.getElementById("viewOrderBtn").onclick = function() {
+        window.location.href = `orders.html?orderId=${orderId}`;
+      };
+      
+      document.getElementById("continueShoppingBtn").onclick = function() {
+        window.location.href = "dashboard.html";
+      };
     }
 
     // Checkout button handler
@@ -966,4 +1142,3 @@
   </script>
 </body>
 </html>
-
