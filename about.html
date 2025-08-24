@@ -40,11 +40,11 @@
       color: var(--light);
       line-height: 1.6;
       overflow-x: hidden;
+      padding-bottom: 60px; /* Add padding to prevent content from being hidden behind nav */
     }
 
     .overlay {
       min-height: 100vh;
-      padding-bottom: 80px;
       position: relative;
       display: none;
       overflow: hidden;
@@ -530,14 +530,15 @@
       font-size: 16px;
     }
 
-    /* Bottom Navigation */
+    /* Bottom Navigation - FIXED */
     .bottom-nav {
       display: flex;
       justify-content: space-around;
       background: rgba(30, 30, 45, 0.95);
       position: fixed;
       bottom: 0;
-      width: 100%;
+      left: 0;
+      right: 0;
       padding: 12px 0;
       box-shadow: var(--shadow-lg);
       z-index: 100;
@@ -556,6 +557,8 @@
       transition: var(--transition);
       padding: 6px 12px;
       border-radius: var(--radius-md);
+      flex: 1;
+      max-width: 20%;
     }
 
     .nav-item i {
@@ -644,6 +647,17 @@
       background: radial-gradient(circle, rgba(108, 99, 255, 0.05) 0%, transparent 60%);
       z-index: -1;
       pointer-events: none;
+    }
+
+    /* Guide Message */
+    .guide-message {
+      background: rgba(66, 226, 184, 0.1);
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--accent);
     }
   </style>
 </head>
@@ -808,49 +822,51 @@
 
       <!-- Contact Card -->
       <div class="card">
-  <div class="card-header">
-    <div class="card-icon">
-      <i class="fas fa-headset"></i>
-    </div>
-    <h2 class="card-title">Contact Us</h2>
-  </div>
-  
-  <p>We're here to help with any questions or feedback.</p>
-  
-  <!-- Guiding Comment Bubble -->
-  <div class="guide-message">
-    💬 Just one click to ask your queries!  
-    Choose any option below 👇
-  </div>
-  
-  <div class="contact-list">
-    <div class="contact-item" onclick="window.location.href='tel:+18004762372'">
-      <div class="contact-icon">
-        <i class="fas fa-phone-alt"></i>
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h2 class="card-title">Contact Us</h2>
+        </div>
+        
+        <p>We're here to help with any questions or feedback.</p>
+        
+        <!-- Guiding Comment Bubble -->
+        <div class="guide-message">
+          💬 Just one click to ask your queries!  
+          Choose any option below 👇
+        </div>
+        
+        <div class="contact-list">
+          <div class="contact-item" onclick="window.location.href='tel:+18004762372'">
+            <div class="contact-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <span>+1 (800) GRO-CERA</span>
+          </div>
+          <div class="contact-item" onclick="window.location.href='mailto:hello@grocera.com'">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>hello@grocera.com</span>
+          </div>
+          <div class="contact-item" onclick="window.open('https://wa.me/18004762372', '_blank')">
+            <div class="contact-icon">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <span>+1 (800) 476-2372</span>
+          </div>
+          <div class="contact-item" onclick="window.open('https://maps.google.com?q=123+Farm+Lane,+Organic+City', '_blank')">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>123 Farm Lane, Organic City</span>
+          </div>
+        </div>
       </div>
-      <span>+1 (800) GRO-CERA</span>
     </div>
-    <div class="contact-item" onclick="window.location.href='mailto:hello@grocera.com'">
-      <div class="contact-icon">
-        <i class="fas fa-envelope"></i>
-      </div>
-      <span>hello@grocera.com</span>
-    </div>
-    <div class="contact-item" onclick="window.open('https://wa.me/18004762372', '_blank')">
-      <div class="contact-icon">
-        <i class="fab fa-whatsapp"></i>
-      </div>
-      <span>+1 (800) 476-2372</span>
-    </div>
-    <div class="contact-item" onclick="window.open('https://maps.google.com?q=123+Farm+Lane,+Organic+City', '_blank')">
-      <div class="contact-icon">
-        <i class="fas fa-map-marker-alt"></i>
-      </div>
-      <span>123 Farm Lane, Organic City</span>
-    </div>
-  </div>
-</div>
-    <!-- Bottom Navigation -->
+
+    <!-- Bottom Navigation - FIXED -->
     <div class="bottom-nav">
       <a href="dashboard.html" class="nav-item">
         <i class="fas fa-home"></i>
@@ -989,16 +1005,28 @@
       const savedAddress = localStorage.getItem("userAddress");
       
       if (savedAddress) {
-        const addressParts = savedAddress.split(', ');
-        let formattedAddress = '';
-        
-        addressParts.forEach((part, index) => {
-          if (part.trim() !== '') {
-            formattedAddress += `<span class="address-line">${part.trim()}</span>`;
+        // Check if the address is in the expected format
+        if (savedAddress.includes('{')) {
+          try {
+            // Handle JSON formatted address
+            const addressObj = JSON.parse(savedAddress);
+            let formattedAddress = '';
+            
+            if (addressObj.street) formattedAddress += `<span class="address-line">${addressObj.street}</span>`;
+            if (addressObj.city) formattedAddress += `<span class="address-line">${addressObj.city}</span>`;
+            if (addressObj.state) formattedAddress += `<span class="address-line">${addressObj.state}</span>`;
+            if (addressObj.zip) formattedAddress += `<span class="address-line">${addressObj.zip}</span>`;
+            if (addressObj.country) formattedAddress += `<span class="address-line">${addressObj.country}</span>`;
+            
+            addressDisplay.innerHTML = formattedAddress || '<span class="no-address">Address format not recognized</span>';
+          } catch (e) {
+            // If JSON parsing fails, display as plain text
+            addressDisplay.innerHTML = `<span class="address-line">${savedAddress}</span>`;
           }
-        });
-        
-        addressDisplay.innerHTML = formattedAddress;
+        } else {
+          // Display plain text address
+          addressDisplay.innerHTML = `<span class="address-line">${savedAddress}</span>`;
+        }
       } else {
         addressDisplay.innerHTML = '<span class="no-address">No address saved yet. Please add your delivery address.</span>';
       }
@@ -1027,4 +1055,3 @@
   </script>
 </body>
 </html>
-
