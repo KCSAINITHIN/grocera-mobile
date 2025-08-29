@@ -1124,13 +1124,14 @@
           return;
         }
         
-        // Load order details from Firebase
+        // Load order details from Firebase (from separate orders collection)
         loadOrderDetails(user.uid, orderId);
       });
     });
     
     function loadOrderDetails(userId, orderId) {
-      const orderRef = database.ref(`users/${userId}/orders/${orderId}`);
+      // Access the orders collection directly
+      const orderRef = database.ref(`orders/${orderId}`);
       
       orderRef.once('value')
         .then(snapshot => {
@@ -1138,6 +1139,13 @@
           
           if (!order) {
             alert('Order not found');
+            window.location.href = 'orders.html';
+            return;
+          }
+          
+          // Verify this order belongs to the current user
+          if (order.userId !== userId) {
+            alert('You do not have permission to view this order');
             window.location.href = 'orders.html';
             return;
           }
@@ -1152,7 +1160,7 @@
           setupDeliveryInfo(order);
           
           // Setup event listeners
-          setupEventListeners(order, userId);
+          setupEventListeners(order, userId, orderId);
         })
         .catch(error => {
           console.error('Error loading order:', error);
@@ -1344,7 +1352,7 @@
         order.deliveryTime || times[Math.floor(Math.random() * times.length)];
     }
     
-    function setupEventListeners(order, userId) {
+    function setupEventListeners(order, userId, orderId) {
       // Cancel order button
       document.getElementById('cancelBtn').addEventListener('click', function() {
         if (order.status.toLowerCase() === 'shipped' || order.status.toLowerCase() === 'delivered') {
@@ -1395,11 +1403,11 @@
           return;
         }
         
-        // Update order status in Firebase
+        // Update order status in Firebase (in the orders collection)
         const updates = {};
-        updates[`users/${user.uid}/orders/${orderId}/status`] = 'Cancelled';
-        updates[`users/${user.uid}/orders/${orderId}/cancellationReason`] = reason;
-        updates[`users/${user.uid}/orders/${orderId}/refundRequested`] = requestRefund;
+        updates[`orders/${orderId}/status`] = 'Cancelled';
+        updates[`orders/${orderId}/cancellationReason`] = reason;
+        updates[`orders/${orderId}/refundRequested`] = requestRefund;
         
         database.ref().update(updates)
           .then(() => {
@@ -1427,8 +1435,8 @@
           return;
         }
         
-        // Get the order details from Firebase
-        database.ref(`users/${user.uid}/orders/${orderId}`).once('value')
+        // Get the order details from Firebase (from orders collection)
+        database.ref(`orders/${orderId}`).once('value')
           .then(snapshot => {
             const order = snapshot.val();
             
@@ -1438,7 +1446,7 @@
               return;
             }
             
-            // Get or create cart in Firebase
+            // Get or create cart in Firebase (in user's cart)
             const cartRef = database.ref(`users/${user.uid}/cart`);
             
             if (replaceCart) {
@@ -1491,7 +1499,7 @@
         }
       });
       
-      // Save updated cart to Firebase
+      // Save updated cart to Firebase (in user's cart)
       return database.ref(`users/${userId}/cart`).set(updatedCart);
     }
     
