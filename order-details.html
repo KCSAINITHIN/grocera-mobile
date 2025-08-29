@@ -1105,10 +1105,14 @@
     const database = firebase.database();
     const auth = firebase.auth();
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get order ID from URL
+    // Get order ID from URL
+    function getOrderIdFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
+      return urlParams.get('orderId');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const orderId = getOrderIdFromURL();
       
       if (!orderId) {
         alert('No order ID provided');
@@ -1124,14 +1128,13 @@
           return;
         }
         
-        // Load order details from Firebase (from separate orders collection)
+        // Load order details from Firebase
         loadOrderDetails(user.uid, orderId);
       });
     });
     
     function loadOrderDetails(userId, orderId) {
-      // Access the orders collection directly
-      const orderRef = database.ref(`orders/${orderId}`);
+      const orderRef = database.ref(`users/${userId}/orders/${orderId}`);
       
       orderRef.once('value')
         .then(snapshot => {
@@ -1139,13 +1142,6 @@
           
           if (!order) {
             alert('Order not found');
-            window.location.href = 'orders.html';
-            return;
-          }
-          
-          // Verify this order belongs to the current user
-          if (order.userId !== userId) {
-            alert('You do not have permission to view this order');
             window.location.href = 'orders.html';
             return;
           }
@@ -1177,17 +1173,6 @@
       const status = order.status || 'Processing';
       const statusClass = getStatusClass(status);
       
-      // Generate random product images for demo
-      const productImages = [
-        'https://via.placeholder.com/100x100/FFE5B4/000000?text=Banana',
-        'https://via.placeholder.com/100x100/F5F5F5/000000?text=Milk',
-        'https://via.placeholder.com/100x100/E6D7BD/000000?text=Bread',
-        'https://via.placeholder.com/100x100/FFCCCB/000000?text=Eggs',
-        'https://via.placeholder.com/100x100/C8E6C9/000000?text=Spinach',
-        'https://via.placeholder.com/100x100/E1BEE7/000000?text=Yogurt',
-        'https://via.placeholder.com/100x100/D7CCC8/000000?text=Granola'
-      ];
-      
       orderElement.innerHTML = `
         <div class="card-header">
           <div>
@@ -1197,10 +1182,10 @@
           <span class="order-status ${statusClass}">${status}</span>
         </div>
         <div class="order-items">
-          ${order.items.map((item, index) => `
+          ${order.items.map(item => `
             <div class="order-item">
               <div class="item-info">
-                <img src="${productImages[index % productImages.length]}" class="item-img" alt="${item.name}">
+                <img src="${item.image || 'https://via.placeholder.com/100x100/E2E8F0/718096?text=Product'}" class="item-img" alt="${item.name}">
                 <div class="item-details">
                   <div class="item-name">${item.name || 'Unknown Item'}</div>
                   <div class="item-meta">Qty: ${item.quantity || 1} • ₹${(item.price || 0).toFixed(2)} each</div>
@@ -1213,11 +1198,11 @@
         <div class="order-summary">
           <div class="summary-row">
             <span>Subtotal</span>
-            <span>₹${(order.totalAmount * 0.9).toFixed(2)}</span>
+            <span>₹${(order.subtotal || order.totalAmount * 0.9).toFixed(2)}</span>
           </div>
           <div class="summary-row">
             <span>Delivery</span>
-            <span>₹${(order.totalAmount * 0.1).toFixed(2)}</span>
+            <span>₹${(order.deliveryFee || order.totalAmount * 0.1).toFixed(2)}</span>
           </div>
           <div class="summary-row total-row">
             <span>Total Amount</span>
@@ -1290,7 +1275,6 @@
         <div class="step ${step.active ? 'active' : ''} ${step.completed ? 'completed' : ''}">
           <div class="step-icon">${step.icon}</div>
           <div class="step-text">${step.label}</div>
-          ${step.completed ? `<div class="step-date">${getRandomTime(activeStepIndex)}</div>` : ''}
         </div>
       `).join('');
       
@@ -1303,14 +1287,6 @@
       if (status.toLowerCase() === 'shipped' || status.toLowerCase() === 'delivered') {
         const deliveryPerson = document.getElementById('deliveryPersonContainer');
         deliveryPerson.classList.remove('hidden');
-        
-        // Generate random delivery person
-        const names = ['John Doe', 'Raj Patel', 'Amit Sharma', 'Priya Singh', 'David Wilson'];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        const initials = randomName.split(' ').map(n => n[0]).join('');
-        
-        document.getElementById('personName').textContent = randomName;
-        document.getElementById('personAvatar').textContent = initials;
         
         // Add pulse animation if active delivery
         if (status.toLowerCase() === 'shipped') {
@@ -1331,25 +1307,9 @@
     }
     
     function setupDeliveryInfo(order) {
-      // Generate random delivery info for demo
-      const addresses = [
-        '123 Main St, Apartment 4B, Mumbai 400001',
-        '456 Oak Avenue, Bangalore 560001',
-        '789 Pine Road, Delhi 110001'
-      ];
-      const contacts = ['+91 9876543210', '+91 8765432109', '+91 7654321098'];
-      const times = [
-        'Within 30 minutes',
-        'Today by 7 PM',
-        'Tomorrow morning'
-      ];
-      
-      document.getElementById('deliveryAddress').textContent = 
-        order.deliveryAddress || addresses[Math.floor(Math.random() * addresses.length)];
-      document.getElementById('deliveryContact').textContent = 
-        order.deliveryContact || contacts[Math.floor(Math.random() * contacts.length)];
-      document.getElementById('deliveryTime').textContent = 
-        order.deliveryTime || times[Math.floor(Math.random() * times.length)];
+      document.getElementById('deliveryAddress').textContent = order.deliveryAddress || 'No address provided';
+      document.getElementById('deliveryContact').textContent = order.deliveryContact || 'No contact provided';
+      document.getElementById('deliveryTime').textContent = order.deliveryTime || 'No time estimate available';
     }
     
     function setupEventListeners(order, userId, orderId) {
@@ -1389,8 +1349,7 @@
         return;
       }
       
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
+      const orderId = getOrderIdFromURL();
       
       if (!orderId) {
         alert('Order ID not found');
@@ -1403,18 +1362,18 @@
           return;
         }
         
-        // Update order status in Firebase (in the orders collection)
+        // Update order status in Firebase
         const updates = {};
-        updates[`orders/${orderId}/status`] = 'Cancelled';
-        updates[`orders/${orderId}/cancellationReason`] = reason;
-        updates[`orders/${orderId}/refundRequested`] = requestRefund;
+        updates[`users/${user.uid}/orders/${orderId}/status`] = 'Cancelled';
+        updates[`users/${user.uid}/orders/${orderId}/cancellationReason`] = reason;
+        updates[`users/${user.uid}/orders/${orderId}/refundRequested`] = requestRefund;
         
         database.ref().update(updates)
           .then(() => {
             alert(`Order #${orderId} has been cancelled. ${requestRefund ? 'Your refund will be processed within 3-5 business days.' : ''}`);
             closeModal();
             setTimeout(() => {
-              window.location.href = 'orders.html';
+              window.location.reload();
             }, 500);
           })
           .catch(error => {
@@ -1426,8 +1385,7 @@
     
     function confirmReorder() {
       const replaceCart = document.getElementById('replaceCart').checked;
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
+      const orderId = getOrderIdFromURL();
       
       auth.onAuthStateChanged(user => {
         if (!user) {
@@ -1435,8 +1393,8 @@
           return;
         }
         
-        // Get the order details from Firebase (from orders collection)
-        database.ref(`orders/${orderId}`).once('value')
+        // Get the order details from Firebase
+        database.ref(`users/${user.uid}/orders/${orderId}`).once('value')
           .then(snapshot => {
             const order = snapshot.val();
             
@@ -1446,7 +1404,7 @@
               return;
             }
             
-            // Get or create cart in Firebase (in user's cart)
+            // Get or create cart in Firebase
             const cartRef = database.ref(`users/${user.uid}/cart`);
             
             if (replaceCart) {
@@ -1499,7 +1457,7 @@
         }
       });
       
-      // Save updated cart to Firebase (in user's cart)
+      // Save updated cart to Firebase
       return database.ref(`users/${userId}/cart`).set(updatedCart);
     }
     
@@ -1529,18 +1487,6 @@
       if (status.includes('cancelled')) return 'status-cancelled';
       if (status.includes('shipped')) return 'status-shipped';
       return 'status-processing';
-    }
-    
-    function getRandomTime(stepIndex) {
-      const now = new Date();
-      const times = [
-        now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        new Date(now.getTime() - 15*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        new Date(now.getTime() - 30*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        new Date(now.getTime() - 45*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        new Date(now.getTime() - 60*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-      ];
-      return times[stepIndex] || times[0];
     }
   </script>
 </body>
